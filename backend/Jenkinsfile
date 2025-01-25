@@ -1,5 +1,10 @@
 pipeline {
     agent any
+    
+    when {
+        branch 'backend'
+    }
+
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
@@ -8,17 +13,6 @@ pipeline {
     }
 
     stages {
-        stage('Check Branch') {
-            when {
-                expression {
-                    env.BRANCH_NAME == 'backend'
-                }
-            }
-            steps {
-                echo "This pipeline is running for the backend branch."
-            }
-        }
-
         stage('Gradle Build') {
             steps {
                 dir('backend') {
