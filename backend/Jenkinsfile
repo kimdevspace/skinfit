@@ -1,11 +1,6 @@
 pipeline {
     agent any
     
-    when {
-        branch 'backend'
-    }
-
-
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
         DOCKER_IMAGE = "kimdevspace/spring-boot"
