@@ -3,6 +3,7 @@ spring:
     name: skinfit
   profiles:
     active: dev  # 기본값으로 dev 설정
+    include: oauth
   jpa:
     properties:
       hibernate:
