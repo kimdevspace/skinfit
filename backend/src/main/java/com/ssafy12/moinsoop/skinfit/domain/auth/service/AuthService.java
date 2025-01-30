@@ -35,7 +35,7 @@ public class AuthService {
 
         refreshTokenService.saveRefreshToken(user.getUserId(), refreshToken);
 
-        return new TokenResponse(accessToken, refreshToken);
+        return new TokenResponse(accessToken, null);
     }
 
     public TokenResponse reissue(String refreshToken) {
