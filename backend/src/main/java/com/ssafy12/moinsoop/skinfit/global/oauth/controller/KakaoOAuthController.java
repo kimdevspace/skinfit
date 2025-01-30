@@ -1,11 +1,15 @@
 package com.ssafy12.moinsoop.skinfit.global.oauth.controller;
 
+import com.ssafy12.moinsoop.skinfit.domain.auth.dto.response.TokenResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
+import com.ssafy12.moinsoop.skinfit.global.config.RefreshTokenService;
 import com.ssafy12.moinsoop.skinfit.global.oauth.dto.KakaoTokenResponse;
 import com.ssafy12.moinsoop.skinfit.global.oauth.dto.KakaoUserInfo;
 import com.ssafy12.moinsoop.skinfit.global.oauth.service.KaKaoOAuthService;
+import com.ssafy12.moinsoop.skinfit.global.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.antlr.v4.runtime.Token;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -33,6 +37,8 @@ public class KakaoOAuthController {
 
     private final RestTemplate restTemplate;
     private final KaKaoOAuthService kakaoOAuthService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenService refreshTokenService;
 
     @GetMapping("/api/v1/oauth/kakao/login")
     public ResponseEntity<Void> kakaoLogin() {
@@ -92,8 +98,14 @@ public class KakaoOAuthController {
                     // 회원가입 또는 로그인 처리
                     User user = kakaoOAuthService.registerOrLogin(kakaoUser);
                     log.info("로그인 성공! 유저 이메일: {}, 닉네임: {}", user.getUserEmail(), user.getNickname());
-                    // 여기에 JWT 토큰 발급 로직이 들어갈 예정
-                    return ResponseEntity.ok("로그인 성공!");
+
+
+                    String jwtAccessToken = jwtTokenProvider.generateAccessToken(user.getUserId(), user.getRoleType());
+                    String jwtRefreshToken = jwtTokenProvider.generateRefreshToken(user.getUserId(), user.getRoleType());
+
+                    refreshTokenService.saveRefreshToken(user.getUserId(), jwtRefreshToken);
+
+                    return ResponseEntity.ok("로그인 성공!, 액세스토큰 : " + jwtAccessToken);
                 }
             }
 
