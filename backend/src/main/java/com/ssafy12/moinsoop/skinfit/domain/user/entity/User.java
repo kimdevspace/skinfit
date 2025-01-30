@@ -71,14 +71,15 @@ public class User {
 
     @Builder
     public User(String userEmail, String userPassword, String nickname,
-                Gender gender, Year birthYear) {
+                Gender gender, Year birthYear, ProviderType providerType,
+                RoleType roleType, boolean isRegistered) {
         this.userEmail = userEmail;
         this.userPassword = userPassword;
         this.nickname = nickname;
         this.gender = gender;
         this.birthYear = birthYear;
-        this.isRegistered = true;
-        this.roleType = RoleType.USER;
-        this.providerType = ProviderType.LOCAL;
+        this.isRegistered = isRegistered;
+        this.roleType = roleType != null ? roleType : RoleType.USER;
+        this.providerType = providerType != null ? providerType : ProviderType.LOCAL;
     }
 }
