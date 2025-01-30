@@ -28,6 +28,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/index.html", "/error").permitAll()  // 루트 경로와 에러 페이지 허용
                         .requestMatchers("/api/v1/auth/signin", "/api/v1/auth/signup").permitAll()
+                        .requestMatchers("/api/v1/oauth/kakao/**").permitAll()
+                        .requestMatchers("/login/oauth2/code/kakao").permitAll()
                         .requestMatchers("/*.js", "/*.css", "/assets/**", "/images/**", "/*.json",
                                 "/*.ico", "/*.png", "/*.svg", "/**/*.html").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
