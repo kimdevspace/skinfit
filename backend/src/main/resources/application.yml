@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: skinfit
+  profiles:
+    active: dev  # 기본값으로 dev 설정
+    include: oauth
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+server:
+  tomcat:
+    remote-ip-header: x-forwarded-for
+    protocol-header: x-forwarded-proto
+
+jwt:
+  access-token-expiration: 1800000  # 30분
+  refresh-token-expiration: 604800000  # 7일
