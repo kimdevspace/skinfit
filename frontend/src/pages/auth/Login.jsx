@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./Login.scss";
 import invisibleEye from "../../assets/icons/login/invisibleEye.png";
 import visibleEye from "../../assets/icons/login/visibleEye.png";
-import Logo from '../../components/common/Logo.jsx';
+import Logo from "../../components/common/Logo.jsx";
+import Button from "../../components/common/Button.jsx";
+import kakaoLoginBtn from "../../assets/images/kakao_login_medium_wide.png";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -27,7 +29,7 @@ function Login() {
   return (
     <div className="login-container">
       {/* 상단 로고 */}
-      <Logo/>
+      <Logo />
 
       {/* 가운데 정렬된 래퍼 */}
       <div className="box-wrapper">
@@ -72,17 +74,17 @@ function Login() {
               </span>
             </div>
 
-            <button type="submit" className="login-button">
-              로그인
-            </button>
+            <Button text="로그인" color="white" type="submit" />
           </form>
 
           <p className="password-find">비밀번호 찾기</p>
           <hr className="divider" />
 
-          <button type="button" className="kakao-button">
-            카카오 로그인
-          </button>
+          <img
+            className="kakao-login-btn"
+            src={kakaoLoginBtn}
+            alt="kakao-login-btn"
+          />
         </div>
       </div>
     </div>
