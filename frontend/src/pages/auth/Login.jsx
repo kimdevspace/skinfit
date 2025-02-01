@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import "./Login.css";
-import invisibleEye from "../../assets/login/invisibleEye.png";
-import visibleEye from "../../assets/login/visibleEye.png";
+import "./Login.scss";
+import invisibleEye from "../../assets/icons/login/invisibleEye.png";
+import visibleEye from "../../assets/icons/login/visibleEye.png";
+import Logo from '../../components/common/Logo.jsx';
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -26,8 +27,7 @@ function Login() {
   return (
     <div className="login-container">
       {/* 상단 로고 */}
-      <h1 className="skinfit-title">skinfit</h1>
-      <p className="skinfit-subtitle">내 피부에 딱 맞는 화장품 찾기</p>
+      <Logo/>
 
       {/* 가운데 정렬된 래퍼 */}
       <div className="box-wrapper">
