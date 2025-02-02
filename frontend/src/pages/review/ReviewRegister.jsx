@@ -1,8 +1,9 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./ReviewRegister.scss";
 import Header from "../../components/common/Header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import Button from "../../components/common/Button";
 
 function ReviewRegister() {
   // 리뷰 데이터
@@ -29,18 +30,59 @@ function ReviewRegister() {
 
   // 리뷰 사진 등록
   const fileInputRef = useRef(null);
+  const [imagePreviews, setImagePreviews] = useState([]); // 미리보기용 URL
 
   const handleFileButtonClick = () => {
     fileInputRef.current.click();
   };
 
   const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files).slice(0, 3); // 최대 3개 파일
+    if (!e.target.files.length) return;
+
+    const newFiles = Array.from(e.target.files);
+    const allFiles = [...reviewData.images, ...newFiles].slice(0, 3);
+
     setReviewData((prev) => ({
       ...prev,
-      images: files,
+      images: allFiles,
     }));
+
+    // 사진 미리보기를 위한 URL 생성
+    const newPreviewUrls = newFiles.map((file) => URL.createObjectURL(file));
+    setImagePreviews((prevPreviews) =>
+      [...prevPreviews, ...newPreviewUrls].slice(0, 3)
+    );
+
+    e.target.value = "";
   };
+  console.log(reviewData.images);
+
+  // 업로드한 사진 삭제
+  const handleDeleteImage = (index) => {
+    setImagePreviews((prevPreviews) => {
+      console.log(index);
+      const updatedPreviews = [...prevPreviews];
+      URL.revokeObjectURL(updatedPreviews[index]);
+      updatedPreviews.splice(index, 1);
+      return updatedPreviews;
+    });
+
+    setReviewData((prevData) => {
+      const updatedImages = [...prevData.images];
+      updatedImages.splice(index, 1);
+      return {
+        ...prevData,
+        images: updatedImages,
+      };
+    });
+  };
+
+  // 사진 URL 해제
+  useEffect(() => {
+    return () => {
+      imagePreviews.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [imagePreviews]);
 
   return (
     <div className="review-register">
@@ -95,11 +137,30 @@ function ReviewRegister() {
             사진을 등록해주세요(선택)
           </label>
           <div className="custom-file-input">
+            <div className="preview-container">
+              {imagePreviews.map((url, index) => (
+                <div key={index} className="preview-box">
+                  <img
+                    src={url}
+                    alt={`preview-${index}`}
+                    className="preview-img"
+                  />
+                  <button className="delete-btn" type="button">
+                    <FontAwesomeIcon
+                      icon={faXmark}
+                      onClick={() => handleDeleteImage(index)}
+                    />
+                  </button>
+                </div>
+              ))}
+            </div>
             <div
               className="custom-file-input-btn"
               onClick={handleFileButtonClick}
             >
-              <p>등록할 사진을 선택해주세요</p>
+              {reviewData.images.length ? null : (
+                <p>등록할 사진을 선택해주세요</p>
+              )}
               <FontAwesomeIcon icon={faPlus} className="plus-icon" />
             </div>
           </div>
@@ -112,6 +173,8 @@ function ReviewRegister() {
             onChange={handleImageUpload}
           />
         </div>
+
+        <Button text="등록하기" color="pink" />
       </form>
     </div>
   );
