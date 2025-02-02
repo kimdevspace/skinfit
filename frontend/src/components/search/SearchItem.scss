@@ -1,0 +1,73 @@
+//searchItem.jsx : 검색결과 하나(뱃지, 버튼 Props로 바꾸기)
+
+.search-list {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    margin-right: 3rem;
+    margin-left: 3rem;
+    
+}
+
+p {
+    padding-bottom: 0.5rem;
+    font-size: 1.4rem;
+    padding-left: 10%;
+
+    &.brand-name {
+        font-size: 1.1rem;
+    }
+
+    
+
+}
+
+
+hr {
+    height: 0.1rem;
+    border: none;
+    background-color:  #DEDEDE;
+}
+
+
+// 반복 문법
+%common {
+    position: absolute;    
+    display: flex;
+    align-items: center;     // 세로 중앙 정렬
+    justify-content: center; // 가로 중앙 정렬
+    font-size: 1.3rem;
+    top: 1rem;
+}
+
+// 뱃지가 아닌 추가 버튼일 때 
+.add-btn {
+    @extend %common;
+    border-color: #DEDEDE;
+    border-style: solid;  
+    border-radius: 2rem;
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
+    margin-top: 0.5rem;
+    right: 0.3rem;
+    color:#8e8e8e;
+}
+
+.badge {
+    @extend %common;
+    border-radius: 50%; // 동그랗게 만들기
+    height: 3rem;
+    width: 3rem;
+    line-height: 1; // 상하 자간
+    right: 1rem;
+    
+    &.isSafe {
+        background-color: #69B293;
+        color: #fff
+    }
+    
+}
+
+
+
+
