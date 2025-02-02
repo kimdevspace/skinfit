@@ -1,0 +1,118 @@
+@mixin input-text {
+  padding: 1rem;
+  color: #8e8e8e;
+  font-size: 1.2rem;
+}
+
+@mixin input-border {
+  border: 0.5px solid #e1e1e1;
+  border-radius: 0.5rem;
+}
+
+@mixin error-msg {
+  display: none;
+  margin-top: 0.5rem;
+  color: #ffae82;
+  font-size: 1rem;
+}
+
+.review-register form {
+  margin: 1rem 3rem 0;
+
+  // 공통 style
+  .input-wrapper {
+    margin-bottom: 2.5rem;
+
+    .input-title {
+      display: block;
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+    }
+
+    // input style
+    .radio-box label .radio-label,
+    &.review-content textarea,
+    &.review-images .custom-file-input {
+      @include input-text();
+      @include input-border();
+    }
+
+    .error-msg {
+      @include error-msg();
+    }
+
+    // 상품명 style
+    &.cosmetic-name > p:last-child {
+      color: #8e8e8e;
+      font-size: 1.2rem;
+    }
+
+    // 피부 적합 여부 style
+    .radio-box {
+      display: flex;
+      gap: 0 0.5rem;
+
+      label {
+        flex-grow: 1;
+        text-align: center;
+        position: relative;
+        cursor: pointer;
+      }
+
+      input {
+        display: none;
+
+        &:checked + .radio-label {
+          color: #565656;
+          border: 0.5px solid #8e8e8e;
+          background-color: #fff0e8;
+        }
+      }
+
+      .radio-label {
+        display: block;
+      }
+    }
+
+    // 리뷰 작성 style
+    &.review-content textarea {
+      width: 100%;
+      height: 12rem;
+      resize: none;
+    }
+
+    // 리뷰 사진 등록 style
+    &.review-images {
+      .custom-file-input {
+        width: 100%;
+        height: 10rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .custom-file-input-btn {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+
+          p {
+            margin-bottom: 10px;
+          }
+
+          .plus-icon {
+            padding: 0.4rem 0.5rem;
+            border: 0.5px solid #8e8e8e;
+            border-radius: 50%;
+            font-size: 1.5rem;
+          }
+        }
+      }
+
+      input {
+        display: none;
+      }
+    }
+  }
+}
