@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final RedisTemplate redisTemplate;
     private final JavaMailSender mailSender;
+    private final PasswordEncoder passwordEncoder;
 
     private static final String EMAIL_VERIFICATION_PREFIX = "email:verification:";
     private static final String EMAIL_VERIFIED_PREFIX = "email:verified:";
@@ -62,7 +64,7 @@ public class UserService {
     public void signUp(SignUpRequest request) {
 
         String userEmail = request.getUserEmail();
-        String userPassword = request.getUserPassword();
+        String userPassword = passwordEncoder.encode(request.getUserPassword());
         String code = request.getCode();
 
         // 레디스 저장된 인증번호 가져오기,
