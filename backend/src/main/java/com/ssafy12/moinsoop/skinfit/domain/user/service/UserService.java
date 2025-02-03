@@ -59,6 +59,48 @@ public class UserService {
 
     }
 
+    public void signUp(SignUpRequest request) {
+
+        String userEmail = request.getUserEmail();
+        String userPassword = request.getUserPassword();
+        String code = request.getCode();
+
+        // 레디스 저장된 인증번호 가져오기,
+        String storedCode = (String) redisTemplate.opsForValue().get(EMAIL_VERIFICATION_PREFIX + userEmail);
+
+        // 인증번호 검증
+        if (storedCode == null) {
+            throw new VerificationCodeExpiredException("5분이 지났습니다. 이메일을 재전송 하세요.");
+        }
+
+        if (!storedCode.equals(code)) {
+            throw new InvalidVerificationCodeException("잘못된 인증 코드입니다. 인증 코드를 다시 입력하세요");
+        }
+
+        // 레디스 저장된 인증번호를 인증했다고 변경
+        redisTemplate.opsForValue().set(EMAIL_VERIFIED_PREFIX + userEmail, "verified", Duration.ofHours(24));
+
+        // 기존 인종코드 삭제
+        redisTemplate.delete(EMAIL_VERIFICATION_PREFIX + userEmail);
+
+
+        //임의의 닉네임
+        String[] nicknames = userEmail.split("@");
+        String nickname = nicknames[0];
+
+        //회원가입
+        User user = User.builder()
+                .userEmail(userEmail)
+                .userPassword(userPassword)
+                .nickname(nickname)
+                .providerType(ProviderType.LOCAL)
+                .roleType(RoleType.USER)
+                .isRegistered(false)
+                .build();
+
+        userRepository.save(user);
+    }
+
     // 인증번호 생성메서드
     private String generateRandomCode() {
         Random random = new Random();

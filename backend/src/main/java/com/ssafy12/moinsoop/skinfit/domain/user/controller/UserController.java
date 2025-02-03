@@ -31,4 +31,11 @@ public class UserController {
         userService.sendVerificationEmail(request.getUserEmail());
         return ResponseEntity.ok("인증 코드가 이메일로 발송되었습니다");
     }
+
+    // 회원가입
+    @PostMapping("/signup")
+    public ResponseEntity<String> signUp(@RequestBody SignUpRequest request) {
+        userService.signUp(request);
+        return ResponseEntity.ok("회원가입에 성공했습니다!");
+    }
 }
