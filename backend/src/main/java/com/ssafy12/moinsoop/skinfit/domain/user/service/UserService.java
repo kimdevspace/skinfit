@@ -1,5 +1,9 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.service;
 
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.SignUpRequest;
+import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
+import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.ProviderType;
+import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.RoleType;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.repository.UserRepository;
 import com.ssafy12.moinsoop.skinfit.domain.user.exception.DuplicateUserEmailException;
 import com.ssafy12.moinsoop.skinfit.domain.user.exception.InvalidVerificationCodeException;
@@ -27,12 +31,15 @@ public class UserService {
     private static final String EMAIL_VERIFIED_PREFIX = "email:verified:";
     private static final long VERIFICATION_CODE_TTL = 300; // 5분
 
-    public void sendVerificationEmail(String userEmail) {
-        // 이미 가입된 이메일인지 확인
-        if (userRepository.existsByUserEmail(userEmail)) {
-            throw new DuplicateUserEmailException("이미 등록된 이메일입니다.");
-        }
 
+    public void checkDuplicateUserEmail(String userEmail) {
+        // 이메일 중복 체크
+        if (userRepository.existsByUserEmail(userEmail)) {
+            throw new DuplicateUserEmailException("이미 가입된 메일입니다.");
+        }
+    }
+
+    public void sendVerificationEmail(String userEmail) {
         // 인증번호 생성
         String verificationCode = generateRandomCode();
 
@@ -51,30 +58,6 @@ public class UserService {
         mailSender.send(message);
 
     }
-
-    public void verifyUserEmail(String userEmail, String code) {
-        String storedCode = (String) redisTemplate
-                .opsForValue()
-                .get(EMAIL_VERIFICATION_PREFIX + userEmail);
-
-        if (storedCode == null) {
-            throw new VerificationCodeExpiredException("5분이 지났습니다. 이메일을 재전송 하세요.");
-        }
-
-        if (!storedCode.equals(code)) {
-            throw new InvalidVerificationCodeException("잘못된 인증 코드입니다.");
-        }
-
-        redisTemplate.opsForValue().set(
-                EMAIL_VERIFIED_PREFIX + userEmail,
-                "verified",
-                Duration.ofHours(24)
-        );
-
-        // 기존 인증 코드 삭제
-        redisTemplate.delete(EMAIL_VERIFICATION_PREFIX + userEmail);
-    }
-
 
     // 인증번호 생성메서드
     private String generateRandomCode() {
