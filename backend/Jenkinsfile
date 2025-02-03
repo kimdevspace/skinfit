@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+    
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
+        DOCKER_IMAGE = "kimdevspace/spring-boot"
+        VERSION = "latest"
+    }
+
+    stages {
+        stage('Gradle Build') {
+            steps {
+                dir('backend') {
+                    sh 'chmod +x gradlew'
+                    sh './gradlew clean build'
+                }
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                dir('backend') {
+                    sh "docker build -t $DOCKER_IMAGE:$VERSION ."
+                }
+            }
+        }
+
+        stage('Docker Login & Push') {
+            steps {
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                sh "docker push $DOCKER_IMAGE:$VERSION"
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                dir('backend') {
+                    sh 'chmod +x deploy.sh'
+                    sh './deploy.sh'
+                }
+            }
+        }
+    }
+}

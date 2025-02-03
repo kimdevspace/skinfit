@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: skinfit
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  datasource:
+    url: jdbc:mysql://localhost:3306/skinfit?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+server:
+  port: 8080
+
+security:
+  require-ssl: false  # 개발 환경에서는 SSL 요구사항 비활성화
+
+# 개발용 jwt 시크릿 키
+jwt:
+  secret-key: 6989816b247f2d01275210e92c61b4098af140a802e2886a487280e39eb380592fc88634c922e38c7515e0f85d7a9399d73ec2402f52573af950d82841dbafed
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    com.yourpackage.skinfit: DEBUG
