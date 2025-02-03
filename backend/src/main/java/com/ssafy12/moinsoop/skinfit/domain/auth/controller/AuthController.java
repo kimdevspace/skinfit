@@ -1,8 +1,12 @@
 package com.ssafy12.moinsoop.skinfit.domain.auth.controller;
 
 import com.ssafy12.moinsoop.skinfit.domain.auth.dto.request.LoginRequest;
+import com.ssafy12.moinsoop.skinfit.domain.auth.dto.response.SignInResponse;
 import com.ssafy12.moinsoop.skinfit.domain.auth.dto.response.TokenResponse;
 import com.ssafy12.moinsoop.skinfit.domain.auth.service.AuthService;
+import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
+import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.ProviderType;
+import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.RoleType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +20,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signin")
-    public ResponseEntity<TokenResponse> signIn(@RequestBody @Valid LoginRequest request) {
+    public ResponseEntity<SignInResponse> signIn(@RequestBody @Valid LoginRequest request) {
         return ResponseEntity.ok(authService.signIn(request));
     }
 
