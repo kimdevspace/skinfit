@@ -1,6 +1,7 @@
 package com.ssafy12.moinsoop.skinfit.domain.auth.service;
 
 import com.ssafy12.moinsoop.skinfit.domain.auth.dto.request.LoginRequest;
+import com.ssafy12.moinsoop.skinfit.domain.auth.dto.response.SignInResponse;
 import com.ssafy12.moinsoop.skinfit.domain.auth.dto.response.TokenResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.RoleType;
@@ -9,6 +10,7 @@ import com.ssafy12.moinsoop.skinfit.global.config.RefreshTokenService;
 import com.ssafy12.moinsoop.skinfit.global.security.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +24,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
 
-    public TokenResponse signIn(LoginRequest request) {
+    public SignInResponse signIn(LoginRequest request) {
         User user = userRepository.findByUserEmail(request.getUserEmail())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이메일입니다."));
 
@@ -35,7 +37,15 @@ public class AuthService {
 
         refreshTokenService.saveRefreshToken(user.getUserId(), refreshToken);
 
-        return new TokenResponse(accessToken, null);
+        boolean isRegistered = user.isRegistered();
+
+        SignInResponse response = SignInResponse
+                .builder()
+                .accessToken(accessToken)
+                .isRegistered(isRegistered)
+                .build();
+
+        return response;
     }
 
     public TokenResponse reissue(String refreshToken) {
@@ -58,5 +68,17 @@ public class AuthService {
         refreshTokenService.saveRefreshToken(userId, newRefreshToken);
 
         return new TokenResponse(newAccessToken, newRefreshToken);
+    }
+
+
+    public boolean isFirstLogin(String userEmail) {
+        User user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+        if (!user.isRegistered()) {
+            return true;
+        }
+
+        return false;
     }
 }

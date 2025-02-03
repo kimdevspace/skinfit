@@ -38,4 +38,11 @@ public class UserController {
         userService.signUp(request);
         return ResponseEntity.ok("회원가입에 성공했습니다!");
     }
+
+    // 비밀번호 분실 시 임시비밀번호 메일로 보내기
+    @PostMapping("password-temporary")
+    public ResponseEntity<String> sendTemporaryPassword(@RequestBody UserEmailRequest request) {
+        userService.sendTemporaryPassword(request.getUserEmail());
+        return ResponseEntity.ok("임시 비밀번호가 이메일로 발송되었습니다");
+    }
 }
