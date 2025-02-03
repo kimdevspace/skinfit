@@ -55,14 +55,12 @@ function ReviewRegister() {
 
     e.target.value = "";
   };
-  console.log(reviewData.images);
 
   // 업로드한 사진 삭제
   const handleDeleteImage = (index) => {
     setImagePreviews((prevPreviews) => {
-      console.log(index);
       const updatedPreviews = [...prevPreviews];
-      URL.revokeObjectURL(updatedPreviews[index]);
+      URL.revokeObjectURL(updatedPreviews[index]); // 사진 URL 해제
       updatedPreviews.splice(index, 1);
       return updatedPreviews;
     });
@@ -77,12 +75,6 @@ function ReviewRegister() {
     });
   };
 
-  // 사진 URL 해제
-  useEffect(() => {
-    return () => {
-      imagePreviews.forEach((url) => URL.revokeObjectURL(url));
-    };
-  }, [imagePreviews]);
 
   return (
     <div className="review-register">
@@ -147,7 +139,7 @@ function ReviewRegister() {
                   />
                   <button className="delete-btn" type="button">
                     <FontAwesomeIcon
-                      icon={faXmark}
+                      icon={faXmark}           
                       onClick={() => handleDeleteImage(index)}
                     />
                   </button>
@@ -168,6 +160,7 @@ function ReviewRegister() {
             type="file"
             id="images"
             accept=".jpg, .png"
+            // accept="image/*" // 모바일 웹에서 업로드 오류시 실행해보기
             multiple
             ref={fileInputRef}
             onChange={handleImageUpload}
