@@ -2,6 +2,8 @@ package com.ssafy12.moinsoop.skinfit.domain.user.service;
 
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.repository.UserRepository;
 import com.ssafy12.moinsoop.skinfit.domain.user.exception.DuplicateUserEmailException;
+import com.ssafy12.moinsoop.skinfit.domain.user.exception.InvalidVerificationCodeException;
+import com.ssafy12.moinsoop.skinfit.domain.user.exception.VerificationCodeExpiredException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
@@ -48,6 +50,29 @@ public class UserService {
         message.setText("인증 코드: " + verificationCode + "\n 5분 내로 입력하세요");
         mailSender.send(message);
 
+    }
+
+    public void verifyUserEmail(String userEmail, String code) {
+        String storedCode = (String) redisTemplate
+                .opsForValue()
+                .get(EMAIL_VERIFICATION_PREFIX + userEmail);
+
+        if (storedCode == null) {
+            throw new VerificationCodeExpiredException("5분이 지났습니다. 이메일을 재전송 하세요.");
+        }
+
+        if (!storedCode.equals(code)) {
+            throw new InvalidVerificationCodeException("잘못된 인증 코드입니다.");
+        }
+
+        redisTemplate.opsForValue().set(
+                EMAIL_VERIFIED_PREFIX + userEmail,
+                "verified",
+                Duration.ofHours(24)
+        );
+
+        // 기존 인증 코드 삭제
+        redisTemplate.delete(EMAIL_VERIFICATION_PREFIX + userEmail);
     }
 
 
