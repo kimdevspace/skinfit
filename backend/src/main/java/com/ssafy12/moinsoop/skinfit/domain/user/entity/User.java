@@ -82,4 +82,9 @@ public class User {
         this.roleType = roleType != null ? roleType : RoleType.USER;
         this.providerType = providerType != null ? providerType : ProviderType.LOCAL;
     }
+
+    // 비밀번호 업데이트 메서드 추가
+    public void updatePassword(String encodedPassword) {
+        this.userPassword = encodedPassword;
+    }
 }

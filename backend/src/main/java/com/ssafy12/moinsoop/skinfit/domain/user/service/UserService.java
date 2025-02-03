@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -103,9 +104,46 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public void sendTemporaryPassword(String userEmail) {
+        // 사용자 존재 여부 확인
+        User user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
+
+        // 임시 비밀번호 생성
+        String temporaryPassword = generateTemporaryPassword();
+
+        // 임시 비밀번호 업데이트
+        user.updatePassword(passwordEncoder.encode(temporaryPassword));
+
+        // Redis에 저장된 리프레시 토큰 삭제 (보안)
+        redisTemplate.delete("RT:" + user.getUserId());
+
+        // 이메일 발송
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(userEmail);
+        message.setSubject("skinfit 임시 비밀번호 발급");
+        message.setText("임시 비밀번호: " + temporaryPassword +
+                "\n로그인 후 반드시 비밀번호를 변경해주세요.");
+
+        mailSender.send(message);
+    }
+
     // 인증번호 생성메서드
     private String generateRandomCode() {
         Random random = new Random();
         return String.format("%06d", random.nextInt(1000000));
+    }
+
+    // 임시 비밀번호 생성 메서드
+    private String generateTemporaryPassword() {
+        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+        StringBuilder password = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < 10; i++) {
+            password.append(chars.charAt(random.nextInt(chars.length())));
+        }
+
+        return password.toString();
     }
 }
