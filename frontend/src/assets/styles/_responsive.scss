@@ -1,0 +1,6 @@
+body {
+  width: 90%;        /* 기본적으로 화면 너비의 90% */
+  max-width: 600px;  /* 최대 600px까지 확장 */
+  min-width: 360px;  /* 최소 360px 유지 */
+  margin: 0 auto;    /* 가운데 정렬 */
+}
