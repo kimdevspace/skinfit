@@ -2,22 +2,20 @@
 import "./SearchResult.scss"
 import { useEffect, useState } from "react";
 
-function SearchResult({ searchWord }) {
+function SearchResult({  }) {
 
   //검색 액션 여부 -> 조건부 랜더링링
   const [hasResults, setHasResults] = useState(false);
 
-  //실시간 연관검색어 
+  // for문으로 실시간 연관검색어 목록 반환
   useEffect(() => {
     const checkResults = async () => {
-      // 여기에 실제 검색 결과를 확인하는 로직을 구현합니다.
-      // 예시: API 호출 또는 데이터 처리
-      const results = await fetchSearchResults(searchWord);
+      const results = await fetchSearchResults();
       setHasResults(results.length > 0);
     };
 
     checkResults();
-  }, [searchWord]);
+  }, []);
 
   // 검색어 입력 글자수 제한
   // 임의로 25글자 이상일 때 .. 처리
@@ -34,7 +32,7 @@ function SearchResult({ searchWord }) {
     <div className='search-wrapper2'>
       <div className="search-result">
         {/* 검색결과받기 */}
-        <p>{truncateText(searchWord , 25)}</p>
+        <p>{truncateText( , 25)}</p>
       </div>
       <hr />
     </div>
