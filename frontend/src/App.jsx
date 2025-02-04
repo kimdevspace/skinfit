@@ -14,10 +14,10 @@ function App() {
       
       {/* 기본 경로에서 '/auth/login'으로 리디렉트 */}
       {/* frontend 개발 진행할 때 바꿔가면서 진행하시고 최종에 삭제 예정 */}
-      {/* <Route path="/" element={<Navigate to="/auth/login" replace />} /> */}
+      <Route path="/" element={<Navigate to="/auth/login" replace />} />
 
       {/* 인증 관련 라우트 */}
-      {/* <Route path="/auth/*" element={<AuthRoutes />} /> */}
+      <Route path="/auth/*" element={<AuthRoutes />} />
       
       {/* 마이페이지 라우트 */}
       {/*<Route path="/mypage/*" element={<MyPageRoute />} />*/}
