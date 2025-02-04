@@ -39,6 +39,10 @@
 
     .error-msg {
       @include error-msg();
+
+      &.error {
+        display: block;
+      }
     }
 
     // 상품명 style

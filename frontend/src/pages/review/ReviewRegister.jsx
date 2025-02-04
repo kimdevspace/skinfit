@@ -1,11 +1,13 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import "./ReviewRegister.scss";
 import Header from "../../components/common/Header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/common/Button";
 
-function ReviewRegister() {
+function ReviewRegister(cosmeticId) {
   // 리뷰 데이터
   const [reviewData, setReviewData] = useState({
     rating: "",
@@ -75,12 +77,65 @@ function ReviewRegister() {
     });
   };
 
+  // 리뷰 데이터 POST 요청
+  const uploadReview = async (review)=> {
+    const formData = new FormData()
+    formData.append("reviewCount", review.reviewContent)
+    formData.append("rating", review.rating)
+    review.images.forEach((file) => formData.append("images", file))
+    console.log("upload 한다")
+
+    return axios.post(`/api/v1/products/${cosmeticId}/reviews`, formData, {
+      headers: {
+        // Authorization: `Bearer ${jwtToken}`,
+        "Content-Type": "multipart/form-data",
+      }
+    })
+  }
+
+  const mutation = useMutation({
+    mutationFn: uploadReview,
+    onSuccess: () => {
+      alert("리뷰가 등록되었습니다.")
+      setReviewData({ rating: "", reviewContent: "", images: []})
+      setImagePreviews([])
+    },
+    onError: () => {
+      alert("리뷰 등록에 실패했습니다.")
+    }
+  })
+
+  const ratingErrorRef = useRef(null)
+  const contentErrorRef = useRef(null)
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    // rating 유효성 검사
+    if (!reviewData.rating) {
+      ratingErrorRef.current.classList.add("error")
+      return
+    } else {
+      ratingErrorRef.current.classList.remove("error")
+    }
+
+    // content 유효성 검사
+    if (!reviewData.reviewContent) {
+      contentErrorRef.current.classList.add("error");
+      return
+    } else {
+      contentErrorRef.current.classList.remove("error");
+    }
+
+    mutation.mutate(reviewData)
+  }
+
 
   return (
     <div className="review-register">
       <Header title="리뷰 등록" />
 
-      <form action="">
+      <form onSubmit={handleSubmit}>
         {/* 상품명 */}
         <div className="input-wrapper cosmetic-name">
           <p className="input-title">상품명</p>
@@ -105,7 +160,7 @@ function ReviewRegister() {
               </label>
             ))}
           </div>
-          <p className="error-msg">피부 적합 여부를 선택해주세요</p>
+          <p className="error-msg" ref={ratingErrorRef}>피부 적합 여부를 선택해주세요</p>
         </div>
 
         {/* 리뷰 작성 */}
@@ -120,7 +175,7 @@ function ReviewRegister() {
             placeholder="리뷰를 작성해주세요"
             onChange={handleInputChange}
           ></textarea>
-          <p className="error-msg">리뷰가 작성되지 않았습니다</p>
+          <p className="error-msg" ref={contentErrorRef}>리뷰가 작성되지 않았습니다</p>
         </div>
 
         {/* 리뷰 사진 등록 */}
@@ -167,7 +222,7 @@ function ReviewRegister() {
           />
         </div>
 
-        <Button text="등록하기" color="pink" />
+        <Button text="등록하기" color="pink" type="submit" />
       </form>
     </div>
   );
