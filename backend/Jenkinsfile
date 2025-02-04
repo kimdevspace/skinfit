@@ -15,14 +15,16 @@ pipeline {
                     file(credentialsId: 'application-mail-config', variable: 'MAIL_CONFIG'),
                     file(credentialsId: 'application-oauth-config', variable: 'OAUTH_CONFIG')
                 ]) {
-                    echo 'Copying Secret Config Files...'
-                    // 권한 부여 추가
                     sh 'chmod -R 777 backend/src/main/resources'
-                    // 파일 복사
-                    sh 'cp $PROD_CONFIG backend/src/main/resources/application-prod.yml'
-                    sh 'cp $MAIL_CONFIG backend/src/main/resources/application-mail.yml'
-                    sh 'cp $OAUTH_CONFIG backend/src/main/resources/application-oauth.yml'
-                    sh 'ls -l backend/src/main/resources' // 디렉토리 내 파일 확인
+                    dir('backend/src/main/resources') {
+                        sh '''
+                            echo "Copying Secret Config Files..."
+                            cp "$PROD_CONFIG" application-prod.yml
+                            cp "$MAIL_CONFIG" application-mail.yml
+                            cp "$OAUTH_CONFIG" application-oauth.yml
+                            ls -l
+                        '''
+                    }
                 }
             }
         }
