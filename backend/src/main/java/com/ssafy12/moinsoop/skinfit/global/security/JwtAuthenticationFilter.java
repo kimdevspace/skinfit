@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (token != null && jwtTokenProvider.validateToken(token)) {
                 // 유효한 토큰인 경우 정상 처리
                 Claims claims = jwtTokenProvider.getClaims(token);
-                // SecurityContext에 인증 정보 설정 로직 추가 가능
+                setAuthentication(claims);  // 이 부분 추가
             }
         } catch (ExpiredJwtException e) {
             try {
@@ -55,7 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     // 새 토큰의 클레임으로 인증 정보 설정
                     Claims newClaims = jwtTokenProvider.getClaims(newAccessToken);
-                    // SecurityContext에 인증 정보 설정 로직 추가 가능
+                    setAuthentication(newClaims);  // 이 부분 추가
                 } else {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     return;
