@@ -5,6 +5,9 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
         DOCKER_IMAGE = "kimdevspace/spring-boot"
         VERSION = "latest"
+        PROD_CONFIG = credentials('application-prod-config')
+        MAIL_CONFIG = credentials('application-mail-config')
+        OAUTH_CONFIG = credentials('application-oauth-config')
     }
 
     stages {
@@ -12,6 +15,12 @@ pipeline {
             steps {
                 dir('backend') {
                     sh 'chmod +x gradlew'
+                    sh '''
+                        mkdir -p src/main/resources
+                        cp $PROD_CONFIG src/main/resources/application-prod.yml
+                        cp $MAIL_CONFIG src/main/resources/application-mail.yml
+                        cp $OAUTH_CONFIG src/main/resources/application-oauth.yml
+                    '''
                     sh './gradlew clean build'
                 }
             }
@@ -40,5 +49,15 @@ pipeline {
                 }
             }
         }
+
+        post {
+            always {
+                // 설정 파일 정리
+                sh '''
+                    rm -f backend/src/main/resources/application-prod.yml
+                    rm -f backend/src/main/resources/application-mail.yml
+                    rm -f backend/src/main/resources/application-oauth.yml
+                '''
+            }
     }
 }
