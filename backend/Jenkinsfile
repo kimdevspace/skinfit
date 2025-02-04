@@ -49,16 +49,5 @@ pipeline {
                 }
             }
         }
-
-        post {
-            always {
-                // 설정 파일 정리
-                sh '''
-                    rm -f backend/src/main/resources/application-prod.yml
-                    rm -f backend/src/main/resources/application-mail.yml
-                    rm -f backend/src/main/resources/application-oauth.yml
-                '''
-            }
-        }
     }
 }
