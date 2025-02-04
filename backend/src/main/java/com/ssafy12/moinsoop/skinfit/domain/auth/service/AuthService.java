@@ -74,4 +74,12 @@ public class AuthService {
         refreshTokenService.deleteRefreshToken(userId);
     }
 
+    public void withdraw(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        userRepository.delete(user);
+        refreshTokenService.deleteRefreshToken(userId);
+    }
+
 }
