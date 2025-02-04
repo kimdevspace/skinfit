@@ -17,9 +17,9 @@ pipeline {
                     sh 'chmod +x gradlew'
                     sh '''
                         mkdir -p src/main/resources
-                        cp $PROD_CONFIG src/main/resources/application-prod.yml
-                        cp $MAIL_CONFIG src/main/resources/application-mail.yml
-                        cp $OAUTH_CONFIG src/main/resources/application-oauth.yml
+                        cp "$PROD_CONFIG" src/main/resources/application-prod.yml
+                        cp "$MAIL_CONFIG" src/main/resources/application-mail.yml
+                        cp "$OAUTH_CONFIG" src/main/resources/application-oauth.yml
                     '''
                     sh './gradlew clean build'
                 }
