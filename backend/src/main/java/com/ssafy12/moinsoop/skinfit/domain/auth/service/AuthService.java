@@ -70,4 +70,8 @@ public class AuthService {
         return new TokenResponse(newAccessToken, newRefreshToken);
     }
 
+    public void logout(Integer userId) {
+        refreshTokenService.deleteRefreshToken(userId);
+    }
+
 }
