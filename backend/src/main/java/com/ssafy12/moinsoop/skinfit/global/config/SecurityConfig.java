@@ -32,7 +32,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/oauth/kakao/**").permitAll()
                         .requestMatchers("/login/oauth2/code/kakao").permitAll()
                         .requestMatchers("/*.js", "/*.css", "/assets/**", "/images/**", "/*.json",
-                                "/*.ico", "/*.png", "/*.svg", "/**/*.html").permitAll()
+                                "/*.ico", "/*.png", "/*.svg", "/*.html").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

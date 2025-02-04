@@ -31,14 +31,14 @@ public class AuthController {
     }
 
     @DeleteMapping("/logout")
-    public ResponseEntity<Void> logout(@AuthenticationPrincipal User user) {
-        authService.logout(user.getUserId());
+    public ResponseEntity<Void> logout(@AuthenticationPrincipal Integer userId) {
+        authService.logout(userId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/withdraw")
-    public ResponseEntity<Void> withdraw(@AuthenticationPrincipal User user) {
-        authService.withdraw(user.getUserId());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> withdraw(@AuthenticationPrincipal Integer userId) {
+        authService.withdraw(userId);
+        return ResponseEntity.ok("회원탈퇴 완료");
     }
 }

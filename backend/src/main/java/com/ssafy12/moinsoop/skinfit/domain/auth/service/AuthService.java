@@ -24,6 +24,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
 
+    @Transactional
     public SignInResponse signIn(LoginRequest request) {
         User user = userRepository.findByUserEmail(request.getUserEmail())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이메일입니다."));
@@ -48,6 +49,7 @@ public class AuthService {
         return response;
     }
 
+    @Transactional
     public TokenResponse reissue(String refreshToken) {
         if (!jwtTokenProvider.validateToken(refreshToken)) {
             throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
@@ -70,10 +72,12 @@ public class AuthService {
         return new TokenResponse(newAccessToken, newRefreshToken);
     }
 
+    @Transactional
     public void logout(Integer userId) {
         refreshTokenService.deleteRefreshToken(userId);
     }
 
+    @Transactional
     public void withdraw(Integer userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
