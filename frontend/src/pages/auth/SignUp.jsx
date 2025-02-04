@@ -27,6 +27,7 @@ function SignUp() {
   const [confirmPasswordErrorMsg, setConfirmPasswordErrorMsg] = useState("");
 
   // 중복 여부: null(아직 확인 안 함) / true(중복) / false(중복 아님)
+  // 에러일 경우 중복 에러가 아닐 경우 성공공
   const [isDuplicate, setIsDuplicate] = useState(null);
 
   const togglePasswordVisibility = () => {
@@ -72,7 +73,7 @@ function SignUp() {
   //#region 이메일 중복 체크
   /**
    * @param {string} useremail "이메일"
-   * @param {boolean} response "결과로 받아올 값은 boolean 형태태"
+   * @param {boolean} response "결과로 받아올 값은 boolean 형태"
    */
 
   const checkEmailDuplicate = async (email) => {
@@ -80,7 +81,7 @@ function SignUp() {
       const response = await axios.get("/api/v1/user/email-duplicate", {
         params: { email },
       });
-      return response.data;
+      return response.status;
     } catch (error) {
       console.error("Email duplicate check failed:", error);
       throw error;
@@ -89,12 +90,16 @@ function SignUp() {
 
   const handleDuplicateCheck = async () => {
     try {
-      const result = await checkEmailDuplicate(email);
-      setIsDuplicate(result);
-      if (result) {
-        alert("이미 존재하는 이메일입니다.");
-      } else {
+      const result = await checkEmailDuplicate(email); 
+      if (result === 200)
+      {
+        setIsDuplicate(false);
         alert("사용 가능한 이메일입니다.");
+      }
+      else if(result === 409)
+      {
+        setIsDuplicate(true);
+        alert("이미 가입된 메일입니다");
       }
     } catch (error) {
       alert("이메일 중복 확인 중 오류가 발생했습니다.");
@@ -112,7 +117,7 @@ function SignUp() {
       const response = await axios.post("/api/v1/user/email-verification", {
         email,
       });
-      return response.data;
+      return response.status;
     } catch (error) {
       console.error("Email verification send failed:", error);
       throw error;
@@ -143,7 +148,7 @@ function SignUp() {
         password,
         verifyCode,
       });
-      return response.data;
+      return response.status;
     } catch (error) {
       console.error("Signup failed:", error);
       throw error;
@@ -167,10 +172,22 @@ function SignUp() {
     }
     try {
       const result = await submitSignup(email, password, verifyCode);
-      alert("회원가입이 완료되었습니다.");
-      navigate("/auth/login");
+      if (result === 200)
+      {
+        alert("회원가입이 완료되었습니다.");
+        navigate("/auth/login");
+      }
     } catch (error) {
-      alert("회원가입에 실패했습니다.");
+      // 서버가 반환한 에러 메세지가 있는지 확인합니다.
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        alert(`회원가입에 실패했습니다: ${error.response.data.message}`);
+      } else {
+        alert("회원가입에 실패했습니다.");
+      }
     }
   };
   //#endregion
