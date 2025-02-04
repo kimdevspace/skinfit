@@ -107,4 +107,15 @@ public class AuthServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("저장된 리프레시 토큰과 일치하지 않습니다.");
     }
+
+    @Test
+    @DisplayName("로그아웃 테스트")
+    void logoutTest() {
+        //given
+        Integer userId = 3;
+        //when
+        authService.logout(userId);
+        //then
+        verify(refreshTokenService).deleteRefreshToken(userId);
+    }
 }
