@@ -19,27 +19,32 @@ function Login() {
         userEmail: email,            
         userPassword: password,
       });
-
+  
       const { accessToken, isRegistered } = response.data;
       console.log("로그인 성공:", response.data);
-
-      // isRegistered 값이 "true" / "false" 로 온다고 가정
+  
+      // isRegistered 값이 "true" 또는 "false" 문자열로 온다고 가정
       if (isRegistered === "true") {
-        // 이미 추가 등록된 사용자 -> 다른 사이트 or 페이지
+        // 이미 추가 등록된 사용자
         navigate("/"); 
       } else {
-        // 추가 등록이 필요하다는 의미
+        // 추가 등록이 필요한 사용자
         navigate("/auth/userform");
       }
     } catch (error) {
-      if (error.response.data.message) 
-      {
-        alert(`로그인에 실패했습니다: ${error.response.data.message}`)
+      let errorMsg = "로그인 중 오류가 발생했습니다.";
+      if (error.response && error.response.data) {
+        // 응답 데이터가 문자열이면 바로 사용, 객체라면 message 프로퍼티 사용
+        errorMsg =
+          typeof error.response.data === "string"
+            ? error.response.data
+            : error.response.data.message || errorMsg;
       }
+      alert(`로그인에 실패했습니다: ${errorMsg}`);
       console.error("로그인 실패:", error);
-      alert("로그인 중 오류가 발생했습니다.");
     }
   };
+  
 
   // const handleSignUpClick = () => {
   //   setShowSignUp(true);
