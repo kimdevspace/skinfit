@@ -9,7 +9,6 @@ spring:
       prod:  # 운영 환경
         - mail
         - oauth
-    default: dev
   jpa:
     properties:
       hibernate:
