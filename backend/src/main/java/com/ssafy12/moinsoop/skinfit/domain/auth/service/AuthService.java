@@ -70,15 +70,8 @@ public class AuthService {
         return new TokenResponse(newAccessToken, newRefreshToken);
     }
 
-
-    public boolean isFirstLogin(String userEmail) {
-        User user = userRepository.findByUserEmail(userEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-
-        if (!user.isRegistered()) {
-            return true;
-        }
-
-        return false;
+    public void logout(Integer userId) {
+        refreshTokenService.deleteRefreshToken(userId);
     }
+
 }

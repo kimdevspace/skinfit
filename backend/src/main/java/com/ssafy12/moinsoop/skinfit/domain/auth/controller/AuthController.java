@@ -10,6 +10,7 @@ import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.RoleType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,5 +28,11 @@ public class AuthController {
     @PostMapping("/reissue")
     public ResponseEntity<TokenResponse> reissue(@RequestHeader("Refresh-Token") String refreshToken) {
         return ResponseEntity.ok(authService.reissue(refreshToken));
+    }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<Void> logout(@AuthenticationPrincipal User user) {
+        authService.logout(user.getUserId());
+        return ResponseEntity.ok().build();
     }
 }
