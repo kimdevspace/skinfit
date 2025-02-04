@@ -27,7 +27,6 @@ docker run -d \
   -p 8080:8080 \
   -v /home/ubuntu/logs:/app/logs \
   --restart unless-stopped \
-  -e SPRING_PROFILES_ACTIVE=prod \
   $DOCKER_IMAGE:$VERSION
 
 echo "미사용 이미지 정리"
