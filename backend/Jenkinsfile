@@ -1,26 +1,37 @@
 pipeline {
     agent any
-    
+
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
         DOCKER_IMAGE = "kimdevspace/spring-boot"
         VERSION = "latest"
-        PROD_CONFIG = file('application-prod-config')
-        MAIL_CONFIG = file('application-mail-config')
-        OAUTH_CONFIG = file('application-oauth-config')
     }
 
     stages {
+        stage('Prepare Config Files') {
+            steps {
+                withCredentials([
+                    file(credentialsId: 'application-prod-config', variable: 'PROD_CONFIG'),
+                    file(credentialsId: 'application-mail-config', variable: 'MAIL_CONFIG'),
+                    file(credentialsId: 'application-oauth-config', variable: 'OAUTH_CONFIG')
+                ]) {
+                    dir('backend/src/main/resources') {
+                        sh '''
+                            echo "Copying Secret Config Files..."
+                            cp "$PROD_CONFIG" application-prod.yml
+                            cp "$MAIL_CONFIG" application-mail.yml
+                            cp "$OAUTH_CONFIG" application-oauth.yml
+                            ls -l
+                        '''
+                    }
+                }
+            }
+        }
+
         stage('Gradle Build') {
             steps {
                 dir('backend') {
                     sh 'chmod +x gradlew'
-                    sh '''
-                        mkdir -p src/main/resources
-                        cp "$PROD_CONFIG" src/main/resources/application-prod.yml
-                        cp "$MAIL_CONFIG" src/main/resources/application-mail.yml
-                        cp "$OAUTH_CONFIG" src/main/resources/application-oauth.yml
-                    '''
                     sh './gradlew clean build'
                 }
             }
