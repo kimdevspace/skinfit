@@ -97,6 +97,7 @@ public class KakaoOAuthController {
                     KakaoUserInfo kakaoUser = userInfoResponse.getBody();
                     // 회원가입 또는 로그인 처리
                     User user = kakaoOAuthService.registerOrLogin(kakaoUser);
+                    boolean isRegistered = user.isRegistered();
                     log.info("로그인 성공! 유저 이메일: {}, 닉네임: {}", user.getUserEmail(), user.getNickname());
 
 
@@ -105,7 +106,7 @@ public class KakaoOAuthController {
 
                     refreshTokenService.saveRefreshToken(user.getUserId(), jwtRefreshToken);
 
-                    return ResponseEntity.ok("로그인 성공!, 액세스토큰 : " + jwtAccessToken);
+                    return ResponseEntity.ok("로그인 성공!, 액세스토큰 : " + jwtAccessToken + "최초 로그인 여부 : " + isRegistered);
                 }
             }
 
@@ -119,26 +120,4 @@ public class KakaoOAuthController {
         }
     }
 
-    @PostMapping("/api/v1/oauth/kakao/logout")
-    public ResponseEntity<String> logout(@RequestHeader("Authorization") String accessToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.setBearerAuth(accessToken);
-
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
-
-        try {
-            restTemplate.postForEntity(
-                    "https://kapi.kakao.com/v1/user/logout",
-                    request,
-                    String.class
-            );
-
-            return ResponseEntity.ok("로그아웃 성공");
-        } catch (Exception e) {
-            log.error("카카오 로그아웃 실패", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("로그아웃 실패");
-        }
-    }
 }
