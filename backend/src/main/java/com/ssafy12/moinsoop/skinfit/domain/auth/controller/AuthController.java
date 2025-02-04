@@ -35,4 +35,10 @@ public class AuthController {
         authService.logout(user.getUserId());
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<Void> withdraw(@AuthenticationPrincipal User user) {
+        authService.withdraw(user.getUserId());
+        return ResponseEntity.ok().build();
+    }
 }
