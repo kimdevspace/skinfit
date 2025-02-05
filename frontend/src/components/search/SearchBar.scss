@@ -1,0 +1,41 @@
+//Searchbar : 검색어 입력창 (성분, 화장품 검색하는 것 props로 넘겨줘야함)
+
+input {  
+    //&: 가상선택자로 그 이벤트가 발생할때 처리해주겠다다
+    &:focus {
+        outline: none;
+      }
+}
+
+// input 창 안 button 있는 것처럼 착시효과 
+.search-container {
+    position: relative;
+    // 반응형으로 전환
+    // display: inline-block;
+    margin-top: 1rem;
+    margin-right: 3rem;
+    margin-left: 3rem;
+    
+}
+.search-bar {
+    // search-bar == input 창 클래스스
+    //컨테이너 길이만큼 채워주기 길이
+    width: 100%;
+    border-style: solid;
+    border-radius: 20px;
+    border-color: #FDCFB7;
+    padding: 1rem 15rem 1rem 1rem; // 상 우 하 좌 (시계방향)
+    
+}
+
+.search-btn {
+    // wrapper(부모) relative 주고 자기의 영역 버리게 하기(absolute)
+    position: absolute; 
+    right: 2rem;
+    //top에서 50% 내려오게 하고
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #FDCFB7;
+
+}
