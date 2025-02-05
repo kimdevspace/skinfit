@@ -2,7 +2,7 @@
 
 DOCKER_IMAGE="kimdevspace/spring-boot"
 CONTAINER_NAME="spring-boot"
-NETWORK_NAME="nginx-spring"  # 기존 네트워크 사용
+NETWORK_NAME="bridge"  # 기존 네트워크 사용
 VERSION="latest"
 
 echo "네트워크 확인"
