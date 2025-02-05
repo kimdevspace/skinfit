@@ -34,8 +34,8 @@ public class KaKaoOAuthService {
                 .userEmail(kakaoId + "@kakao")
                 .userPassword("KAKAO_" + kakaoId)
                 .nickname(kakaoUserInfo.getProperties().getNickname())
-                .providerType(ProviderType.KAKAO)
-                .roleType(RoleType.USER)
+                .providerType(ProviderType.kakao)
+                .roleType(RoleType.user)
                 .isRegistered(false)
                 .build();
 
