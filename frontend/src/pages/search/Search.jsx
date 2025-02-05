@@ -94,23 +94,23 @@ function Search() {
       <div className="filter">
         <div className="category">
           <div
-        className={`category-btn ${isOpen ? "active" : ""}`}
-        onClick={toggleDropdown}
-      >
-      <button>{selectedOption.name || "카테고리"}</button>
-      <FontAwesomeIcon icon={faChevronDown} />
-      </div>
-      {isOpen && (
-        <ul className="category-options">
-          {categoryOptions.map((option) => (
-            <li key={option.id}>
-              <button onClick={() => handleOptionClick(option)}>
-                {option.name}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+            className={`category-btn ${isOpen ? "active" : ""}`}
+            onClick={toggleDropdown}
+            >
+            <button>{selectedOption.name || "카테고리"}</button>
+            <FontAwesomeIcon icon={faChevronDown} />
+          </div>
+        {isOpen && (
+          <ul className="category-options">
+            {categoryOptions.map((option) => (
+              <li key={option.id}>
+                <button onClick={() => handleOptionClick(option)}>
+                  {option.name}
+                </button>
+                </li>
+              ))}
+          </ul>
+        )}  
     </div>
       <button
         className={`user-preference ${isActive ? "active" : ""}`}
@@ -118,8 +118,8 @@ function Search() {
       >
         잘 맞는 화장품만 보기
       </button>
-    </div>      
-  </form>
+      </div>      
+    </form>
 
       {/* 화장품 검색결과/검색결과 없을 때의 화면 */}
     <SearchResult result={cosmetics} />
