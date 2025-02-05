@@ -50,12 +50,12 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role_type", nullable = false,
-            columnDefinition = "ENUM('user', 'admin') DEFAULT 'user'")
+            columnDefinition = "ENUM('USER', 'ADMIN') DEFAULT 'USER'")
     private RoleType roleType;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "provider_type", nullable = false,
-            columnDefinition = "ENUM('local', 'kakao') DEFAULT 'local'")
+            columnDefinition = "ENUM('LOCAL', 'KAKAO') DEFAULT 'LOCAL'")
     private ProviderType providerType;
 
     @PrePersist
