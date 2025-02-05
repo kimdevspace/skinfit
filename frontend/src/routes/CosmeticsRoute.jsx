@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 // import CosmeticDetail from "../pages/cosmetics/CosmeticDetail";
 // import ReviewRegister from "../pages/review/ReviewRegister";
 
-function ProductRoute() {
+function CosmeticsRoute() {
   return (
     // <Routes>
     //   <Route path=":productId" element={<CosmeticDetail />}>
@@ -13,4 +13,4 @@ function ProductRoute() {
   );
 }
 
-export default ProductDetailRoute;
+export default CosmeticsRoute;
