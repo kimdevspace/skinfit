@@ -51,8 +51,12 @@ function Search() {
   // 카테고리 박스 클릭 여부 확인
   const [isOpen, setIsOpen] = useState(false);
 
-  // 선택한 카테고리 value(UI)
-  const [selectedOption, setSelectedOption] = useState('');
+  // 선택한 카테고리 value
+  // const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedOption, setSelectedOption] = useState({
+    id : '' ,
+    name : ''
+  });
 
 
   // 카테고리 옵션 드롭다운(UI)
@@ -61,13 +65,17 @@ function Search() {
   };
 
   
+  
   // 카테고리 클릭된 옵션 감지
+  //select box 커스텀 불가 ->  button 은 value값 전달이 안됨(id, name값 다루기기)
   const handleOptionClick = (option) => {
-    setSelectedOption(option.name);
-    // console.log(selectedOption)
-    setIsOpen(false) // 창닫기
+    setSelectedOption({
+      id : option.id,
+      name : option.name,
+    });
+    setIsOpen(false); // 창닫기
     setCategory(option.id) 
-    console.log(option);
+    console.log(option)
   };
   //#endregion
 
@@ -89,14 +97,14 @@ function Search() {
         className={`category-btn ${isOpen ? "active" : ""}`}
         onClick={toggleDropdown}
       >
-        <button>{selectedOption ? selectedOption : "카테고리"}</button>
-        <FontAwesomeIcon icon={faChevronDown} />
+      <button>{selectedOption.name || "카테고리"}</button>
+      <FontAwesomeIcon icon={faChevronDown} />
       </div>
       {isOpen && (
         <ul className="category-options">
           {categoryOptions.map((option) => (
             <li key={option.id}>
-              <button  onClick={() => handleOptionClick(option)}>
+              <button onClick={() => handleOptionClick(option)}>
                 {option.name}
               </button>
             </li>
