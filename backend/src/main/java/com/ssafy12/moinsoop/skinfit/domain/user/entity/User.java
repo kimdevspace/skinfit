@@ -50,12 +50,12 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role_type", nullable = false,
-            columnDefinition = "ENUM('USER', 'ADMIN') DEFAULT 'USER'")
+            columnDefinition = "VARCHAR(10) CHECK (role_type IN ('USER', 'ADMIN')) DEFAULT 'USER'")
     private RoleType roleType;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "provider_type", nullable = false,
-            columnDefinition = "ENUM('LOCAL', 'KAKAO') DEFAULT 'LOCAL'")
+            columnDefinition = "VARCHAR(10) CHECK (provider_type IN ('LOCAL', 'KAKAO')) DEFAULT 'LOCAL'")
     private ProviderType providerType;
 
     @PrePersist
