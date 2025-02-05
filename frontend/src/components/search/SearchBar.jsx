@@ -9,9 +9,11 @@ function SearchBar({ searchWord, setSearchWord }) {
     <div className="search-container">
       <input className="search-bar" type="text" placeholder="검색어를 입력하세요." 
       value={searchWord} onChange={(e) => setSearchWord(e.target.value)} />
-      <button type="submit" className="search-btn">
+
+      <button className="search-btn">
         <FontAwesomeIcon icon={faMagnifyingGlass} size="lg" />
       </button>
+
     </div>
   )
 }
