@@ -1,6 +1,8 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.entity;
 
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.converter.GenderConverter;
+import com.ssafy12.moinsoop.skinfit.domain.user.entity.converter.ProviderTypeConverter;
+import com.ssafy12.moinsoop.skinfit.domain.user.entity.converter.RoleTypeConverter;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.Gender;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.ProviderType;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.RoleType;
@@ -50,12 +52,12 @@ public class User {
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
-    @Convert(converter = RoleType.class)
+    @Convert(converter = RoleTypeConverter.class)
     @Enumerated(EnumType.STRING)
     @Column(name = "role_type", nullable = false)
     private RoleType roleType;
 
-    @Convert(converter = ProviderType.class)
+    @Convert(converter = ProviderTypeConverter.class)
     @Enumerated(EnumType.STRING)
     @Column(name = "provider_type", nullable = false)
     private ProviderType providerType;
