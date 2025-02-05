@@ -96,8 +96,8 @@ public class UserService {
                 .userEmail(userEmail)
                 .userPassword(userPassword)
                 .nickname(nickname)
-                .providerType(ProviderType.local)
-                .roleType(RoleType.user)
+                .providerType(ProviderType.LOCAL)
+                .roleType(RoleType.USER)
                 .isRegistered(false)
                 .build();
 

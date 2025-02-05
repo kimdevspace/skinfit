@@ -1,5 +1,6 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.entity;
 
+import com.ssafy12.moinsoop.skinfit.domain.user.entity.converter.GenderConverter;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.Gender;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.ProviderType;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.RoleType;
@@ -34,6 +35,7 @@ public class User {
     @Column(nullable = false, length = 50)
     private String nickname;
 
+    @Convert(converter = GenderConverter.class)
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
@@ -48,14 +50,14 @@ public class User {
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
+    @Convert(converter = RoleType.class)
     @Enumerated(EnumType.STRING)
-    @Column(name = "role_type", nullable = false,
-            columnDefinition = "ENUM('user', 'admin') DEFAULT 'user'")
+    @Column(name = "role_type", nullable = false)
     private RoleType roleType;
 
+    @Convert(converter = ProviderType.class)
     @Enumerated(EnumType.STRING)
-    @Column(name = "provider_type", nullable = false,
-            columnDefinition = "ENUM('local', 'kakao') DEFAULT 'local'")
+    @Column(name = "provider_type", nullable = false)
     private ProviderType providerType;
 
     @PrePersist
@@ -79,8 +81,8 @@ public class User {
         this.gender = gender;
         this.birthYear = birthYear;
         this.isRegistered = isRegistered;
-        this.roleType = roleType != null ? roleType : RoleType.user;
-        this.providerType = providerType != null ? providerType : ProviderType.local;
+        this.roleType = roleType != null ? roleType : RoleType.USER;
+        this.providerType = providerType != null ? providerType : ProviderType.LOCAL;
     }
 
     // 비밀번호 업데이트 메서드 추가
