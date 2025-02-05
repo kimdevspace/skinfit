@@ -2,7 +2,9 @@ package com.ssafy12.moinsoop.skinfit.domain.user.entity.converter;
 
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.RoleType;
 import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
+@Converter(autoApply = true)
 public class RoleTypeConverter implements AttributeConverter<RoleType, String> {
     @Override
     public String convertToDatabaseColumn(RoleType attribute) {
