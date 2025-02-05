@@ -49,13 +49,11 @@ public class User {
     private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role_type", nullable = false,
-            columnDefinition = "VARCHAR(10) CHECK (role_type IN ('USER', 'ADMIN')) DEFAULT 'USER'")
+    @Column(name = "role_type", nullable = false)
     private RoleType roleType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "provider_type", nullable = false,
-            columnDefinition = "VARCHAR(10) CHECK (provider_type IN ('LOCAL', 'KAKAO')) DEFAULT 'LOCAL'")
+    @Column(name = "provider_type", nullable = false)
     private ProviderType providerType;
 
     @PrePersist
