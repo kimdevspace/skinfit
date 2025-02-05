@@ -1,0 +1,43 @@
+.UserInfo2-block {
+  border: 1px solid #ccc;
+  border-radius: 0.4rem;
+  padding: 1rem;
+  margin-bottom: 3rem; /* 블록 간격 */
+
+  .info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    label {
+      font-size: 1.4rem;
+      color: #333;
+    }
+
+    .search-btn {
+      border: 1px solid #aaa;
+      background-color: #fff;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.4rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+  }
+
+  .info-textarea {
+    width: 100%;
+    height: 6rem; /* 필요시 조절 */
+    border: 1px solid #ddd;
+    border-radius: 0.4rem;
+    padding: 0.8rem;
+    resize: none; /* 사용자가 사이즈를 조절 못하게 함 */
+    font-size: 1.2rem;
+    outline: none;
+    margin-bottom: 1rem;
+
+    /* 읽기 전용임을 시각적으로 알리고 싶다면 예시:
+    background-color: #f9f9f9;
+    */
+  }
+}
