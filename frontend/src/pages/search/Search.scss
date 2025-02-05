@@ -11,12 +11,13 @@
       align-items: center;
       width: 9rem;
       padding: 0.5rem 1rem;
-      border: 1px solid #dedede;
+      border: 1px solid #DEDEDE;
       border-radius: 2rem;
-      color: #8e8e8e;
+      color: #8E8E8E;
+      
 
       &.active {
-        border-color: #ffae82;
+        border-color: #FFAE82;
       }
 
       button {
@@ -34,7 +35,7 @@
       margin-top: 0.3rem;
       padding: 0.5rem 0.8rem;
       text-align: center;
-      border: 1px solid #dedede;
+      border: 1px solid #DEDEDE;
       border-radius: 0.8rem;
       background-color: #fff;
 
@@ -42,8 +43,8 @@
         button {
           width: 100%;
           padding: 0.5rem;
-          border-bottom: 0.5px solid #dedede;
-          color: #8e8e8e;
+          border-bottom: 0.5px solid #DEDEDE;  
+          color: #8E8E8E;
           font-size: 1rem;
         }
 
@@ -58,12 +59,13 @@
       }
     }
   }
-  .filter-btn {
-    font-size: 1rem;
+
+  .user-preference {
     padding: 0.5rem 1rem;
+    font-size: 1rem;
 
     &.active {
-      color: #ffae82;
+      color: #FFAE82;
     }
   }
 }
