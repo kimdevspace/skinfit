@@ -1,6 +1,5 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.dto.request;
 
-import com.ssafy12.moinsoop.skinfit.domain.experience.entity.ProductExperience;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.Gender;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -29,17 +28,17 @@ public class RegisterUserInfoRequest {
     private List<Integer> skinTypeIds;
 
     // 화장품 경험 정보
-    private List<SuitableProductRequest> suitableProducts; // 잘 맞는 화장품
-    private List<UnsuitableProductRequest> unsuitableProducts; // 잘 맞지 않는 화장품
+    private List<SuitableCosmeticRequest> suitableCosmetics; // 잘 맞는 화장품
+    private List<UnsuitableCosmeticRequest> unsuitableCosmetics; // 잘 맞지 않는 화장품
 
     // 성분 경험 정보
     private List<SuitableIngredientRequest> suitableIngredients; // 잘 맞는 성분
-    private List<SuitableProductRequest> unsuitableIngredients; // 잘 맞지 앟는 성분
+    private List<UnsuitableIngredientRequest> unsuitableIngredients; // 잘 맞지 앟는 성분
 
     // 잘 맞는 화장품 요청
     @Getter
     @NoArgsConstructor
-    public static class SuitableProductRequest {
+    public static class SuitableCosmeticRequest {
         @NotNull
         private Integer cosmeticId;
     }
@@ -47,7 +46,7 @@ public class RegisterUserInfoRequest {
     // 잘 맞지 않는 화장품 요청 (증상 필수)
     @Getter
     @NoArgsConstructor
-    public static class UnsuitableProductRequest {
+    public static class UnsuitableCosmeticRequest {
         @NotNull
         private Integer cosmeticId;
 
