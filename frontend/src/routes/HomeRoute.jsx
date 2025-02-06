@@ -1,5 +1,6 @@
 /*HomeRoute.jsx*/ //메인페이지
 import { Routes, Route } from "react-router-dom";
+import Home from "../pages/home/Home"
 
 
 function HomeRoute() {
