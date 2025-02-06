@@ -1,5 +1,5 @@
-import "./MyPage.scss";
-h;
+import "./MyPage.scss"
+
 function MyPage() {
   return (
     <>
@@ -14,34 +14,31 @@ function MyPage() {
         </div>
       </div>
 
-      <div className="top3-behind-box"></div>
-
-      <div className="top3-box-wrapper">
-
-        <div className="top3-box">
-          <div className="title">
-            <h2>나와 맞지 않는 성분 TOP 3</h2>
-            <p className="question-text">
-              내가 등록한 화장품에서 얼마나 발견됐을까?
-            </p>
-          </div>
-          <hr />
-          <div className="ranking-text">
-            <span className="rank-num">1</span>
-            <span className="ingredient-name">아밀신남알</span>
-            <span className="count">9/10개</span>
-          </div>
-          <div className="ingredient-detail-btn">
-            <button className="detail-btn">성분 자세히 보기</button>
-          </div>
+      <div className="top3-box">
+        <div className="title">
+          <h2>나와 맞지 않는 성분 TOP 3</h2>
+          <p className="question-text">내가 등록한 화장품에서 얼마나 발견됐을까?</p>
+        </div>
+        <hr />
+        <div className="ranking-text">
+          <span className="rank-num">1</span>
+          <span className="ingredient-name">아밀신남알</span>
+          <span className="count">9/10개</span>
+        </div>
+        <div className="ingredient-detail-btn">
+          <button className="detail-btn">성분 자세히 보기</button>
         </div>
       </div>
 
       <div className="cosmetic-wrapper">
         <h2>내가 등록한 화장품</h2>
+        <div className="toggle-container">
+          <button className="toggle-btn active">내가 좋아요한 리뷰</button>
+          <button className="toggle-btn">내가 작성한 리뷰</button>
+        </div>
       </div>
     </>
-  );
+  )
 }
 
-export default MyPage;
+export default MyPage
