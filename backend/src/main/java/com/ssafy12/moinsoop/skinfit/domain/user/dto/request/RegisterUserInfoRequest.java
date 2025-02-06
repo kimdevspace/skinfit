@@ -12,6 +12,8 @@ import org.aspectj.weaver.IUnwovenClassFile;
 import java.time.Year;
 import java.util.List;
 
+@Getter
+@NoArgsConstructor
 public class RegisterUserInfoRequest {
     // 회원의 기본 정보 (성별, 태어난 연도, 닉네임)
     @NotNull
