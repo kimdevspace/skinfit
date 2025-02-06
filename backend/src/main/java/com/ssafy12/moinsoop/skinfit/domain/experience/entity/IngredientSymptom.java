@@ -2,6 +2,7 @@ package com.ssafy12.moinsoop.skinfit.domain.experience.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,4 +22,10 @@ public class IngredientSymptom {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "symptom_id", nullable = false)
     private Symptom symptom;
+
+    @Builder
+    public IngredientSymptom(IngredientExperience ingredientExperience, Symptom symptom) {
+        this.ingredientExperience = ingredientExperience;
+        this.symptom = symptom;
+    }
 }

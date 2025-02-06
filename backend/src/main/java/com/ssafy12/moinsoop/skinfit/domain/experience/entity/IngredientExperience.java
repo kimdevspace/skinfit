@@ -4,6 +4,7 @@ import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.Ingredient;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -39,4 +40,11 @@ public class IngredientExperience {
 
     @OneToMany(mappedBy = "ingredientExperience")
     private List<IngredientSymptom> ingredientSymptoms = new ArrayList<>();
+
+    @Builder
+    public IngredientExperience(User user, Ingredient ingredient, boolean isSuitable) {
+        this.user = user;
+        this.ingredient = ingredient;
+        this.isSuitable = isSuitable;
+    }
 }
