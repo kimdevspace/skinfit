@@ -2,12 +2,10 @@ package com.ssafy12.moinsoop.skinfit.domain.user.service;
 
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.repository.CosmeticRepository;
-import com.ssafy12.moinsoop.skinfit.domain.experience.entity.CosmeticExperience;
-import com.ssafy12.moinsoop.skinfit.domain.experience.entity.CosmeticSymptom;
-import com.ssafy12.moinsoop.skinfit.domain.experience.entity.Symptom;
-import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.CosmeticExperienceRepository;
-import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.CosmeticSymptomRepository;
-import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.SymptomRepository;
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.*;
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.*;
+import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.Ingredient;
+import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.repository.IngredientRepository;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.SkinType;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.UserSkinType;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.repository.SkinTypeRepository;
@@ -22,6 +20,7 @@ import com.ssafy12.moinsoop.skinfit.domain.user.exception.DuplicateUserEmailExce
 import com.ssafy12.moinsoop.skinfit.domain.user.exception.InvalidVerificationCodeException;
 import com.ssafy12.moinsoop.skinfit.domain.user.exception.VerificationCodeExpiredException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.Id;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
@@ -50,6 +49,9 @@ public class UserService {
     private final CosmeticExperienceRepository cosmeticExperienceRepository;
     private final SymptomRepository symptomRepository;
     private final CosmeticSymptomRepository cosmeticSymptomRepository;
+    private final IngredientRepository ingredientRepository;
+    private final IngredientExperienceRepository ingredientExperienceRepository;
+    private final IngredientSymptomRepository ingredientSymptomRepository;
 
     private static final String EMAIL_VERIFICATION_PREFIX = "email:verification:";
     private static final String EMAIL_VERIFIED_PREFIX = "email:verified:";
@@ -255,6 +257,54 @@ public class UserService {
                         .build();
 
                 cosmeticSymptomRepository.save(cosmeticSymptom);
+            }
+        }
+    }
+
+    
+    // 잘 맞는 성분 저장하기
+    private void saveSuitableIngredients(User user, List<RegisterUserInfoRequest.SuitableIngredientRequest> suitableIngredients) {
+        for (RegisterUserInfoRequest.SuitableIngredientRequest ingredientRequest : suitableIngredients) {
+            Ingredient ingredient = ingredientRepository.findById(ingredientRequest.getIngredientId())
+                    .orElseThrow(() -> new EntityNotFoundException("Ingredient Not found"));
+
+            IngredientExperience experience = IngredientExperience.builder()
+                    .user(user)
+                    .ingredient(ingredient)
+                    .isSuitable(true)
+                    .build();
+
+            ingredientExperienceRepository.save(experience);
+        }
+    }
+    
+    // 잘 안맞는 성분 저장하기
+    private void saveUnsuitableIngredients(User user, List<RegisterUserInfoRequest.UnsuitableIngredientRequest> unsuitableIngredients) {
+        for (RegisterUserInfoRequest.UnsuitableIngredientRequest ingredientRequest : unsuitableIngredients) {
+            Ingredient ingredient = ingredientRepository.findById(ingredientRequest.getIngredientId())
+                    .orElseThrow(() -> new EntityNotFoundException("Ingredient Not found"));
+
+            IngredientExperience experience = IngredientExperience.builder()
+                    .user(user)
+                    .ingredient(ingredient)
+                    .isSuitable(false)
+                    .build();
+
+            ingredientExperienceRepository.save(experience);
+
+            // 증상
+            List<Symptom> symptoms = symptomRepository.findAllById(ingredientRequest.getSymptomIds());
+            if (symptoms.size() != ingredientRequest.getSymptomIds().size()) {
+                throw new EntityNotFoundException("Symptom Not found");
+            }
+
+            for (Symptom symptom : symptoms) {
+                IngredientSymptom ingredientSymptom = IngredientSymptom.builder()
+                        .ingredientExperience(experience)
+                        .symptom(symptom)
+                        .build();
+
+                ingredientSymptomRepository.save(ingredientSymptom);
             }
         }
     }
