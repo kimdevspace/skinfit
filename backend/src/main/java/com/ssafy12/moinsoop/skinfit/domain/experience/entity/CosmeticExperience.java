@@ -4,6 +4,7 @@ import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,4 +33,11 @@ public class CosmeticExperience {
 
     @OneToMany(mappedBy = "cosmeticExperience")
     private List<CosmeticSymptom> cosmeticSymptoms = new ArrayList<>();
+
+    @Builder
+    public CosmeticExperience(User user, Cosmetic cosmetic, boolean isSuitable) {
+        this.user = user;
+        this.cosmetic = cosmetic;
+        this.isSuitable = isSuitable;
+    }
 }

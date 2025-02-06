@@ -1,5 +1,13 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.service;
 
+import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
+import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.repository.CosmeticRepository;
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.CosmeticExperience;
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.CosmeticSymptom;
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.Symptom;
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.CosmeticExperienceRepository;
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.CosmeticSymptomRepository;
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.SymptomRepository;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.SkinType;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.UserSkinType;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.repository.SkinTypeRepository;
@@ -38,6 +46,10 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final SkinTypeRepository skinTypeRepository;
     private final UserSkinTypeRepository userSkinTypeRepository;
+    private final CosmeticRepository cosmeticRepository;
+    private final CosmeticExperienceRepository cosmeticExperienceRepository;
+    private final SymptomRepository symptomRepository;
+    private final CosmeticSymptomRepository cosmeticSymptomRepository;
 
     private static final String EMAIL_VERIFICATION_PREFIX = "email:verification:";
     private static final String EMAIL_VERIFIED_PREFIX = "email:verified:";
@@ -146,6 +158,16 @@ public class UserService {
 
         // 2. 사용자 피부 타입 정보 저장
         saveUserSkinTypes(user, request.getSkinTypeIds());
+
+        // 3. 잘 맞는 화장품 정보 저장
+        if (request.getSuitableCosmetics() != null) {
+            saveSuitableCosmetics(user, request.getSuitableCosmetics());
+        }
+
+        // 4. 잘 맞지 않는 화장품 정보 저장
+        if (request.getUnsuitableCosmetics() != null) {
+            saveUnsuitableCosmetics(user, request.getUnsuitableCosmetics());
+        }
     }
 
     // 인증번호 생성메서드
@@ -188,5 +210,52 @@ public class UserService {
                 })
                 .toList();
         userSkinTypeRepository.saveAll(userSkinTypes);
+    }
+
+    // 잘 맞는 화장품 저장하는 메서드
+    private void saveSuitableCosmetics(User user, List<RegisterUserInfoRequest.SuitableCosmeticRequest> suitableCosmetics) {
+        for (RegisterUserInfoRequest.SuitableCosmeticRequest cosmeticRequest : suitableCosmetics) {
+            Cosmetic cosmetic = cosmeticRepository.findById(cosmeticRequest.getCosmeticId())
+                    .orElseThrow(() -> new EntityNotFoundException("Cosmetic Not found"));
+
+            CosmeticExperience experience = CosmeticExperience.builder()
+                    .user(user)
+                    .cosmetic(cosmetic)
+                    .isSuitable(true)
+                    .build();
+
+            cosmeticExperienceRepository.save(experience);
+        }
+    }
+
+    // 잘 안맞는 화장품 저장하는 메서드 (증상과 같이 저장)
+    private void saveUnsuitableCosmetics(User user, List<RegisterUserInfoRequest.UnsuitableCosmeticRequest> unsuitableCosmetics) {
+        for(RegisterUserInfoRequest.UnsuitableCosmeticRequest cosmeticRequest : unsuitableCosmetics) {
+            Cosmetic cosmetic = cosmeticRepository.findById(cosmeticRequest.getCosmeticId())
+                    .orElseThrow(() -> new EntityNotFoundException("Cosmetic Not found"));
+
+            CosmeticExperience experience = CosmeticExperience.builder()
+                    .user(user)
+                    .cosmetic(cosmetic)
+                    .isSuitable(false)
+                    .build();
+
+            cosmeticExperienceRepository.save(experience);
+
+            // 증상 정보 저장
+            List<Symptom> symptoms = symptomRepository.findAllById(cosmeticRequest.getSymptomIds());
+            if (symptoms.size() != cosmeticRequest.getSymptomIds().size()) {
+                throw new EntityNotFoundException("Symptom Not found");
+            }
+
+            for (Symptom symptom : symptoms) {
+                CosmeticSymptom cosmeticSymptom = CosmeticSymptom.builder()
+                        .cosmeticExperience(experience)
+                        .symptom(symptom)
+                        .build();
+
+                cosmeticSymptomRepository.save(cosmeticSymptom);
+            }
+        }
     }
 }
