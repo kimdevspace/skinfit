@@ -1,5 +1,8 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.entity;
 
+import com.ssafy12.moinsoop.skinfit.domain.user.entity.converter.GenderConverter;
+import com.ssafy12.moinsoop.skinfit.domain.user.entity.converter.ProviderTypeConverter;
+import com.ssafy12.moinsoop.skinfit.domain.user.entity.converter.RoleTypeConverter;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.Gender;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.ProviderType;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.RoleType;
@@ -34,6 +37,7 @@ public class User {
     @Column(nullable = false, length = 50)
     private String nickname;
 
+    @Convert(converter = GenderConverter.class)
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
@@ -48,14 +52,14 @@ public class User {
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
+    @Convert(converter = RoleTypeConverter.class)
     @Enumerated(EnumType.STRING)
-    @Column(name = "role_type", nullable = false,
-            columnDefinition = "ENUM('user', 'admin') DEFAULT 'user'")
+    @Column(name = "role_type", nullable = false)
     private RoleType roleType;
 
+    @Convert(converter = ProviderTypeConverter.class)
     @Enumerated(EnumType.STRING)
-    @Column(name = "provider_type", nullable = false,
-            columnDefinition = "ENUM('local', 'kakao') DEFAULT 'local'")
+    @Column(name = "provider_type", nullable = false)
     private ProviderType providerType;
 
     @PrePersist
@@ -86,5 +90,17 @@ public class User {
     // 비밀번호 업데이트 메서드 추가
     public void updatePassword(String encodedPassword) {
         this.userPassword = encodedPassword;
+    }
+
+    // 회원 정보 최초 입력에 필요한 메서드
+    public void updateInitialInfo(String nickname, Gender gender, Year birthYear) {
+        this.nickname = nickname;
+        this.gender = gender;
+        this.birthYear = birthYear;
+    }
+
+    // 회원 정보 최초 입력 시 false -> true 로 변환해줘야 한다.
+    public void setRegistered(boolean registered) {
+        this.isRegistered = registered;
     }
 }

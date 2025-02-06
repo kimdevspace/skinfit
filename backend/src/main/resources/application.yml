@@ -2,10 +2,13 @@ spring:
   application:
     name: skinfit
   profiles:
-    active: dev  # 기본값으로 dev 설정
-    include:
-      - oauth
-      - mail
+    group:
+      dev:  # 로컬 개발 환경
+        - mail
+        - oauth
+      prod:  # 운영 환경
+        - mail
+        - oauth
   jpa:
     properties:
       hibernate:
@@ -17,5 +20,5 @@ server:
     protocol-header: x-forwarded-proto
 
 jwt:
-  access-token-expiration: 1800000  # 30분
-  refresh-token-expiration: 604800000  # 7일
+  access-token-expiration: 1800000
+  refresh-token-expiration: 604800000

@@ -1,11 +1,14 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.controller;
 
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.EmailVerificationRequest;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.RegisterUserInfoRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.SignUpRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.UserEmailRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,5 +47,12 @@ public class UserController {
     public ResponseEntity<String> sendTemporaryPassword(@RequestBody UserEmailRequest request) {
         userService.sendTemporaryPassword(request.getUserEmail());
         return ResponseEntity.ok("임시 비밀번호가 이메일로 발송되었습니다");
+    }
+
+    // 최초로그인 시 사용자 정보 저장
+    @PostMapping("/init")
+    public ResponseEntity<Void> initializeUserInfo(@AuthenticationPrincipal Integer userId,
+                                                   @Valid @RequestBody RegisterUserInfoRequest request) {
+        return ResponseEntity.ok().build();
     }
 }

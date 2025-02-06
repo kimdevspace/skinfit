@@ -20,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 
 @RestController
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 @Slf4j
 public class KakaoOAuthController {
@@ -40,7 +41,7 @@ public class KakaoOAuthController {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
 
-    @GetMapping("/api/v1/oauth/kakao/login")
+    @GetMapping("/oauth/kakao/login")
     public ResponseEntity<Void> kakaoLogin() {
         String kakaoAuthUrl = authUri +
                 "?client_id=" + clientId +
