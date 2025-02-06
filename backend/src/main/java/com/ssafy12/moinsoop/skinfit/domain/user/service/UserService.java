@@ -1,5 +1,6 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.service;
 
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.RegisterUserInfoRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.SignUpRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.ProviderType;
@@ -8,6 +9,7 @@ import com.ssafy12.moinsoop.skinfit.domain.user.entity.repository.UserRepository
 import com.ssafy12.moinsoop.skinfit.domain.user.exception.DuplicateUserEmailException;
 import com.ssafy12.moinsoop.skinfit.domain.user.exception.InvalidVerificationCodeException;
 import com.ssafy12.moinsoop.skinfit.domain.user.exception.VerificationCodeExpiredException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
@@ -128,6 +130,14 @@ public class UserService {
         mailSender.send(message);
     }
 
+    public void initializeUserInfo(Integer userId, RegisterUserInfoRequest request) {
+        // 1. 사용자 기본 정보 업데이트
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+        updateUserBasicInfo(user, request);
+
+    }
+
     // 인증번호 생성메서드
     private String generateRandomCode() {
         Random random = new Random();
@@ -145,5 +155,16 @@ public class UserService {
         }
 
         return password.toString();
+    }
+
+
+    // 기본 회원정보 최초 등록
+    private void updateUserBasicInfo(User user, RegisterUserInfoRequest request) {
+        user.updateInitialInfo(
+                request.getNickname(),
+                request.getGender(),
+                request.getYear()
+        );
+        user.setRegistered(true);
     }
 }
