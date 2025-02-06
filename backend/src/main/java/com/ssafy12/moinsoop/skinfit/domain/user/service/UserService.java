@@ -1,5 +1,9 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.service;
 
+import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.SkinType;
+import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.UserSkinType;
+import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.repository.SkinTypeRepository;
+import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.repository.UserSkinTypeRepository;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.RegisterUserInfoRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.SignUpRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
@@ -20,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -31,6 +36,8 @@ public class UserService {
     private final RedisTemplate redisTemplate;
     private final JavaMailSender mailSender;
     private final PasswordEncoder passwordEncoder;
+    private final SkinTypeRepository skinTypeRepository;
+    private final UserSkinTypeRepository userSkinTypeRepository;
 
     private static final String EMAIL_VERIFICATION_PREFIX = "email:verification:";
     private static final String EMAIL_VERIFIED_PREFIX = "email:verified:";
@@ -136,6 +143,8 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
         updateUserBasicInfo(user, request);
 
+        // 2. 사용자 피부 타입 정보 저장
+        saveUserSkinTypes(user, request.getSkinTypeIds());
     }
 
     // 인증번호 생성메서드
@@ -158,7 +167,7 @@ public class UserService {
     }
 
 
-    // 기본 회원정보 최초 등록
+    // 기본 회원정보 최초 등록 메서드
     private void updateUserBasicInfo(User user, RegisterUserInfoRequest request) {
         user.updateInitialInfo(
                 request.getNickname(),
@@ -166,5 +175,17 @@ public class UserService {
                 request.getYear()
         );
         user.setRegistered(true);
+    }
+
+    // 사용자 피부 타입 정보 저장 메서드
+    private void saveUserSkinTypes(User user, List<Integer> skinTypeIds) {
+        List<UserSkinType> userSkinTypes = skinTypeIds.stream()
+                .map(typeId -> {
+                    SkinType skinType = skinTypeRepository.findById(typeId)
+                            .orElseThrow(() -> new EntityNotFoundException("SkinType Not found"));
+                    return UserSkinType.create(user, skinType);
+                })
+                .toList();
+        userSkinTypeRepository.saveAll(userSkinTypes);
     }
 }

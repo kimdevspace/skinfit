@@ -22,4 +22,12 @@ public class UserSkinType {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "type_id", nullable = false)
     private SkinType skinType;
+
+    // 유저 스킨타입을 생성할 메소드
+    public static UserSkinType create(User user, SkinType skinType) {
+        UserSkinType userSkinType = new UserSkinType();
+        userSkinType.user = user;
+        userSkinType.skinType = skinType;
+        return userSkinType;
+    }
 }
