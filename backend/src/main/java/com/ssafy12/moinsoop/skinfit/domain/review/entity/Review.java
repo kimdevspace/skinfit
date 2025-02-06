@@ -38,7 +38,7 @@ public class Review {
     private int reportCount;
 
     @Column(nullable = false)
-    private int score;
+    private int rating;
 
     @OneToMany(mappedBy = "review")
     private List<ReviewLike> reviewLikes = new ArrayList<>();
@@ -48,4 +48,12 @@ public class Review {
 
     @OneToMany(mappedBy = "review")
     private List<ReviewImage> reviewImages = new ArrayList<>();
+
+    public Review(User user, Cosmetic cosmetic, int rating, String content) {
+        this.user = user;
+        this.cosmetic = cosmetic;
+        this.rating = rating;
+        this.content = content;
+        this.createdAt = LocalDateTime.now();
+    }
 }

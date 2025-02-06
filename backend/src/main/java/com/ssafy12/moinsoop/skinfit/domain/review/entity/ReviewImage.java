@@ -28,4 +28,10 @@ public class ReviewImage {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    public ReviewImage(Review review, String imageUrl) {
+        this.review = review;
+        this.imageUrl = imageUrl;
+        this.createdAt = LocalDateTime.now(); // 생성 시 현재 시간 자동 설정
+    }
 }
