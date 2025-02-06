@@ -137,6 +137,7 @@ public class UserService {
         mailSender.send(message);
     }
 
+    //  회원등록 서비스
     public void initializeUserInfo(Integer userId, RegisterUserInfoRequest request) {
         // 1. 사용자 기본 정보 업데이트
         User user = userRepository.findById(userId)
