@@ -2,6 +2,7 @@ package com.ssafy12.moinsoop.skinfit.domain.review.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,9 +30,11 @@ public class ReviewImage {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    public ReviewImage(Review review, String imageUrl) {
+    @Builder
+    public ReviewImage(Review review, String imageUrl, int sequence) {
         this.review = review;
         this.imageUrl = imageUrl;
+        this.sequence = sequence;
         this.createdAt = LocalDateTime.now(); // 생성 시 현재 시간 자동 설정
     }
 }
