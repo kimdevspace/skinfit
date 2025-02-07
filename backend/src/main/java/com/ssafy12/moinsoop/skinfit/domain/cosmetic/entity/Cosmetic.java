@@ -5,6 +5,7 @@ import com.ssafy12.moinsoop.skinfit.domain.experience.entity.CosmeticExperience;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
