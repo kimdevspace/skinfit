@@ -1,0 +1,29 @@
+.toggle-container {
+  display: flex; // 버튼 div 안에 나란히 두기
+  justify-content: center;
+  background: #fff;
+  border: solid #8e8e8e 0.1rem;
+  border-radius: 1.5rem;
+  width: 100%;
+
+
+  .toggle-btn {
+    width: 100%;
+    padding: 1.3rem 3rem;
+    font-size: 1.2rem;
+    color: #565656;
+
+    &.active {
+      background: #fff0e8;
+      border: solid #8e8e8e 0.1rem;
+      border-radius: 1.5rem;
+      color: #000000;
+      font-weight: bold;
+    
+    }
+
+    &:hover:not(.active) {
+      font-weight: bold;
+    }
+  }
+}
