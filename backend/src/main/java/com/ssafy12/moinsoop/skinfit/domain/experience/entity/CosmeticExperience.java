@@ -4,6 +4,7 @@ import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,13 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "product_experience")
+@Table(name = "cosmetic_experience")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProductExperience {
+public class CosmeticExperience {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer productExperienceId;
+    private Integer cosmeticExperienceId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -30,6 +31,13 @@ public class ProductExperience {
     @Column(nullable = false)
     private boolean isSuitable;
 
-    @OneToMany(mappedBy = "productExperience")
-    private List<ProductSymptom> productSymptoms = new ArrayList<>();
+    @OneToMany(mappedBy = "cosmeticExperience")
+    private List<CosmeticSymptom> cosmeticSymptoms = new ArrayList<>();
+
+    @Builder
+    public CosmeticExperience(User user, Cosmetic cosmetic, boolean isSuitable) {
+        this.user = user;
+        this.cosmetic = cosmetic;
+        this.isSuitable = isSuitable;
+    }
 }

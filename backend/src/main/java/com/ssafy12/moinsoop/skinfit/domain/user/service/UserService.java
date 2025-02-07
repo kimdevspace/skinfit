@@ -1,5 +1,11 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.service;
 
+import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
+import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.repository.CosmeticRepository;
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.*;
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.*;
+import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.Ingredient;
+import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.repository.IngredientRepository;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.SkinType;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.UserSkinType;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.repository.SkinTypeRepository;
@@ -14,6 +20,7 @@ import com.ssafy12.moinsoop.skinfit.domain.user.exception.DuplicateUserEmailExce
 import com.ssafy12.moinsoop.skinfit.domain.user.exception.InvalidVerificationCodeException;
 import com.ssafy12.moinsoop.skinfit.domain.user.exception.VerificationCodeExpiredException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.Id;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
@@ -38,6 +45,13 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final SkinTypeRepository skinTypeRepository;
     private final UserSkinTypeRepository userSkinTypeRepository;
+    private final CosmeticRepository cosmeticRepository;
+    private final CosmeticExperienceRepository cosmeticExperienceRepository;
+    private final SymptomRepository symptomRepository;
+    private final CosmeticSymptomRepository cosmeticSymptomRepository;
+    private final IngredientRepository ingredientRepository;
+    private final IngredientExperienceRepository ingredientExperienceRepository;
+    private final IngredientSymptomRepository ingredientSymptomRepository;
 
     private static final String EMAIL_VERIFICATION_PREFIX = "email:verification:";
     private static final String EMAIL_VERIFIED_PREFIX = "email:verified:";
@@ -137,6 +151,7 @@ public class UserService {
         mailSender.send(message);
     }
 
+    @Transactional
     //  회원등록 서비스
     public void initializeUserInfo(Integer userId, RegisterUserInfoRequest request) {
         // 1. 사용자 기본 정보 업데이트
@@ -146,6 +161,27 @@ public class UserService {
 
         // 2. 사용자 피부 타입 정보 저장
         saveUserSkinTypes(user, request.getSkinTypeIds());
+
+        // 3. 잘 맞는 화장품 정보 저장
+        if (request.getSuitableCosmetics() != null) {
+            saveSuitableCosmetics(user, request.getSuitableCosmetics());
+        }
+
+        // 4. 잘 맞지 않는 화장품 정보 저장
+        if (request.getUnsuitableCosmetics() != null) {
+            saveUnsuitableCosmetics(user, request.getUnsuitableCosmetics());
+        }
+
+        // 5. 잘 맞는 성분 정보 저장
+        if (request.getSuitableIngredients() != null) {
+            saveSuitableIngredients(user, request.getSuitableIngredients());
+        }
+
+        // 6. 잘 맞지 않는 성분 정보 저장
+        if (request.getUnsuitableCosmetics() != null) {
+            saveUnsuitableIngredients(user, request.getUnsuitableIngredients());
+        }
+
     }
 
     // 인증번호 생성메서드
@@ -188,5 +224,100 @@ public class UserService {
                 })
                 .toList();
         userSkinTypeRepository.saveAll(userSkinTypes);
+    }
+
+    // 잘 맞는 화장품 저장하는 메서드
+    private void saveSuitableCosmetics(User user, List<RegisterUserInfoRequest.SuitableCosmeticRequest> suitableCosmetics) {
+        for (RegisterUserInfoRequest.SuitableCosmeticRequest cosmeticRequest : suitableCosmetics) {
+            Cosmetic cosmetic = cosmeticRepository.findById(cosmeticRequest.getCosmeticId())
+                    .orElseThrow(() -> new EntityNotFoundException("Cosmetic Not found"));
+
+            CosmeticExperience experience = CosmeticExperience.builder()
+                    .user(user)
+                    .cosmetic(cosmetic)
+                    .isSuitable(true)
+                    .build();
+
+            cosmeticExperienceRepository.save(experience);
+        }
+    }
+
+    // 잘 안맞는 화장품 저장하는 메서드 (증상과 같이 저장)
+    private void saveUnsuitableCosmetics(User user, List<RegisterUserInfoRequest.UnsuitableCosmeticRequest> unsuitableCosmetics) {
+        for(RegisterUserInfoRequest.UnsuitableCosmeticRequest cosmeticRequest : unsuitableCosmetics) {
+            Cosmetic cosmetic = cosmeticRepository.findById(cosmeticRequest.getCosmeticId())
+                    .orElseThrow(() -> new EntityNotFoundException("Cosmetic Not found"));
+
+            CosmeticExperience experience = CosmeticExperience.builder()
+                    .user(user)
+                    .cosmetic(cosmetic)
+                    .isSuitable(false)
+                    .build();
+
+            cosmeticExperienceRepository.save(experience);
+
+            // 증상 정보 저장
+            List<Symptom> symptoms = symptomRepository.findAllById(cosmeticRequest.getSymptomIds());
+            if (symptoms.size() != cosmeticRequest.getSymptomIds().size()) {
+                throw new EntityNotFoundException("Symptom Not found");
+            }
+
+            for (Symptom symptom : symptoms) {
+                CosmeticSymptom cosmeticSymptom = CosmeticSymptom.builder()
+                        .cosmeticExperience(experience)
+                        .symptom(symptom)
+                        .build();
+
+                cosmeticSymptomRepository.save(cosmeticSymptom);
+            }
+        }
+    }
+
+    
+    // 잘 맞는 성분 저장하기
+    private void saveSuitableIngredients(User user, List<RegisterUserInfoRequest.SuitableIngredientRequest> suitableIngredients) {
+        for (RegisterUserInfoRequest.SuitableIngredientRequest ingredientRequest : suitableIngredients) {
+            Ingredient ingredient = ingredientRepository.findById(ingredientRequest.getIngredientId())
+                    .orElseThrow(() -> new EntityNotFoundException("Ingredient Not found"));
+
+            IngredientExperience experience = IngredientExperience.builder()
+                    .user(user)
+                    .ingredient(ingredient)
+                    .isSuitable(true)
+                    .build();
+
+            ingredientExperienceRepository.save(experience);
+        }
+    }
+    
+    // 잘 안맞는 성분 저장하기
+    private void saveUnsuitableIngredients(User user, List<RegisterUserInfoRequest.UnsuitableIngredientRequest> unsuitableIngredients) {
+        for (RegisterUserInfoRequest.UnsuitableIngredientRequest ingredientRequest : unsuitableIngredients) {
+            Ingredient ingredient = ingredientRepository.findById(ingredientRequest.getIngredientId())
+                    .orElseThrow(() -> new EntityNotFoundException("Ingredient Not found"));
+
+            IngredientExperience experience = IngredientExperience.builder()
+                    .user(user)
+                    .ingredient(ingredient)
+                    .isSuitable(false)
+                    .build();
+
+            ingredientExperienceRepository.save(experience);
+
+            // 증상
+            List<Symptom> symptoms = symptomRepository.findAllById(ingredientRequest.getSymptomIds());
+            if (symptoms.size() != ingredientRequest.getSymptomIds().size()) {
+                throw new EntityNotFoundException("Symptom Not found");
+            }
+
+            for (Symptom symptom : symptoms) {
+                IngredientSymptom ingredientSymptom = IngredientSymptom.builder()
+                        .ingredientExperience(experience)
+                        .symptom(symptom)
+                        .build();
+
+                ingredientSymptomRepository.save(ingredientSymptom);
+            }
+        }
     }
 }

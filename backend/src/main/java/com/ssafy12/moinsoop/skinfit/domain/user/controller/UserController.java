@@ -53,6 +53,7 @@ public class UserController {
     @PostMapping("/init")
     public ResponseEntity<Void> initializeUserInfo(@AuthenticationPrincipal Integer userId,
                                                    @Valid @RequestBody RegisterUserInfoRequest request) {
+        userService.initializeUserInfo(userId, request);
         return ResponseEntity.ok().build();
     }
 }
