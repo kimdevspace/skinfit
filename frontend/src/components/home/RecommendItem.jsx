@@ -1,16 +1,17 @@
-import React from 'react'
+import { Link } from 'react-router-dom';
 import './RecommendItem.scss'
 // import testImg from './favicon.png'
 
-function RecommendItem() {
+function RecommendItem({ cosmetic }) {
   return (
-    <button className='recommend-item'>
-      {/* <img className='recomend-img' src={testImg} alt="" /> */}
+    // <Link to={`/cosmetics/${cosmetic.cosmeticId}`} className='recommend-item'>
+    <Link to={`/cosmetics/`} className='recommend-item'>
+      {/* <img className='recomend-img' src={cosmetic.imageUrl} alt={cosmetic.cosmeticName} /> */}
       <div className="recommend-txt">
-        <p className='brand-name'>브랜드명</p>
-        <p className='cosmetic-name'>화장품명</p>
+        <p className='brand-name'>{cosmetic.brandName}</p>
+        <p className='cosmetic-name'>{cosmetic.cosmeticName}</p>
       </div>
-    </button>
+    </Link>
   )
 }
 
