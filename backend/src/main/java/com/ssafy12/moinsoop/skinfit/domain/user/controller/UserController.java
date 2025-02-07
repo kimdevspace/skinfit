@@ -4,15 +4,14 @@ import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.EmailVerificationReq
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.RegisterUserInfoRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.SignUpRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.UserEmailRequest;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UserNicknameAndUserSkinTypeResponse;
+import com.ssafy12.moinsoop.skinfit.domain.user.service.MyPageService;
 import com.ssafy12.moinsoop.skinfit.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
+    private final MyPageService myPageService;
 
     // 이메일 중복확인
     @PostMapping("/email-duplicate")
@@ -55,5 +55,12 @@ public class UserController {
                                                    @Valid @RequestBody RegisterUserInfoRequest request) {
         userService.initializeUserInfo(userId, request);
         return ResponseEntity.ok().build();
+    }
+
+    // 마이페이지
+    @GetMapping("/mypage")
+    public ResponseEntity<UserNicknameAndUserSkinTypeResponse> getUserNicknameAndSkinTypes(@AuthenticationPrincipal Integer userId) {
+        UserNicknameAndUserSkinTypeResponse response = myPageService.getUserNicknameAndSkinTypes(userId);
+        return ResponseEntity.ok(response);
     }
 }
