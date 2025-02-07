@@ -1,9 +1,9 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.controller;
 
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.EmailVerificationRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.RegisterUserInfoRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.SignUpRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.UserEmailRequest;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.Top3UnSuitIngredientsResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UserNicknameAndUserSkinTypeResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.service.MyPageService;
 import com.ssafy12.moinsoop.skinfit.domain.user.service.UserService;
@@ -57,10 +57,16 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    // 마이페이지
+    // 마이페이지 들어갈 때 기본정보 가져오기 (사용자 닉네임과 사용자 피부타입 가져오기)
     @GetMapping("/mypage")
     public ResponseEntity<UserNicknameAndUserSkinTypeResponse> getUserNicknameAndSkinTypes(@AuthenticationPrincipal Integer userId) {
         UserNicknameAndUserSkinTypeResponse response = myPageService.getUserNicknameAndSkinTypes(userId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/mypage/bad-ingredient-three")
+    public ResponseEntity<Top3UnSuitIngredientsResponse> getTop3UnSuitIngredients(@AuthenticationPrincipal Integer userId) {
+        Top3UnSuitIngredientsResponse response = myPageService.getTop3UnSuitIngredients(userId);
         return ResponseEntity.ok(response);
     }
 }
