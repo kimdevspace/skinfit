@@ -78,7 +78,7 @@ function SignUp() {
 
   const checkEmailDuplicate = async (email) => {
     try {
-      const response = await axios.get("/api/v1/user/email-duplicate", {
+      const response = await axios.post("/api/v1/user/email-duplicate", {
         params: { email },
       });
       return response.status;
