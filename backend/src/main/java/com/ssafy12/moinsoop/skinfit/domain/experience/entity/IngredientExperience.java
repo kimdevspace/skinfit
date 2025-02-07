@@ -41,6 +41,17 @@ public class IngredientExperience {
     @OneToMany(mappedBy = "ingredientExperience")
     private List<IngredientSymptom> ingredientSymptoms = new ArrayList<>();
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
     @Builder
     public IngredientExperience(User user, Ingredient ingredient, boolean isSuitable) {
         this.user = user;
