@@ -151,6 +151,7 @@ public class UserService {
         mailSender.send(message);
     }
 
+    @Transactional
     //  회원등록 서비스
     public void initializeUserInfo(Integer userId, RegisterUserInfoRequest request) {
         // 1. 사용자 기본 정보 업데이트
@@ -170,6 +171,17 @@ public class UserService {
         if (request.getUnsuitableCosmetics() != null) {
             saveUnsuitableCosmetics(user, request.getUnsuitableCosmetics());
         }
+
+        // 5. 잘 맞는 성분 정보 저장
+        if (request.getSuitableIngredients() != null) {
+            saveSuitableIngredients(user, request.getSuitableIngredients());
+        }
+
+        // 6. 잘 맞지 않는 성분 정보 저장
+        if (request.getUnsuitableCosmetics() != null) {
+            saveUnsuitableIngredients(user, request.getUnsuitableIngredients());
+        }
+
     }
 
     // 인증번호 생성메서드
