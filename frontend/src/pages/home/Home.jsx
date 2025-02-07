@@ -11,7 +11,11 @@ function Home() {
 
   return (
     <div className="home">
-      <Logo/>
+      <header>
+        <Logo/>
+        <div className="circle left-circle"></div>
+        <div className="circle right-circle"></div>
+      </header>
 
       {/* 검색바 */}
       <div className="serch-bar">
@@ -38,11 +42,11 @@ function Home() {
           <div className="cosmetic-box">
             <div className="cosmetic-count-box">
               <div className="good-cosmetic">
-                <p className="sub-title">나와 잘 맞는<br/>화장품</p>
+                <p className="sub-title">잘 맞는<br/>화장품</p>
                 <p className="count">3개</p>
               </div>
               <div className="bad-cosmetic">
-                <p className="sub-title">나와 맞지 않는<br/>화장품</p>
+                <p className="sub-title">맞지 않는<br/>화장품</p>
                 <p className="count">5개</p>
               </div>
             </div>

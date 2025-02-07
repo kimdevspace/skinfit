@@ -2,10 +2,11 @@
   padding: 1rem;
   border: 1px solid #E1E1E1;
   border-radius: 1.2rem;
+  overflow: hidden;
 
   .recomend-img {
-    width: 10rem;
-    height: 10rem;
+    width: 80%;
+    aspect-ratio: 1/1;
     margin: 0 auto;
     object-fit: cover;
   }
@@ -21,7 +22,7 @@
     }
 
     .cosmetic-name {
-      width: 80%;
+      width: 90%;
       font-size: 1.1rem;
       color: #565656;
       white-space: nowrap; // 줄바꿈 방지
