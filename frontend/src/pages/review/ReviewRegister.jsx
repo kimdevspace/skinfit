@@ -3,9 +3,8 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import "./ReviewRegister.scss";
 import Header from "../../components/common/Header";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/common/Button";
+import ImageUpload from "../../components/common/ImageUpload";
 
 function ReviewRegister(cosmeticId) {
   // 리뷰 데이터
@@ -14,6 +13,11 @@ function ReviewRegister(cosmeticId) {
     reviewContent: "",
     images: [],
   });
+
+  // 이미지 데이터
+  const setImages = (newImages) => {
+    setReviewData(prev => ({ ...prev, images: newImages }))
+  }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -29,53 +33,6 @@ function ReviewRegister(cosmeticId) {
     { value: "BAD", label: "안 맞았어요" },
     { value: "UNKNOWN", label: "모르겠어요" },
   ];
-
-  // 리뷰 사진 등록
-  const fileInputRef = useRef(null);
-  const [imagePreviews, setImagePreviews] = useState([]); // 미리보기용 URL
-
-  const handleFileButtonClick = () => {
-    fileInputRef.current.click();
-  };
-
-  const handleImageUpload = (e) => {
-    if (!e.target.files.length) return;
-
-    const newFiles = Array.from(e.target.files);
-    const allFiles = [...reviewData.images, ...newFiles].slice(0, 3);
-
-    setReviewData((prev) => ({
-      ...prev,
-      images: allFiles,
-    }));
-
-    // 사진 미리보기를 위한 URL 생성
-    const newPreviewUrls = newFiles.map((file) => URL.createObjectURL(file));
-    setImagePreviews((prevPreviews) =>
-      [...prevPreviews, ...newPreviewUrls].slice(0, 3)
-    );
-
-    e.target.value = "";
-  };
-
-  // 업로드한 사진 삭제
-  const handleDeleteImage = (index) => {
-    setImagePreviews((prevPreviews) => {
-      const updatedPreviews = [...prevPreviews];
-      URL.revokeObjectURL(updatedPreviews[index]); // 사진 URL 해제
-      updatedPreviews.splice(index, 1);
-      return updatedPreviews;
-    });
-
-    setReviewData((prevData) => {
-      const updatedImages = [...prevData.images];
-      updatedImages.splice(index, 1);
-      return {
-        ...prevData,
-        images: updatedImages,
-      };
-    });
-  };
 
   // 리뷰 데이터 POST 요청
   const uploadReview = async (review)=> {
@@ -179,48 +136,10 @@ function ReviewRegister(cosmeticId) {
         </div>
 
         {/* 리뷰 사진 등록 */}
-        <div className="input-wrapper review-images">
-          <label className="input-title" htmlFor="images">
-            사진을 등록해주세요(선택)
-          </label>
-          <div className="custom-file-input">
-            <div className="preview-container">
-              {imagePreviews.map((url, index) => (
-                <div key={index} className="preview-box">
-                  <img
-                    src={url}
-                    alt={`preview-${index}`}
-                    className="preview-img"
-                  />
-                  <button className="delete-btn" type="button">
-                    <FontAwesomeIcon
-                      icon={faXmark}           
-                      onClick={() => handleDeleteImage(index)}
-                    />
-                  </button>
-                </div>
-              ))}
-            </div>
-            <div
-              className="custom-file-input-btn"
-              onClick={handleFileButtonClick}
-            >
-              {reviewData.images.length ? null : (
-                <p>등록할 사진을 선택해주세요</p>
-              )}
-              <FontAwesomeIcon icon={faPlus} className="plus-icon" />
-            </div>
-          </div>
-          <input
-            type="file"
-            id="images"
-            accept=".jpg, .png"
-            // accept="image/*" // 모바일 웹에서 업로드 오류시 실행해보기
-            multiple
-            ref={fileInputRef}
-            onChange={handleImageUpload}
-          />
-        </div>
+        <ImageUpload
+          images={reviewData.images}
+          setImages={setImages}
+          maxImages={3}/>
 
         <Button text="등록하기" color="pink" type="submit" />
       </form>
