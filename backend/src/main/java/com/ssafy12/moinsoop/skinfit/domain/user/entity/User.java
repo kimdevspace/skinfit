@@ -91,4 +91,16 @@ public class User {
     public void updatePassword(String encodedPassword) {
         this.userPassword = encodedPassword;
     }
+
+    // 회원 정보 최초 입력에 필요한 메서드
+    public void updateInitialInfo(String nickname, Gender gender, Year birthYear) {
+        this.nickname = nickname;
+        this.gender = gender;
+        this.birthYear = birthYear;
+    }
+
+    // 회원 정보 최초 입력 시 false -> true 로 변환해줘야 한다.
+    public void setRegistered(boolean registered) {
+        this.isRegistered = registered;
+    }
 }

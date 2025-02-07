@@ -6,17 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "product_symptom")
+@Table(name = "cosmetic_symptom")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProductSymptom {
+public class CosmeticSymptom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer productSymptomId;
+    private Integer cosmeticSymptomId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_experience_id", nullable = false)
-    private ProductExperience productExperience;
+    @JoinColumn(name = "cosmetic_experience_id", nullable = false)
+    private CosmeticExperience cosmeticExperience;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "symptom_id", nullable = false)

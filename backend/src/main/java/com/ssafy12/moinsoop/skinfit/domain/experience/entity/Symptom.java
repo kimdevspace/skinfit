@@ -21,7 +21,7 @@ public class Symptom {
     private String name;
 
     @OneToMany(mappedBy = "symptom")
-    private List<ProductSymptom> productSymptoms = new ArrayList<>();
+    private List<CosmeticSymptom> cosmeticSymptoms = new ArrayList<>();
 
     @OneToMany(mappedBy = "symptom")
     private List<IngredientSymptom> ingredientSymptoms = new ArrayList<>();
