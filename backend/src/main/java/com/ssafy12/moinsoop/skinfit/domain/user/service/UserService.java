@@ -106,7 +106,7 @@ public class UserService {
                 .userPassword(userPassword)
                 .nickname(nickname)
                 .providerType(ProviderType.LOCAL)
-                .roleType(RoleType.USER)
+                .roleType(RoleType.ADMIN)
                 .isRegistered(false)
                 .build();
 

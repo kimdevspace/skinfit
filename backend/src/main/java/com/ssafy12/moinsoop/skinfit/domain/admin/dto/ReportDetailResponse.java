@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReportDetailResponse {
-    private Integer reportId;
-    private Integer reporterId;       // 신고한 회원의 ID
-    private String reason;            // 신고 사유
-    private int status;               // 신고 상태 (예: 0: 기본, 1: 신고)
+    private Integer reportId;     // 신고 ID
+    private Integer reviewId;     // 리뷰 ID
+    private Integer reporterId;   // 신고자 ID
+    private String reason;        // 신고 사유
 }

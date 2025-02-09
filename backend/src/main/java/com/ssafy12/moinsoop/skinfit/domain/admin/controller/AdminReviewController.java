@@ -25,22 +25,10 @@ public class AdminReviewController {
     @GetMapping("/reports")
     public ResponseEntity<Map<String, Object>> getReportedReviews() {
         List<ReportedReviewResponse> reviews = adminReviewService.getReportedReviews();
-        Map<String, Object> data = new HashMap<>();
-        data.put("content", reviews);
-
         Map<String, Object> response = new HashMap<>();
         response.put("status", "success");
-        response.put("data", data);
+        response.put("data", reviews);
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * 신고 5회 이상인 리뷰 삭제 API
-     * URL: /api/v1/admin/reports/{reviewId}
-     */
-    @DeleteMapping("/reports/{reviewId}")
-    public ResponseEntity<Map<String, Object>> deleteReportedReview(@PathVariable Integer reviewId) {
-        adminReviewService.deleteReportedReview(reviewId);
-        return ResponseEntity.ok(Collections.singletonMap("status", "deleted"));
-    }
 }

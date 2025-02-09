@@ -25,12 +25,17 @@ public class AdminReviewService {
         List<Review> reviews = reviewRepository.findByReportCountGreaterThanEqual(5);
 
         return reviews.stream().map(review -> {
-            // 각 리뷰에 연결된 신고 내역을 DTO로 변환
+            // 리뷰의 신고 내역을 DTO로 변환
             List<ReportDetailResponse> reportDetails = review.getReviewReports()
-                    .stream().map(report -> convertToReportDetailResponse(report))
+                    .stream()
+                    .map(report -> new ReportDetailResponse(
+                            report.getReportId(),
+                            review.getReviewId(),         // 리뷰 ID
+                            report.getUser().getUserId(), // 신고자 ID
+                            report.getReason()            // 신고 사유
+                    ))
                     .collect(Collectors.toList());
 
-            // 작성자 닉네임은 Review의 User 엔티티에서 가져온다고 가정
             String writerNickname = review.getUser().getNickname();
 
             return new ReportedReviewResponse(
@@ -42,29 +47,5 @@ public class AdminReviewService {
                     reportDetails
             );
         }).collect(Collectors.toList());
-    }
-
-    /**
-     * ReviewReport 엔티티를 ReportDetailResponse DTO로 변환하는 메서드
-     * 신고일시 필드 제거 후 변환 처리
-     */
-    private ReportDetailResponse convertToReportDetailResponse(ReviewReport report) {
-        return new ReportDetailResponse(
-                report.getReportId(),
-                report.getUser().getUserId(),  // 신고한 회원의 ID
-                report.getReason(),
-                1                              // API 명세에 따른 신고 상태 (필요 시 report.getStatus() 사용)
-        );
-    }
-
-    /**
-     * 신고 횟수가 5회 이상인 리뷰를 삭제
-     */
-    @Transactional
-    public void deleteReportedReview(Integer reviewId) {
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new AdminReviewException("해당 리뷰가 존재하지 않습니다."));
-
-        reviewRepository.delete(review);
     }
 }
