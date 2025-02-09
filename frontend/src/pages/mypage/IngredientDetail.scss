@@ -1,0 +1,92 @@
+.ingredient-detail-wrapper {
+  margin-left: 2rem;
+  margin-right: 2rem;
+
+  @mixin ingredient-list-common {
+    margin-top: 1rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    display: flex;
+    justify-content: space-between;
+    padding-right: 1rem;
+    padding-left: 1rem;
+
+    .ewg-level {
+      font-size: 1.1rem;
+      font-weight: bold;
+
+      &.green {
+        color: #a5cf96;
+      }
+
+      &.red {
+        color: #ff7d8a;
+      }
+      &.orange {
+        color: #ffb58c;
+      }
+    }
+    .ingredient-name {
+      font-size: 1.1rem;
+      color: #8e8e8e;
+    }
+  }
+
+  h2 {
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    color: #565656;
+    text-align: center;
+  }
+
+  hr {
+    margin: 1rem 2rem;
+    background-color: #dedede;
+    border: 0;
+    height: 0.1rem;
+  }
+
+  .bad-ingredient-box {
+    .bad-ingredient-bar {
+      border: solid #8e8e8e 0.1rem;
+      border-radius: 1.5rem;
+      background: #fff0e8;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 1.5rem 3rem;
+
+      .bar-text {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #565656;
+      }
+    }
+
+    .ingredient-list {
+      @include ingredient-list-common();
+    }
+  }
+
+  .my-ingredient-box {
+    .set-position {
+      position: relative;
+
+      .edit-del-btn {
+        border-radius: 1.5rem;
+        border: solid 0.1rem #8e8a8a;
+        font-size: 1rem;
+        padding: 0.2rem 1rem;
+        position: absolute;
+        right: 1rem;
+        margin-top: 0.8rem;
+      }
+    }
+
+    .ingredient-list {
+      @include ingredient-list-common();
+      margin-top: 4rem;
+    }
+  }
+}
