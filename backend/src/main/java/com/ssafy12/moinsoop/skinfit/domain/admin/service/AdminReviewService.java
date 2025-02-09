@@ -1,5 +1,7 @@
 package com.ssafy12.moinsoop.skinfit.domain.admin.service;
 
+import com.ssafy12.moinsoop.skinfit.domain.admin.dto.DeleteReviewsRequest;
+import com.ssafy12.moinsoop.skinfit.domain.admin.dto.DeleteReviewsResponse;
 import com.ssafy12.moinsoop.skinfit.domain.admin.dto.ReportDetailResponse;
 import com.ssafy12.moinsoop.skinfit.domain.admin.dto.ReportedReviewResponse;
 import com.ssafy12.moinsoop.skinfit.domain.admin.exception.AdminReviewException;
@@ -9,6 +11,8 @@ import com.ssafy12.moinsoop.skinfit.domain.review.entity.repository.ReviewReposi
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,5 +51,33 @@ public class AdminReviewService {
                     reportDetails
             );
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * 선택한 리뷰 삭제 처리
+     */
+    @Transactional
+    public DeleteReviewsResponse deleteSelectedReviews(DeleteReviewsRequest request) {
+        List<Integer> reviewIds = request.getReviewIds();
+
+        if (reviewIds == null || reviewIds.isEmpty()) {
+            throw new AdminReviewException("삭제할 리뷰를 선택해주세요.");
+        }
+
+        List<Integer> failedIds = new ArrayList<>();
+        int deletedCount = 0;
+
+        for (Integer reviewId : reviewIds) {
+            try {
+                Review review = reviewRepository.findById(reviewId)
+                        .orElseThrow(() -> new AdminReviewException("리뷰 ID " + reviewId + "가 존재하지 않습니다."));
+                reviewRepository.delete(review);
+                deletedCount++;
+            } catch (Exception e) {
+                failedIds.add(reviewId); // 삭제 실패한 리뷰 ID
+            }
+        }
+
+        return new DeleteReviewsResponse(deletedCount, failedIds);
     }
 }

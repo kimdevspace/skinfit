@@ -1,5 +1,7 @@
 package com.ssafy12.moinsoop.skinfit.domain.admin.controller;
 
+import com.ssafy12.moinsoop.skinfit.domain.admin.dto.DeleteReviewsRequest;
+import com.ssafy12.moinsoop.skinfit.domain.admin.dto.DeleteReviewsResponse;
 import com.ssafy12.moinsoop.skinfit.domain.admin.dto.ReportedReviewResponse;
 import com.ssafy12.moinsoop.skinfit.domain.admin.service.AdminReviewService;
 import lombok.RequiredArgsConstructor;
@@ -31,4 +33,18 @@ public class AdminReviewController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * 신고 5회 이상인 리뷰 삭제 API
+     * URL: /api/v1/admin/reports
+     */
+    @DeleteMapping("/reports")
+    public ResponseEntity<Map<String, Object>> deleteSelectedReviews(@RequestBody DeleteReviewsRequest request) {
+        DeleteReviewsResponse response = adminReviewService.deleteSelectedReviews(request);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("status", "success");
+        result.put("data", response);
+
+        return ResponseEntity.ok(result);
+    }
 }
