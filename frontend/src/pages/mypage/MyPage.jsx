@@ -1,17 +1,31 @@
 import "./MyPage.scss";
 import ToggleButton from "../../components/common/ToggleButton";
 import { useMyPageStore, useMyPageInfo } from "../../stores/Mypage";
+import axios from 'axios'
+import { useQuery } from "@tanstack/react-query"
 
 
+const fetchTop3Data = async () => {
+  const response = await axios.get('/api/v1/user/mypage/bad-ingredient-three')
+  return response.data;
+};
+
+const useTop3Data = () => {
+  return useQuery({
+    queryKey : ['top3Data'],
+    queryFn : fetchTop3Data
+  });
+};
 
 function MyPage() {
-  // 스토어 
+  // 마이페이지 유저 정보 (스토어) 
   const { setNickname, setSkinTypeId } = useMyPageStore()
   const { data: myinfos, isLoading, isError, error } = useMyPageInfo()
   
-  // 조회 액션
+  // 성분 top3 데이터
+  const { data: top3Data , isLoading, error } = useTop3Data();
   
-
+  
   return (
     <div className="wrapper">
       <div className="edit-user-info">
@@ -35,9 +49,11 @@ function MyPage() {
         </div>
         <hr />
         <div className="ranking-text">
-          <span className="rank-num">1</span>
-          <span className="ingredient-name">아밀신남알</span>
-          <span className="count">9</span>
+          {top3Data.map((top3,index) => (
+            <span className="rank-num">{}</span>
+            <span className="ingredient-name">{top3.ingredientName}</span>
+            <span className="count">{top3.detectionCount}</span>
+          ))}
           <span className="count2">/10개</span>
         </div>
         <div className="ingredient-detail-btn">
