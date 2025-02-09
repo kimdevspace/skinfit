@@ -1,15 +1,25 @@
 import "./MyPage.scss";
 import ToggleButton from "../../components/common/ToggleButton";
+import { useMyPageStore, useMyPageInfo } from "../../stores/Mypage";
+
+
 
 function MyPage() {
+  // 스토어 
+  const { setNickname, setSkinTypeId } = useMyPageStore()
+  const { data: myinfos, isLoading, isError, error } = useMyPageInfo()
+  
+  // 조회 액션
+  
+
   return (
     <div className="wrapper">
       <div className="edit-user-info">
-        <span className="user-name">먀먀</span>
+        <span className="user-name">{myinfos.nickname}</span>
         <span className="user-name2">님</span>
         <div className="user-skin-type">
-          <span>#건성 </span>
-          <span>#민감성 </span>
+          {myinfos.skinTypeId.map((skinType, index) => ( 
+            <span key={index}>#{skinType} </span>))}
         </div>
         <div>
           <button className="edit-info-btn">내 정보 수정하기</button>
