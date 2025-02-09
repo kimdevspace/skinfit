@@ -13,17 +13,23 @@ const fetchTop3Data = async () => {
 const useTop3Data = () => {
   return useQuery({
     queryKey : ['top3Data'],
-    queryFn : fetchTop3Data
+    queryFn : fetchTop3Data,
+    onSuccess : (data) => {
+      console.log('TOP3 데이터 조회완료', data)
+    },
+    onError : (error) => {
+      console.error('top3 성분 조회 에러', error)
+    }
   });
 };
 
 function MyPage() {
   // 마이페이지 유저 정보 (스토어) 
   const { setNickname, setSkinTypeId } = useMyPageStore()
-  const { data: myinfos, isLoading, isError, error } = useMyPageInfo()
+  const { data: myinfos} = useMyPageInfo()
   
   // 성분 top3 데이터
-  const { data: top3Data , isLoading, error } = useTop3Data();
+  const { data: top3Data } = useTop3Data();
   
   
   return (
