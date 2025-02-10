@@ -15,8 +15,8 @@
     width: 80%;
     min-width: 29rem;
     max-width: 50rem;
-    padding: 3.5rem 2rem;
-    text-align: center;
+    height: 40rem;
+    padding: 2rem;
     border-radius: 1.6rem;
     background-color: #fff;
 
@@ -36,11 +36,76 @@
     .popup-title {
       font-size: 1.4rem;
       font-weight: 700;
+      text-align: center;
     }
 
     .all-ingredient {
-      margin-top: 2.5rem;
+      height: 30rem;
+      margin-top: 2rem;
       font-size: 1.2rem;
+      overflow: auto;
+      
+
+      .grade-box {
+        margin-bottom: 1rem;
+  
+        // 등급 공통 스타일링
+        .grade-title {
+          padding: 0.5rem;
+          border-bottom: 1px solid #DEDEDE;
+          font-size: 1.4rem;
+          font-weight: 700;
+        }
+  
+        .ingredient {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.5rem 0.5rem 0;
+  
+          .ingredient-name {
+            color: #8e8e8e;
+            font-size: 1.1rem;
+          }
+  
+          .ewg-score {
+            font-size: 1.2rem;
+            font-weight: 700;
+          }
+        }
+
+        // 안전 등급 스타일링
+        &.low {
+          .grade-title,
+          .ewg-score {
+            color: #A5CF96;
+          }
+        }
+
+        // 보통 등급 스타일링
+        &.moderate {
+          .grade-title,
+          .ewg-score {
+            color: #FFB58C;
+          }
+        }
+
+        // 위험 등급 스타일링
+        &.high {
+          .grade-title,
+          .ewg-score {
+            color: #FF7D8A;
+          }
+        }
+
+        // 미분류 등급 스타일링
+        &.unclassified {
+          .grade-title,
+          .ewg-score {
+            color: #8E8E8E;
+          }
+        }
+      }
     }
   }
 }
