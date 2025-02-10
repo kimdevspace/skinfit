@@ -4,7 +4,6 @@ import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.RegisterUserInfoRequ
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.SignUpRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.UserEmailRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.MyCosmeticsResponse;
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.Top3UnSuitIngredientsResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UserNicknameAndUserSkinTypeResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.service.MyPageService;
 import com.ssafy12.moinsoop.skinfit.domain.user.service.UserService;
@@ -66,11 +65,7 @@ public class UserController {
     }
 
     // 나와 맞지 않는 성분 TOP 3 제공
-    @GetMapping("/mypage/bad-ingredient-three")
-    public ResponseEntity<Top3UnSuitIngredientsResponse> getTop3UnSuitIngredients(@AuthenticationPrincipal Integer userId) {
-        Top3UnSuitIngredientsResponse response = myPageService.getTop3UnSuitIngredients(userId);
-        return ResponseEntity.ok(response);
-    }
+    // 긴급수정필요함 ㅠ
 
     // 내가 등록한 화장품 가져오기
     @GetMapping("/mypage/cosmetics")

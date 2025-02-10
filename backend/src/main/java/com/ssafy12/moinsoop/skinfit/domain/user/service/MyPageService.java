@@ -3,13 +3,10 @@ package com.ssafy12.moinsoop.skinfit.domain.user.service;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.CosmeticExperience;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.CosmeticExperienceRepository;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.IngredientExperienceRepository;
-import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.Ingredient;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.SkinType;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.UserSkinType;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.repository.UserSkinTypeRepository;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.MyCosmeticsResponse;
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.Top3UnSuitIngredientsResponse;
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UnSuitIngredientDto;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UserNicknameAndUserSkinTypeResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.repository.UserRepository;
@@ -48,23 +45,7 @@ public class MyPageService {
         return new UserNicknameAndUserSkinTypeResponse(user.getNickname(), userSkinTypes);
     }
 
-    @Transactional(readOnly = true)
-    public Top3UnSuitIngredientsResponse getTop3UnSuitIngredients(Integer userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
-
-        Pageable topThree = PageRequest.of(0, 3);
-        List<Object[]> results = ingredientExperienceRepository.findTop3UnSuitableIngredientsWithCount(userId, topThree);
-
-        List<UnSuitIngredientDto> ingredients = results.stream()
-                .map(result -> new UnSuitIngredientDto(
-                        (String) result[0],
-                        ((Long) result[1]).intValue()
-                ))
-                .toList();
-
-        return new Top3UnSuitIngredientsResponse(ingredients);
-    }
+    // top3 .. 다시 구현해야 함.
 
     // 내가 등록한 화장품, 맞는 것과 안맞는 것으로 구분하여 응답
     @Transactional(readOnly = true)
