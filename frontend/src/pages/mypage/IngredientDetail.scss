@@ -68,25 +68,4 @@
       @include ingredient-list-common();
     }
   }
-
-  .my-ingredient-box {
-    .set-position {
-      position: relative;
-
-      .edit-del-btn {
-        border-radius: 1.5rem;
-        border: solid 0.1rem #8e8a8a;
-        font-size: 1rem;
-        padding: 0.2rem 1rem;
-        position: absolute;
-        right: 1rem;
-        margin-top: 0.8rem;
-      }
-    }
-
-    .ingredient-list {
-      @include ingredient-list-common();
-      margin-top: 4rem;
-    }
-  }
 }

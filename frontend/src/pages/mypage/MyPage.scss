@@ -2,13 +2,27 @@
   margin-left: 2rem;
   margin-right: 2rem;
 
+  hr {
+    margin: 1rem 2rem;
+    background-color: #dedede;
+    border: 0;
+    height: 0.1rem;
+  }
+
+  h2 {
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    text-align: center;
+  }
+
   .edit-user-info {
     border: solid #8e8a8a 0.1rem;
     padding: 1rem;
     border-radius: 1.5rem;
     display: flex;
     align-items: center;
-    background-color:  #fff0e8;
+    background-color: #fff0e8;
 
     .user-name {
       font-size: 18px;
@@ -44,22 +58,17 @@
 
     .title {
       text-align: center;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
 
-      h2 {
+      span {
         font-size: 1.4rem;
-        color: #f9a476;
+        font-weight: bold;
+
+        &.color-text {
+          color: #ff975f;
+        }
       }
-    }
-    .question-text {
-      font-size: 1rem;
-    }
-
-    hr {
-      margin-top: 1rem;
-      background-color:#DEDEDE;
-      border: 0;
-      height: 0.1rem;
-
     }
 
     .ranking-text {
@@ -77,15 +86,6 @@
         flex-grow: 10;
         font-size: 1.1rem;
         color: #565656;
-      }
-
-      .count {
-        font-weight: bold;
-        font-size: 1.6rem;
-        color:#f9a476;
-      }
-      .count2 {
-        font-size: 1rem;
       }
     }
     // 뒷 배경
@@ -109,6 +109,7 @@
 
   .ingredient-detail-btn {
     text-align: center;
+    margin-bottom: 0.3rem;
 
     .detail-btn {
       font-size: 1rem;
@@ -122,23 +123,6 @@
   }
 
   .cosmetic-wrapper {
-
-    hr {
-      margin: 1rem 2rem;
-      background-color:#DEDEDE;
-      border: 0;
-      height: 0.1rem;
-
-    }
-
-    h2 {
-      margin-top: 3rem;
-      margin-bottom: 1rem;
-      font-size: 1.4rem;
-      color: #565656;
-      text-align: center;
-    }
-
     .set-position {
       position: relative;
     }
@@ -159,13 +143,12 @@
       margin-right: 2rem;
       display: flex;
       justify-content: space-between;
-      
 
       .cosmetic-name {
         font-size: 1.1rem;
         align-self: center;
       }
-      
+
       img {
         width: 2rem;
         height: 4rem;
@@ -173,21 +156,59 @@
     }
   }
 
-  .review-wrapper {    
-    h2 {
-      margin-top: 3rem;
-      margin-bottom: 1rem;
-      font-size: 1.4rem;
-      text-align: center;
+  @mixin ingredient-list-common {
+    margin-top: 1rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    display: flex;
+    justify-content: space-between;
+    padding-right: 1rem;
+    padding-left: 1rem;
+
+    .ewg-level {
+      font-size: 1.1rem;
+      font-weight: bold;
+
+      &.green {
+        color: #a5cf96;
+      }
+
+      &.red {
+        color: #ff7d8a;
+      }
+      &.orange {
+        color: #ffb58c;
+      }
+    }
+    .ingredient-name {
+      font-size: 1.1rem;
+      color: #8e8e8e;
+    }
+  }
+  .my-ingredient-box {
+    .set-position {
+      position: relative;
+
+      .edit-del-btn {
+        border-radius: 1.5rem;
+        border: solid 0.1rem #8e8a8a;
+        font-size: 1rem;
+        padding: 0.2rem 1rem;
+        position: absolute;
+        right: 1rem;
+        margin-top: 0.8rem;
+      }
+    }
+
+    .ingredient-list {
+      @include ingredient-list-common();
+      margin-top: 4rem;
     }
   }
 
-
   .hr-line {
     margin-top: 3rem;
-    margin-left: 2rem;
-    margin-right: 2rem;
-    background-color:#DEDEDE;
+    background-color: #dedede;
     border: 0;
     height: 0.1rem;
   }
@@ -197,9 +218,6 @@
     color: #8e8e8e;
     font-size: 1rem;
     margin-top: 0.5rem;
-
-
   }
+
 }
-
-

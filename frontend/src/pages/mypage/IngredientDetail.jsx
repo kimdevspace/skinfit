@@ -17,18 +17,6 @@ export default function IngredientDetail() {
         <hr />
       </div>
 
-      <div className="my-ingredient-box">
-        <h2>내가 등록한 성분</h2>
-        <div className="set-position">
-          <ToggleButton btn1="맞는 성분" btn2="맞지 않는 성분" />
-          <button className="edit-del-btn">수정</button>
-        </div>
-        <div className="ingredient-list">
-          <div className="ingredient-name">아말신남알</div>
-          <div className="ewg-level">-</div>
-        </div>
-        <hr />
-      </div>
     </div>
   )
 }
