@@ -12,6 +12,7 @@ import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.repository.SkinTypeRe
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.repository.UserSkinTypeRepository;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.RegisterUserInfoRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.SignUpRequest;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.UpdateProfileRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.UserPasswordRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UserProfileResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
@@ -31,11 +32,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,7 +64,7 @@ public class UserService {
     private static final String EMAIL_VERIFICATION_PREFIX = "email:verification:";
     private static final String EMAIL_VERIFIED_PREFIX = "email:verified:";
     private static final long VERIFICATION_CODE_TTL = 300; // 5분
-
+    private static final long VERIFICATION_TIMEOUT = 30 * 60; // 30분 (개인정보 수정전 비밀번호 검증)
 
     public void checkDuplicateUserEmail(String userEmail) {
         // 이메일 중복 체크
@@ -188,17 +192,30 @@ public class UserService {
     }
 
     // 개인정보 수정 전 비밀번호 검증
-    public void verifyPassword(Integer userId, UserPasswordRequest request) {
+    public String verifyPassword(Integer userId, UserPasswordRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
 
         if (!passwordEncoder.matches(request.getUserPassword(), user.getUserPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
         }
+
+        // 검증 성공 시 토큰 생성 및 저장
+        String token = UUID.randomUUID().toString();
+        redisTemplate.opsForValue().set(
+                "profile_verify:" + userId,
+                token,
+                VERIFICATION_TIMEOUT,
+                TimeUnit.SECONDS
+        );
+
+        return token;
     }
 
     // 수정폼으로 넘어가기
-    public UserProfileResponse getUserProfile(Integer userId) {
+    public UserProfileResponse getUserProfile(Integer userId, String token) {
+        validateVerificationToken(userId, token);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
 
@@ -222,6 +239,31 @@ public class UserService {
                 .nickname(user.getNickname())
                 .skinTypes(skinTypes)
                 .build();
+    }
+
+    // 개인정보 수정하기
+    @Transactional
+    public void updateProfile(Integer userId, String token, UpdateProfileRequest request) {
+        validateVerificationToken(userId, token);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        // 닉네임 업데이트
+        user.updateNickname(request.getNickname());
+
+        // 비밀번호가 입력된 경우에만 변경
+        if (StringUtils.hasText(request.getNewPassword())) {
+            user.updatePassword(passwordEncoder.encode(request.getNewPassword()));
+        }
+
+        // 피부타입 업데이트
+        userSkinTypeRepository.deleteById(userId);  // 기존 피부타입 삭제
+        request.getSkinTypeIds().forEach(typeId -> {
+            SkinType skinType = skinTypeRepository.findById(typeId)
+                    .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 피부타입입니다."));
+            userSkinTypeRepository.save(UserSkinType.create(user, skinType));
+        });
     }
 
 
@@ -359,6 +401,13 @@ public class UserService {
 
                 ingredientSymptomRepository.save(ingredientSymptom);
             }
+        }
+    }
+
+    private void validateVerificationToken(Integer userId, String token) {
+        String savedToken = (String) redisTemplate.opsForValue().get("profile_verify:" + userId);
+        if (savedToken == null || !savedToken.equals(token)) {
+            throw new EntityNotFoundException("비밀번호 검증이 필요합니다.");
         }
     }
 }

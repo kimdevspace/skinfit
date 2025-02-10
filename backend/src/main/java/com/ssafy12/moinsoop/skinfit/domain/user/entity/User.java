@@ -103,4 +103,11 @@ public class User {
     public void setRegistered(boolean registered) {
         this.isRegistered = registered;
     }
+
+    public void updateNickname(String nickname) {
+        if (nickname == null || nickname.trim().isEmpty()) {
+            throw new IllegalArgumentException("닉네임은 비어있을 수 없습니다.");
+        }
+        this.nickname = nickname;
+    }
 }
