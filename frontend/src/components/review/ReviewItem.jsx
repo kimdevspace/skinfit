@@ -1,8 +1,38 @@
 import "./ReviewItem.scss";
 import thumbsUpEmoji from "../../assets/images/thumsUp.png";
 import ReviewComplaintPopup from "./ReviewComplaintPopup";
+import { useState } from 'react'
+import { useQuery } from "@tanstack/react-query";
+import axios from 'axios';
 
 export default function ReviewItem() {
+
+  // 리뷰 데이터 불러오기
+const fetchReview = async () => {
+  const response = await axios.get("/api/v1/cosmetics/{cosmeticId}/reviews?sort=")
+  return response.data
+}
+
+const reviewAll = () => {
+  return useQuery({
+    queryKey: ["reviewAll"],
+    queryFn: fetchReview,
+    onSuccess: (data) => {
+      console.log("리뷰 데이터 조회완료", data)
+    },
+    onError: (error) => {
+      console.error("리뷰 조회 에러", error)
+    },
+  })
+}
+  
+  //신고팝업창 관리
+  const [ isPopupOpen, setIsPopupOpen ] = useState(false);
+
+  const handlePopup = () => {
+    setIsPopupOpen(!isPopupOpen);
+  }
+
   return (
     <>
       <div className="review-box">
@@ -25,11 +55,12 @@ export default function ReviewItem() {
               <img src={thumbsUpEmoji} alt="liked-btn" className="emoji" />
               15개
             </button>
-            <button className="report-btn">신고  | 25.02.11</button>
+            <button className="report-btn" onClick={handlePopup}>신고| 25.02.11
+            </button>
+                   { isPopupOpen && <ReviewComplaintPopup onClose={handlePopup}/> }
           </div>
         </div>
       </div>
-      <ReviewComplaintPopup />
     </>
   );
 }
