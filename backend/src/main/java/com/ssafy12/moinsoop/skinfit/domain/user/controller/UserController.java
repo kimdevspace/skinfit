@@ -1,9 +1,6 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.controller;
 
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.RegisterUserInfoRequest;
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.SignUpRequest;
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.UserEmailRequest;
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.UserPasswordRequest;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.*;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.MyCosmeticsResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.MyReviewResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UserNicknameAndUserSkinTypeResponse;
@@ -15,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -86,14 +85,23 @@ public class UserController {
 
     // 비밀번호 검증 후 /api/v1/user/mypage/info 로 리다이렉트
     @PostMapping("/mypage/password-verify")
-    public ResponseEntity<Void> verifyPassword(@AuthenticationPrincipal Integer userId,
-                                               @RequestBody UserPasswordRequest request) {
-        userService.verifyPassword(userId, request);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Map<String, String>> verifyPassword(@AuthenticationPrincipal Integer userId,
+                                                              @RequestBody UserPasswordRequest request) {
+        String token = userService.verifyPassword(userId, request);
+        return ResponseEntity.ok(Map.of("token", token));
     }
 
     @GetMapping("/mypage/info")
-    public ResponseEntity<UserProfileResponse> getUserProfile(@AuthenticationPrincipal Integer userId) {
-        return ResponseEntity.ok(userService.getUserProfile(userId));
+    public ResponseEntity<UserProfileResponse> getUserProfile(@AuthenticationPrincipal Integer userId,
+                                                              @RequestHeader("Verification-Token") String token) {
+        return ResponseEntity.ok(userService.getUserProfile(userId, token));
+    }
+
+    @PatchMapping("/mypage/info")
+    public ResponseEntity<Void> updateProfile(@AuthenticationPrincipal Integer userId,
+                                              @RequestHeader("Verification-Token") String token,
+                                              @RequestBody UpdateProfileRequest request) {
+        userService.updateProfile(userId, token, request);
+        return ResponseEntity.ok().build();
     }
 }
