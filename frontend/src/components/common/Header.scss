@@ -1,22 +1,19 @@
-.header {
-    position: relative;         /* 자식의 절대 위치 기준이 됨 */
-    display: flex;
-    align-items: center;
-    justify-content: center;    /* 모든 자식(제목)을 가로로 중앙 배치 */
-    margin: 2rem;
-  
-    .back-button {
-      position: absolute;
-      left: 0;                  /* 헤더 왼쪽 끝에 붙이기 */
-      border: none;
-      background: none;
-      padding: 0;
-      cursor: pointer;
-    }
-  
-    .page-title {
-      font-size: 1.6rem;
-      font-weight: bold;
-    }
+header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 0;
+
+  .back-button {
+    position: absolute;
+    left: 3rem;
+    padding: 1rem;
+    font-size: 1.5rem;
+    color: #565656;
   }
-  
+
+  .page-title {
+    font-size: 1.4rem;
+  }
+}
