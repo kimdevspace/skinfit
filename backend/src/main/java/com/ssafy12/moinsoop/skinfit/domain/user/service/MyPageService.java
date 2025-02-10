@@ -3,17 +3,19 @@ package com.ssafy12.moinsoop.skinfit.domain.user.service;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.CosmeticExperience;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.CosmeticExperienceRepository;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.IngredientExperienceRepository;
+import com.ssafy12.moinsoop.skinfit.domain.review.entity.ReviewLike;
+import com.ssafy12.moinsoop.skinfit.domain.review.entity.repository.ReviewLikeRepository;
+import com.ssafy12.moinsoop.skinfit.domain.review.entity.repository.ReviewRepository;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.SkinType;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.UserSkinType;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.repository.UserSkinTypeRepository;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.MyCosmeticsResponse;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.MyReviewResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UserNicknameAndUserSkinTypeResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +28,8 @@ public class MyPageService {
 
     private final UserRepository userRepository;
     private final UserSkinTypeRepository userSkinTypeRepository;
-    private final IngredientExperienceRepository ingredientExperienceRepository;
+    private final ReviewRepository reviewRepository;
+    private final ReviewLikeRepository reviewLikeRepository;
     private final CosmeticExperienceRepository cosmeticExperienceRepository;
 
     @Transactional(readOnly = true)
@@ -68,6 +71,28 @@ public class MyPageService {
         return MyCosmeticsResponse.builder()
                 .suitableCosmetics(suitableList)
                 .unsuitableCosmetics(unsuitalbeList)
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public MyReviewResponse getAllMyReviews(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        List<MyReviewResponse.ReviewDto> myReviews = reviewRepository.findByUser_UserIdOrderByCreatedAtDesc(userId)
+                .stream()
+                .map(MyReviewResponse.ReviewDto::from)
+                .toList();
+
+        List<MyReviewResponse.ReviewDto> likedReviews = reviewLikeRepository.findByUser_UserId(userId)
+                .stream()
+                .map(ReviewLike::getReview)
+                .map(MyReviewResponse.ReviewDto::from)
+                .toList();
+
+        return MyReviewResponse.builder()
+                .myReviews(myReviews)
+                .likedReviews(likedReviews)
                 .build();
     }
 
