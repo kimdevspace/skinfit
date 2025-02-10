@@ -1,0 +1,23 @@
+.report-wrapper {
+  margin: 1.5rem 1rem;
+
+  .title-and-close-btn {
+    display: flex;
+
+
+    h1 {
+      font-size: 1.4rem;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .close-btn {
+        align-self: self-start;
+    }
+  }
+
+
+  .report-section {
+    border: 1px solid #E1E1E1;
+  }
+}
