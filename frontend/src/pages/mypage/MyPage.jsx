@@ -5,6 +5,7 @@ import axios from "axios"
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import ReviewItem from '../../components/review/ReviewItem'
 
 // top3 데이터 불러오기기
 const fetchTop3Data = async () => {
@@ -110,9 +111,10 @@ function MyPage() {
       <div className="review-wrapper">
         <h2>리뷰 목록</h2>
         <ToggleButton btn1="내가 좋아요한 리뷰" btn2="내가 작성한 리뷰" />
+        <ReviewItem />
       </div>
       <hr className="hr-line" />
-      <p>회원탈퇴</p>
+      <p className="signout">회원탈퇴</p>
     </div>
   )
 }
