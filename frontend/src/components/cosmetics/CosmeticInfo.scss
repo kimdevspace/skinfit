@@ -133,15 +133,15 @@
             font-size: 1.2rem;
             font-weight: 700;
 
-            .low {
+            &.low {
               color: #A5CF96;
             }
 
-            .moderate {
+            &.moderate {
               color: #FFB58C;
             }
 
-            .high {
+            &.high {
               color: #FF7D8A;
             }
           }
