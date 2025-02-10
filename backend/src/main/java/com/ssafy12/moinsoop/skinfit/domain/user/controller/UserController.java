@@ -4,6 +4,7 @@ import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.RegisterUserInfoRequ
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.SignUpRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.UserEmailRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.MyCosmeticsResponse;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.MyReviewResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UserNicknameAndUserSkinTypeResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.service.MyPageService;
 import com.ssafy12.moinsoop.skinfit.domain.user.service.UserService;
@@ -72,5 +73,10 @@ public class UserController {
     public ResponseEntity<MyCosmeticsResponse> getAllMyCosmetics(@AuthenticationPrincipal Integer userId) {
         MyCosmeticsResponse response = myPageService.getAllMyCosmetics(userId);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/mypage/review")
+    public ResponseEntity<MyReviewResponse> getAllMyReviews(@AuthenticationPrincipal Integer userId) {
+        return ResponseEntity.ok(myPageService.getAllMyReviews(userId));
     }
 }
