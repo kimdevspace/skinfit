@@ -3,6 +3,7 @@ package com.ssafy12.moinsoop.skinfit.domain.user.controller;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.RegisterUserInfoRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.SignUpRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.UserEmailRequest;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.MyCosmeticsResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.Top3UnSuitIngredientsResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UserNicknameAndUserSkinTypeResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.service.MyPageService;
@@ -64,9 +65,17 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    // 나와 맞지 않는 성분 TOP 3 제공
     @GetMapping("/mypage/bad-ingredient-three")
     public ResponseEntity<Top3UnSuitIngredientsResponse> getTop3UnSuitIngredients(@AuthenticationPrincipal Integer userId) {
         Top3UnSuitIngredientsResponse response = myPageService.getTop3UnSuitIngredients(userId);
+        return ResponseEntity.ok(response);
+    }
+
+    // 내가 등록한 화장품 가져오기
+    @GetMapping("/mypage/cosmetics")
+    public ResponseEntity<MyCosmeticsResponse> getAllMyCosmetics(@AuthenticationPrincipal Integer userId) {
+        MyCosmeticsResponse response = myPageService.getAllMyCosmetics(userId);
         return ResponseEntity.ok(response);
     }
 }
