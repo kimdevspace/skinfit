@@ -1,0 +1,35 @@
+.skintype-group {
+    margin-bottom: 2.5rem;
+  
+    label {
+      display: block;
+      margin-bottom: 0.8rem;
+      font-size: 1.4rem;
+      color: #333;
+    }
+  
+    .skintype-options {
+      display: flex;
+      /* 5개 버튼이 전부 한 줄에서 균등 분배되길 원한다면 flex-wrap: nowrap (기본값) */
+      /* 만약 좁은 화면에서 줄바꿈되길 원하면 flex-wrap: wrap; 을 사용 */
+      gap: 0.8rem; // 버튼들 사이 간격
+  
+      .skin-btn {
+        flex: 1;                /* 5개의 피부타입 버튼이 한 줄을 균등 분할 */
+        text-align: center;     /* 텍스트 가운데 정렬 */
+        border: 1px solid #ccc;
+        background-color: #fff;
+        padding: 0.8rem 1.2rem;
+        border-radius: 0.4rem;
+        cursor: pointer;
+        font-size: 1.2rem;
+  
+        &.selected {
+          border-color: #ffae82;
+          color: #fff;
+          background-color: #ffae82;
+        }
+      }
+    }
+  }
+  
