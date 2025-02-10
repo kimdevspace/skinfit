@@ -12,6 +12,8 @@ import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.repository.SkinTypeRe
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.repository.UserSkinTypeRepository;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.RegisterUserInfoRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.SignUpRequest;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.UserPasswordRequest;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UserProfileResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.ProviderType;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.RoleType;
@@ -33,6 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -181,8 +185,45 @@ public class UserService {
         if (request.getUnsuitableCosmetics() != null) {
             saveUnsuitableIngredients(user, request.getUnsuitableIngredients());
         }
-
     }
+
+    // 개인정보 수정 전 비밀번호 검증
+    public void verifyPassword(Integer userId, UserPasswordRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
+
+        if (!passwordEncoder.matches(request.getUserPassword(), user.getUserPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
+        }
+    }
+
+    // 수정폼으로 넘어가기
+    public UserProfileResponse getUserProfile(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        List<SkinType> allSkinTypes = skinTypeRepository.findAll();
+        List<UserSkinType> userSkinTypes = userSkinTypeRepository.findAllByUser_UserId(userId);
+
+        // 현재 사용자가 선택한 피부타입 ID 목록
+        Set<Integer> selectedTypeIds = userSkinTypes.stream()
+                .map(ust -> ust.getSkinType().getTypeId())
+                .collect(Collectors.toSet());
+
+        // 모든 피부타입에 대해 현재 사용자의 선택 여부 표시
+        List<UserProfileResponse.SkinTypeInfo> skinTypes = allSkinTypes.stream()
+                .map(type -> UserProfileResponse.SkinTypeInfo.of(
+                        type,
+                        selectedTypeIds.contains(type.getTypeId())
+                ))
+                .collect(Collectors.toList());
+
+        return UserProfileResponse.builder()
+                .nickname(user.getNickname())
+                .skinTypes(skinTypes)
+                .build();
+    }
+
 
     // 인증번호 생성메서드
     private String generateRandomCode() {

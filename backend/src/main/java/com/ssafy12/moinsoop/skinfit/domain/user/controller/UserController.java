@@ -3,9 +3,11 @@ package com.ssafy12.moinsoop.skinfit.domain.user.controller;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.RegisterUserInfoRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.SignUpRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.UserEmailRequest;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.UserPasswordRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.MyCosmeticsResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.MyReviewResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UserNicknameAndUserSkinTypeResponse;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UserProfileResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.service.MyPageService;
 import com.ssafy12.moinsoop.skinfit.domain.user.service.UserService;
 import jakarta.validation.Valid;
@@ -66,7 +68,9 @@ public class UserController {
     }
 
     // 나와 맞지 않는 성분 TOP 3 제공
-    // 긴급수정필요함 ㅠ
+    /**
+     * 레디스에 저장 된 나와 맞지 않는 성분들을 가져온 후 3개만 반환한다.
+     */
 
     // 내가 등록한 화장품 가져오기
     @GetMapping("/mypage/cosmetics")
@@ -78,5 +82,18 @@ public class UserController {
     @GetMapping("/mypage/review")
     public ResponseEntity<MyReviewResponse> getAllMyReviews(@AuthenticationPrincipal Integer userId) {
         return ResponseEntity.ok(myPageService.getAllMyReviews(userId));
+    }
+
+    // 비밀번호 검증 후 /api/v1/user/mypage/info 로 리다이렉트
+    @PostMapping("/mypage/password-verify")
+    public ResponseEntity<Void> verifyPassword(@AuthenticationPrincipal Integer userId,
+                                               @RequestBody UserPasswordRequest request) {
+        userService.verifyPassword(userId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/mypage/info")
+    public ResponseEntity<UserProfileResponse> getUserProfile(@AuthenticationPrincipal Integer userId) {
+        return ResponseEntity.ok(userService.getUserProfile(userId));
     }
 }
