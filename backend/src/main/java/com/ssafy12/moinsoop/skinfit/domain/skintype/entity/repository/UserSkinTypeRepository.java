@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface UserSkinTypeRepository extends JpaRepository<UserSkinType, Integer> {
     List<UserSkinType> findAllByUser_UserId(Integer userId);
+
+    void deleteByUser_UserId(Integer userId);
 }

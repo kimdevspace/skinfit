@@ -264,7 +264,7 @@ public class UserService {
         }
 
         // 피부타입 업데이트
-        userSkinTypeRepository.deleteById(userId);  // 기존 피부타입 삭제
+        userSkinTypeRepository.deleteByUser_UserId(userId);  // 기존 피부타입 삭제
         request.getSkinTypeIds().forEach(typeId -> {
             SkinType skinType = skinTypeRepository.findById(typeId)
                     .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 피부타입입니다."));
