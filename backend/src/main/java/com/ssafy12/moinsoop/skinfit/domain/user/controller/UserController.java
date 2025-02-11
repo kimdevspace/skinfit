@@ -57,6 +57,13 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/nickname-duplicate")
+    public ResponseEntity<String> checkNicknameDuplicate(@RequestBody NicknameRequest request) {
+        userService.checkDuplicateUserNickname(request.getNickname());
+        return ResponseEntity.ok("사용할 수 있는 닉네임입니다.");
+    }
+
+
     // 마이페이지 들어갈 때 기본정보 가져오기 (사용자 닉네임과 사용자 피부타입 가져오기)
     @GetMapping("/mypage")
     public ResponseEntity<UserNicknameAndUserSkinTypeResponse> getUserNicknameAndSkinTypes(@AuthenticationPrincipal Integer userId) {

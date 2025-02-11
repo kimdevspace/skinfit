@@ -73,6 +73,12 @@ public class UserService {
         }
     }
 
+    public void checkDuplicateUserNickname(String nickname) {
+        if (userRepository.existsByNickname(nickname)) {
+            throw new IllegalArgumentException("이미 사용중인 닉네임입니다.");
+        }
+    }
+
     public void sendVerificationEmail(String userEmail) {
         // 인증번호 생성
         String verificationCode = generateRandomCode();
