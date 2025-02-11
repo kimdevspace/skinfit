@@ -16,4 +16,7 @@ public interface IngredientExperienceRepository extends JpaRepository<Ingredient
             "GROUP BY i.ingredientName " +
             "ORDER BY count DESC")
     List<Object[]> findTop3UnSuitableIngredientsWithCount(Integer userId, Pageable pageable);
+
+    List<IngredientExperience> findByUser_UserIdAndIsSuitableTrue(Integer userId);
+    List<IngredientExperience> findByUser_UserIdAndIsSuitableFalse(Integer userId);
 }

@@ -1,10 +1,7 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.controller;
 
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.*;
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.MyCosmeticsResponse;
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.MyReviewResponse;
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UserNicknameAndUserSkinTypeResponse;
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UserProfileResponse;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.*;
 import com.ssafy12.moinsoop.skinfit.domain.user.service.MyPageService;
 import com.ssafy12.moinsoop.skinfit.domain.user.service.UserService;
 import jakarta.validation.Valid;
@@ -13,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -104,4 +102,59 @@ public class UserController {
         userService.updateProfile(userId, token, request);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/mypage/good-cosmetics")
+    public ResponseEntity<List<CosmeticExperienceDto>> getAllSuitableCosmetics(@AuthenticationPrincipal Integer userId) {
+        return ResponseEntity.ok(myPageService.getAllSuitableCosmetics(userId));
+    }
+
+    @PutMapping("/mypage/good-cosmetics")
+    public ResponseEntity<Void> updateSuitableCosmetics(@AuthenticationPrincipal Integer userId,
+                                                        @RequestBody List<CosmeticUpdateRequest> request) {
+        myPageService.updateSuitableCosmetics(userId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/mypage/bad-cosmetics")
+    public ResponseEntity<List<CosmeticExperienceDto>> getAllUnsuitableCosmetics(@AuthenticationPrincipal Integer userId) {
+        return ResponseEntity.ok(myPageService.getAllUnsuitableCosmetics(userId));
+    }
+
+    @PutMapping("/mypage/bad-cosmetics")
+    public ResponseEntity<Void> updateUnsuitableCosmetics(@AuthenticationPrincipal Integer userId,
+                                                        @RequestBody List<CosmeticUpdateRequest> request) {
+        myPageService.updateUnsuitableCosmetics(userId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    // 맞는 성분조회
+    @GetMapping("/mypage/good-ingredients")
+    public ResponseEntity<List<IngredientExperienceDto>> getSuitableIngredients(@AuthenticationPrincipal Integer userId) {
+        return ResponseEntity.ok(myPageService.getAllSuitableIngredients(userId));
+    }
+
+    // 맞는 성분 수정
+    @PutMapping("/mypage/good-ingredients")
+    public ResponseEntity<Void> updateSuitableIngredients(@AuthenticationPrincipal Integer userId,
+                                                          @RequestBody List<IngredientUpdateRequest> request) {
+        myPageService.updateSuitableIngredients(userId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    // 안 맞는 성분 조회
+    @GetMapping("/mypage/bad-ingredients")
+    public ResponseEntity<List<IngredientExperienceDto>> getUnsuitableIngredients(@AuthenticationPrincipal Integer userId) {
+        return ResponseEntity.ok(myPageService.getAllUnsuitableIngredients(userId));
+    }
+
+    // 안 맞는 성분 수정
+    // 안맞는 성분 목록 수정
+    @PutMapping("/mypage/bad-ingredients")
+    public ResponseEntity<Void> updateUnsuitableIngredients(@AuthenticationPrincipal Integer userId,
+                                                            @RequestBody List<IngredientUpdateRequest> request) {
+        myPageService.updateUnsuitableIngredients(userId, request);
+        return ResponseEntity.ok().build();
+    }
+
+
 }
