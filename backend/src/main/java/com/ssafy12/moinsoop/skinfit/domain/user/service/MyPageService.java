@@ -2,7 +2,6 @@ package com.ssafy12.moinsoop.skinfit.domain.user.service;
 
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.CosmeticExperience;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.CosmeticExperienceRepository;
-import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.IngredientExperienceRepository;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.ReviewLike;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.repository.ReviewLikeRepository;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.repository.ReviewRepository;
@@ -94,6 +93,25 @@ public class MyPageService {
                 .myReviews(myReviews)
                 .likedReviews(likedReviews)
                 .build();
+    }
+
+    /**
+     * 나와 맞는 화장품을 수정하는 폼으로 이동하는 메서드
+     * GET 요청이기 떄문에 사용자가 등록한 맞는 화장품을 응답해주어야 한다.
+     */
+    @Transactional(readOnly = true)
+    public List<MyCosmeticsResponse.CosmeticExperienceDto> getAllSuitableCosmetics(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자 정보를 찾을 수 없습니다"));
+
+        List<CosmeticExperience> experiences = cosmeticExperienceRepository.findByUserId(userId);
+
+        List<MyCosmeticsResponse.CosmeticExperienceDto> suitableList = experiences.stream()
+                .filter(CosmeticExperience::isSuitable)
+                .map(this::convertToDto)
+                .toList();
+
+        return suitableList;
     }
 
     private MyCosmeticsResponse.CosmeticExperienceDto convertToDto(CosmeticExperience experience) {
