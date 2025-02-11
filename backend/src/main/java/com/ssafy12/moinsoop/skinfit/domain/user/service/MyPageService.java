@@ -4,8 +4,10 @@ import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.repository.CosmeticRepository;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.CosmeticExperience;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.CosmeticSymptom;
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.IngredientExperience;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.Symptom;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.CosmeticExperienceRepository;
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.IngredientExperienceRepository;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.SymptomRepository;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.ReviewLike;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.repository.ReviewLikeRepository;
@@ -14,10 +16,7 @@ import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.SkinType;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.UserSkinType;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.repository.UserSkinTypeRepository;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.CosmeticUpdateRequest;
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.CosmeticExperienceDto;
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.MyCosmeticsResponse;
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.MyReviewResponse;
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UserNicknameAndUserSkinTypeResponse;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.*;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -40,6 +39,7 @@ public class MyPageService {
     private final CosmeticExperienceRepository cosmeticExperienceRepository;
     private final CosmeticRepository cosmeticRepository;
     private final SymptomRepository symptomRepository;
+    private final IngredientExperienceRepository ingredientExperienceRepository;
 
     @Transactional(readOnly = true)
     public UserNicknameAndUserSkinTypeResponse getUserNicknameAndSkinTypes(Integer userId) {
@@ -119,7 +119,7 @@ public class MyPageService {
                 cosmeticExperienceRepository.findByUser_UserIdAndIsSuitableTrue(userId);
 
         return experiences.stream()
-                .map(this::convertToDtoAtUpdate)
+                .map(this::convertToDtoAtUpdateCosmetic)
                 .toList();
     }
 
@@ -141,7 +141,7 @@ public class MyPageService {
                 cosmeticExperienceRepository.findByUser_UserIdAndIsSuitableFalse(userId);
 
         return experiences.stream()
-                .map(this::convertToDtoAtUpdate)
+                .map(this::convertToDtoAtUpdateCosmetic)
                 .toList();
     }
 
@@ -154,6 +154,20 @@ public class MyPageService {
         updateCosmeticExperiences(user, requests, false);
     }
 
+    // 잘 맞는 성분 목록 조회
+    public List<IngredientExperienceDto> getAllSuitableIngredients(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자 정보를 찾을 수 없습니다"));
+
+        List<IngredientExperience> experiences =
+                ingredientExperienceRepository.findByUser_UserIdAndIsSuitableTrue(userId);
+
+        return experiences.stream()
+                .map(this::convertToDtoAtUpdateIngredient)
+                .toList();
+    }
+
+
     private MyCosmeticsResponse.CosmeticExperienceDto convertToDto(CosmeticExperience experience) {
         return MyCosmeticsResponse.CosmeticExperienceDto.builder()
                 .cosmeticId(experience.getCosmetic().getCosmeticId())
@@ -165,7 +179,7 @@ public class MyPageService {
     }
 
     // DTO 변환
-    private CosmeticExperienceDto convertToDtoAtUpdate(CosmeticExperience experience) {
+    private CosmeticExperienceDto convertToDtoAtUpdateCosmetic(CosmeticExperience experience) {
         List<CosmeticExperienceDto.SymptomDto> symptoms =
                 experience.isSuitable() ? new ArrayList<>() : // 잘 맞는 화장품이면 빈 리스트
                         experience.getCosmeticSymptoms().stream()
@@ -238,6 +252,24 @@ public class MyPageService {
         // 5. 변경사항 적용
         cosmeticExperienceRepository.deleteAll(experiencesToDelete);
         cosmeticExperienceRepository.saveAll(experiencesToAdd);
+    }
+
+    // DTO 변환
+    private IngredientExperienceDto convertToDtoAtUpdateIngredient(IngredientExperience experience) {
+        List<IngredientExperienceDto.SymptomDto> symptoms =
+                experience.isSuitable() ? new ArrayList<>() :
+                        experience.getIngredientSymptoms().stream()
+                                .map(symptom -> IngredientExperienceDto.SymptomDto.builder()
+                                        .symptomId(symptom.getSymptom().getSymptomId())
+                                        .symptomName(symptom.getSymptom().getName())
+                                        .build())
+                                .toList();
+
+        return IngredientExperienceDto.builder()
+                .ingredientId(experience.getIngredient().getIngredientId())
+                .ingredientName(experience.getIngredient().getIngredientName())
+                .symptoms(symptoms)
+                .build();
     }
 
 }
