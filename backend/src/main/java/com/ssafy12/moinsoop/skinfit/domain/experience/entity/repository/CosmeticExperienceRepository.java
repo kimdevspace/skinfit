@@ -15,4 +15,6 @@ public interface CosmeticExperienceRepository extends JpaRepository<CosmeticExpe
     List<CosmeticExperience> findByUserId(Integer userId);
 
     List<CosmeticExperience> findByUser_UserIdAndIsSuitableTrue(Integer userId);
+    // CosmeticExperienceRepository
+    List<CosmeticExperience> findByUser_UserIdAndIsSuitableFalse(Integer userId);
 }
