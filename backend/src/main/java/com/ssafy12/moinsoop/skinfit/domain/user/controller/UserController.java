@@ -147,5 +147,14 @@ public class UserController {
         return ResponseEntity.ok(myPageService.getAllUnsuitableIngredients(userId));
     }
 
+    // 안 맞는 성분 수정
+    // 안맞는 성분 목록 수정
+    @PutMapping("/mypage/bad-ingredients")
+    public ResponseEntity<Void> updateUnsuitableIngredients(@AuthenticationPrincipal Integer userId,
+                                                            @RequestBody List<IngredientUpdateRequest> request) {
+        myPageService.updateUnsuitableIngredients(userId, request);
+        return ResponseEntity.ok().build();
+    }
+
 
 }

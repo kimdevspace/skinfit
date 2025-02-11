@@ -188,6 +188,13 @@ public class MyPageService {
                 .toList();
     }
 
+    // 안 맞는 성분 수정
+    // 안맞는 성분 목록 수정
+    @Transactional
+    public void updateUnsuitableIngredients(Integer userId, List<IngredientUpdateRequest> requests) {
+        updateIngredientExperiences(userId, requests, false);
+    }
+
 
     private MyCosmeticsResponse.CosmeticExperienceDto convertToDto(CosmeticExperience experience) {
         return MyCosmeticsResponse.CosmeticExperienceDto.builder()
