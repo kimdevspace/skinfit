@@ -56,52 +56,31 @@
           font-size: 1.4rem;
           font-weight: 700;
         }
-  
-        .ingredient {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 0.5rem 0.5rem 0;
-  
-          .ingredient-name {
-            color: #8e8e8e;
-            font-size: 1.1rem;
-          }
-  
-          .ewg-score {
-            font-size: 1.2rem;
-            font-weight: 700;
-          }
-        }
 
         // 안전 등급 스타일링
         &.low {
-          .grade-title,
-          .ewg-score {
+          .grade-title {
             color: #A5CF96;
           }
         }
 
         // 보통 등급 스타일링
         &.moderate {
-          .grade-title,
-          .ewg-score {
+          .grade-title {
             color: #FFB58C;
           }
         }
 
         // 위험 등급 스타일링
         &.high {
-          .grade-title,
-          .ewg-score {
+          .grade-title {
             color: #FF7D8A;
           }
         }
 
         // 미분류 등급 스타일링
-        &.unclassified {
-          .grade-title,
-          .ewg-score {
+        &.others {
+          .grade-title {
             color: #8E8E8E;
           }
         }
