@@ -38,7 +38,7 @@ public class IngredientExperience {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "ingredientExperience")
+    @OneToMany(mappedBy = "ingredientExperience", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<IngredientSymptom> ingredientSymptoms = new ArrayList<>();
 
     @PrePersist
