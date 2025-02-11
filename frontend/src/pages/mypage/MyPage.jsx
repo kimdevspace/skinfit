@@ -1,38 +1,57 @@
-import "./MyPage.scss"
-import ToggleButton from "../../components/common/ToggleButton"
-import { useMyPageInfo, useTop3Data, useMyCosmetics, useMyIngredients, useMyReviews } from "../../stores/Mypage"
-import axios from "axios"
-import { useQuery } from "@tanstack/react-query"
-import { useState } from "react"
-import { Link } from "react-router-dom"
-import ReviewItem from "../../components/review/ReviewItem"
+import "./MyPage.scss";
+import ToggleButton from "../../components/common/ToggleButton";
+import {
+  useMyPageInfo,
+  useTop3Data,
+  useMyCosmetics,
+  useMyIngredients,
+  useReviews,
+} from "../../stores/Mypage";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import ReviewItem from "../../components/review/ReviewItem";
 
 function MyPage() {
   //1. 스토어 데이터 불러오기
   // 마이페이지 유저 정보 불러오기
-  const { data: myinfos } = useMyPageInfo()
+  const { myinfos } = useMyPageInfo();
 
   // 성분 top3 데이터
-  const { data: top3Data } = useTop3Data()
+  const { top3Data } = useTop3Data();
 
   // 내가 등록한 화장품 데이터
-  const { data: myCosmetics } = useMyCosmetics()
+  const { myMatchedCosData, myUnMatchedCosData } = useMyCosmetics();
 
   // 성분 데이터
-  const { data: myIngredients } = useMyIngredients()
+  const { myIngredientsData } = useMyIngredients();
 
   // 리뷰 데이터
-  const { data: myReviews } = useMyReviews()
+  const { myReviews, likedReviews } = useReviews();
 
   //2. 액션 감지
-  // 리뷰 토글 버튼 감지
-  const [showLikedReviews, setShowLikedReviews] = useState(true)
-  const reviewHandler= () => {
-      
-    setShowLikedReviews(true)
-    console.log('메인페이지에서 감지',showLikedReviews)
+
+  // 내가 등록한 화장품 토글 버튼 감지
+  const [isCosmeticClicked, setIsCosmeticClicked] = useState("맞는 화장품");
+  const cosmeticHandler = (text) => {
+    setIsCosmeticClicked(text);
+    console.log("화장품 토글:", text);
   };
-  
+
+  // 내가 등록한 성분 토글 버튼 감지
+  const [isIngredientClicked, setIsIngredientClicked] = useState("맞는 성분");
+  const ingredientHandler = (text) => {
+    setIsIngredientClicked(isIngredientClicked);
+    console.log("마이페이지 성분 데이터 조회", text);
+  };
+
+  // 리뷰 토글 버튼 감지
+  const [isReviewClicked, setReviewIsClicked] = useState("내가 좋아요한 리뷰");
+  const reviewHandler = (text) => {
+    setReviewIsClicked(text);
+    console.log("마이페이지에서 리뷰감지", text); // 업데이트된 값을 직접 출력
+  };
 
   return (
     <div className="wrapper">
@@ -40,7 +59,12 @@ function MyPage() {
       <div className="edit-user-info">
         <span className="user-name">{myinfos?.nickname}</span>
         <span className="user-name2">님</span>
-        <div className="user-skin-type">{myinfos && myinfos.skinTypeId.map((skinType, index) => <span key={index}>#{skinType} </span>)}</div>
+        <div className="user-skin-type">
+          {myinfos &&
+            myinfos.skinTypeId.map((skinType, index) => (
+              <span key={index}>#{skinType} </span>
+            ))}
+        </div>
         <div>
           <button className="edit-info-btn">내 정보 수정하기</button>
         </div>
@@ -73,42 +97,79 @@ function MyPage() {
       <div className="cosmetic-wrapper">
         <h2>내가 등록한 화장품</h2>
         <div className="set-position">
-          <ToggleButton btn1="맞는 화장품" btn2="맞지 않는 화장품" />
+          <ToggleButton
+            text1="맞는 화장품"
+            text2="맞지 않는 화장품"
+            handler={cosmeticHandler}
+          />
           <button className="edit-del-btn">수정</button>
         </div>
-        <div className="cosmetic-list">
-          <span className="cosmetic-name">{}</span>
-          <img src="" alt="" />
-        </div>
-        <hr />
+
+        {/* 조건부 렌더링 및 map() */}
+        {(isCosmeticClicked === "화장품"
+          ? myMatchedCosData
+          : myUnMatchedCosData
+        )?.map((cos) => (
+          <div key={cos.id} className="cosmetic-item-wrapper">
+            <div className="cosmetic-item">
+              <span className="cosmetic-name">{cos.cosmeticName}</span>
+              <img src="" alt="" />
+            </div>
+            <hr />
+          </div>
+        ))}
       </div>
 
-      {/* 내가 등록한 성분분 정보 */}
-      <div className="my-ingredient-box">
+      {/* 내가 등록한 성분 정보 */}
+      {/* <div className="my-ingredient-box">
         <h2>내가 등록한 성분</h2>
         <div className="set-position">
-          <ToggleButton btn1="맞는 성분" btn2="맞지 않는 성분" />
+          <ToggleButton
+            text1="맞는 성분"
+            text2="맞지 않는 성분"
+            handler={ingredientHandler}
+          />
           <button className="edit-del-btn">수정</button>
         </div>
-        <div className="ingredient-list">
-          <div className="ingredient-name">아말신남알</div>
-          <div className="ewg-level">-</div>
-        </div>
-        <hr />
-      </div>
+        {(isIngredientClicked === "맞는 성분"
+          ? myMatchedIngData
+          : myUnMatchedIngData
+        )?.map((ing) => (
+          <div key={ing.id}>
+            <div className="ingredient-list">
+              <div className="ingredient-name">{ing.name}</div>
+              <div className="ewg-level">{ing.ewgLevel}</div>
+            </div>
+            <hr />
+          </div>
+        ))}
+      </div> */}
 
       {/* 리뷰 목록 */}
       <div className="review-wrapper">
         <h2>리뷰 목록</h2>
-        <ToggleButton btn1="내가 좋아요한 리뷰" btn2="내가 작성한 리뷰" onClick={reviewHandler}/>
-        {myReviews && <ReviewItem reviews={showLikedReviews ? myReviews.likedReviews : myReviews.myReviews} />}
+        {/* props로 함수 전달 */}
+        <ToggleButton
+          text1="내가 좋아요한 리뷰"
+          text2="내가 작성한 리뷰"
+          handler={reviewHandler}
+        />
+
+        {/* 리뷰 데이터를 하나씩 전달 */}
+        {isReviewClicked === "내가 좋아요한 리뷰"
+          ? likedReviews?.map((review) => (
+              <ReviewItem key={review.reviewId} review={review} />
+            ))
+          : myReviews?.map((review) => (
+              <ReviewItem key={review.reviewId} review={review} />
+            ))}
       </div>
 
       {/* 회원탈퇴 */}
       <hr className="hr-line" />
       <p className="signout">회원탈퇴</p>
     </div>
-  )
+  );
 }
 
-export default MyPage
+export default MyPage;

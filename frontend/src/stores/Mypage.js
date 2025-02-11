@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query"
 const fetchMyPage = async () => {
   const response = await axios.get("/api/v1/user/mypage")
   if (response.data.status === "success") {
-    return response.data.user
+    return response.data
   }
   throw new Error("Failed to fetch cosmetics")
 }
@@ -50,18 +50,20 @@ const fetchTop3Data = async () => {
 
 // create : 스토어 생성
 export const useTop3DataStore = create((set) => ({
-  setIngredientName: (ingredientName) => set({ ingredientName })
+  top3Data :[],
+  setTop3Data: (data) => set({ top3Data: data })
 }))
 
+
 export const useTop3Data = () => {
-  const setIngredientName = useTop3DataStore((state) => state.setIngredientName)
+  const setTop3Data = useTop3DataStore((state) => state.setTop3Data)
 
   return useQuery({
     queryKey: ["top3Data"],
     queryFn: fetchTop3Data,
     onSuccess: (data) => {
       console.log("TOP3 데이터 조회완료", data)
-      setIngredientName(data)
+      setTop3Data(data.ingredients)
     },
     onError: (error) => {
       console.error("top3 성분 조회 에러", error)
@@ -79,20 +81,25 @@ const fetchMyCosmetics = async () => {
 
 // create : 스토어 생성
 export const useMyCosmeticsStore = create((set) => ({
-  myCosmeticsData: {},
+  myMatchedCosData: [],
+  myUnmatchedCosData : [],
   //기존 객체 업데이트
-  setMyCosmeticsData: (data) => set({ myCosmeticsData: data }),
+  setMyMatchedCosData: (data) => set({ myMatchedCosData: data }),
+  setMyUnMatchedCosData: (data) => set({ myUnMatchedCosData: data }),
+
 }))
 
 export const useMyCosmetics = () => {
-  const setMyCosmeticsData = useMyCosmeticsStore((state) => state.setMyCosmeticsData)
+  const setMyMatchedCosData = useMyCosmeticsStore((state) => state.setMyMatchedCosData)
+  const setMyUnMatchedCosData = useMyCosmeticsStore((state) => state.setMyUnMatchedCosData)
 
   return useQuery({
     queryKey: ["myCosmetics"],
     queryFn: fetchMyCosmetics,
     onSuccess: (data) => {
       console.log("내가 등록한 화장품 데이터 조회완료", data)
-      setMyCosmeticsData(data) // 데이터 저장
+      setMyMatchedCosData(data.suitableCosmetics) // 데이터 저장
+      setMyUnMatchedCosData(data.unsuitableCosmetics)
     },
     onError: (error) => {
       console.error("내가 등록한 화장품 데이터 조회 에러", error)
@@ -112,7 +119,7 @@ const fetchMyIngredients = async () => {
 
 // create : 스토어 생성
 export const useMyIngredientsStore = create((set) => ({
-  myIngredientsData: {},
+  myIngredientsData: [],
   //기존 객체 업데이트
   setMyIngredientsData: (data) => set({ myIngredientsData: data }),
 }))
@@ -142,25 +149,29 @@ export const fetchReviews = async () => {
 }
 
 
-// create : 스토어 생성
-export const useMyReviewsStore = create((set) => ({
-  myReviewsData: {},
-  //기존 객체 업데이트
-  setMyReviewsData: (data) => set({ myReviewsData: data })
+// Zustand store 생성
+export const useReviewsStore = create((set) => ({
+  myReviews: [],
+  likedReviews: [],
+  setMyReviews: (data) => set({ myReviews: data }),
+  setLikedReviews: (data) => set({ likedReviews: data })
 }))
 
-export const useMyReviews = () => {
-  const setMyReviewsData = useMyReviewsStore((state) => state.setMyReviewsData)
+// 커스텀 훅: 리뷰 데이터 조회 및 상태 저장
+export const useReviews = () => {
+  const setMyReviews = useReviewsStore((state) => state.setMyReviews)
+  const setLikedReviews = useReviewsStore((state) => state.setLikedReviews)
 
-// 캐싱싱
   return useQuery({
-    queryKey: ["myReviews"],
-    queryFn: fetchReviews,
+    queryKey: ['reviews'], // 쿼리 키는 하나로 설정
+    queryFn: fetchReviews, // 동일한 API 호출 함수 사용
     onSuccess: (data) => {
-      console.log("리뷰 데이터 조회완료", data)
+      console.log('리뷰 데이터 조회 완료', data)
+      setMyReviews(data.myReviews) // Zustand 스토어에 myReviews 저장
+      setLikedReviews(data.likedReviews) // Zustand 스토어에 likedReviews 저장
     },
     onError: (error) => {
-      console.error("리뷰 조회 에러", error)
+      console.error('리뷰 데이터 조회 에러', error)
     },
   })
 }

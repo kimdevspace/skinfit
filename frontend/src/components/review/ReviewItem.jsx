@@ -5,7 +5,7 @@ import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 
-export default function ReviewItem({ reviews }) {
+export default function ReviewItem({ review }) {
   
   //리뷰 점수(잘맞아요 등)
   const scoreMap = {
@@ -24,8 +24,7 @@ export default function ReviewItem({ reviews }) {
 
   return (
     <>
-     {Array.isArray(reviews) &&
-        reviews.map((review) => {
+
           <div key={review.reviewId} className="review-box">
             <p className="cosmetic-name">{review.cosmetic.name} </p>
             <div className="user-info-section">
@@ -57,7 +56,7 @@ export default function ReviewItem({ reviews }) {
               </div>
             </div>
           </div>
-        })}
+
     </>
   )
 }
