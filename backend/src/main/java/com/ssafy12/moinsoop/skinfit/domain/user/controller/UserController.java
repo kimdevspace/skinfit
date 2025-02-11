@@ -1,10 +1,7 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.controller;
 
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.*;
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.MyCosmeticsResponse;
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.MyReviewResponse;
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UserNicknameAndUserSkinTypeResponse;
-import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UserProfileResponse;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.*;
 import com.ssafy12.moinsoop.skinfit.domain.user.service.MyPageService;
 import com.ssafy12.moinsoop.skinfit.domain.user.service.UserService;
 import jakarta.validation.Valid;
@@ -107,7 +104,7 @@ public class UserController {
     }
 
     @GetMapping("/mypage/good-cosmetics")
-    public ResponseEntity<List<MyCosmeticsResponse.CosmeticExperienceDto>> getAllSuitableCosmetics(@AuthenticationPrincipal Integer userId) {
+    public ResponseEntity<List<CosmeticExperienceDto>> getAllSuitableCosmetics(@AuthenticationPrincipal Integer userId) {
         return ResponseEntity.ok(myPageService.getAllSuitableCosmetics(userId));
     }
 
@@ -115,6 +112,18 @@ public class UserController {
     public ResponseEntity<Void> updateSuitableCosmetics(@AuthenticationPrincipal Integer userId,
                                                         @RequestBody List<CosmeticUpdateRequest> request) {
         myPageService.updateSuitableCosmetics(userId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/mypage/bad-cosmetics")
+    public ResponseEntity<List<CosmeticExperienceDto>> getAllUnsuitableCosmetics(@AuthenticationPrincipal Integer userId) {
+        return ResponseEntity.ok(myPageService.getAllUnsuitableCosmetics(userId));
+    }
+
+    @PutMapping("/mypage/bad-cosmetics")
+    public ResponseEntity<Void> updateUnsuitableCosmetics(@AuthenticationPrincipal Integer userId,
+                                                        @RequestBody List<CosmeticUpdateRequest> request) {
+        myPageService.updateUnsuitableCosmetics(userId, request);
         return ResponseEntity.ok().build();
     }
 }

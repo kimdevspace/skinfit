@@ -1,14 +1,12 @@
 package com.ssafy12.moinsoop.skinfit.domain.experience.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "cosmetic_symptom")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CosmeticSymptom {
     @Id

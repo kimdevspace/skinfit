@@ -1,8 +1,12 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.service;
 
+import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.repository.CosmeticRepository;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.CosmeticExperience;
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.CosmeticSymptom;
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.Symptom;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.CosmeticExperienceRepository;
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.SymptomRepository;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.ReviewLike;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.repository.ReviewLikeRepository;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.repository.ReviewRepository;
@@ -10,6 +14,7 @@ import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.SkinType;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.UserSkinType;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.repository.UserSkinTypeRepository;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.CosmeticUpdateRequest;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.CosmeticExperienceDto;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.MyCosmeticsResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.MyReviewResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UserNicknameAndUserSkinTypeResponse;
@@ -20,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,6 +39,7 @@ public class MyPageService {
     private final ReviewLikeRepository reviewLikeRepository;
     private final CosmeticExperienceRepository cosmeticExperienceRepository;
     private final CosmeticRepository cosmeticRepository;
+    private final SymptomRepository symptomRepository;
 
     @Transactional(readOnly = true)
     public UserNicknameAndUserSkinTypeResponse getUserNicknameAndSkinTypes(Integer userId) {
@@ -103,49 +110,48 @@ public class MyPageService {
      * GET 요청이기 떄문에 사용자가 등록한 맞는 화장품을 응답해주어야 한다.
      */
     @Transactional(readOnly = true)
-    public List<MyCosmeticsResponse.CosmeticExperienceDto> getAllSuitableCosmetics(Integer userId) {
+    // 잘 맞는 화장품 목록 조회
+    public List<CosmeticExperienceDto> getAllSuitableCosmetics(Integer userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자 정보를 찾을 수 없습니다"));
 
-        List<CosmeticExperience> experiences = cosmeticExperienceRepository.findByUserId(userId);
+        List<CosmeticExperience> experiences =
+                cosmeticExperienceRepository.findByUser_UserIdAndIsSuitableTrue(userId);
 
-        List<MyCosmeticsResponse.CosmeticExperienceDto> suitableList = experiences.stream()
-                .filter(CosmeticExperience::isSuitable)
-                .map(this::convertToDto)
+        return experiences.stream()
+                .map(this::convertToDtoAtUpdate)
                 .toList();
-
-        return suitableList;
     }
 
-    // 나에게 맞는 화장품 수정 메서드
+    // 잘 맞는 화장품 목록 수정
     @Transactional
     public void updateSuitableCosmetics(Integer userId, List<CosmeticUpdateRequest> requests) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자 정보를 찾을 수 없습니다"));
 
-        // 1. 기존 잘 맞는 화장품 목록 조회
-        List<CosmeticExperience> existingExperiences = cosmeticExperienceRepository.findByUser_UserIdAndIsSuitableTrue(userId);
-        // 2. 요청된 화장품 ID 목록 추출
-        List<Integer> newCosmeticIds = requests.stream()
-                .map(CosmeticUpdateRequest::getCosmeticId)
-                .toList();
-        // 3. 삭제할 거 찾기 (새 목록에 없는 기존 경험들)
-        List<CosmeticExperience> experiencesToDelete = existingExperiences.stream()
-                .filter(exp -> !newCosmeticIds.contains(exp.getCosmetic().getCosmeticId()))
-                .toList();
-        // 4. 새로 추가할 경험 생성
-        List<CosmeticExperience> experiencesToAdd = CosmeticExperience.updateCosmeticExperiences(
-                user,
-                existingExperiences,
-                newCosmeticIds,
-                true,
-                cosmeticRepository
-        );
+        updateCosmeticExperiences(user, requests, true);
+    }
 
-        // 5. 삭제
-        cosmeticExperienceRepository.deleteAll(experiencesToDelete);
-        // 6. 등록
-        cosmeticExperienceRepository.saveAll(experiencesToAdd);
+    // 안맞는 화장품 목록 조회
+    public List<CosmeticExperienceDto> getAllUnsuitableCosmetics(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자 정보를 찾을 수 없습니다"));
+
+        List<CosmeticExperience> experiences =
+                cosmeticExperienceRepository.findByUser_UserIdAndIsSuitableFalse(userId);
+
+        return experiences.stream()
+                .map(this::convertToDtoAtUpdate)
+                .toList();
+    }
+
+    // 나에게 맞지 않는 화장품 수정 메서드
+    @Transactional
+    public void updateUnsuitableCosmetics(Integer userId, List<CosmeticUpdateRequest> requests) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자 정보를 찾을 수 없습니다"));
+
+        updateCosmeticExperiences(user, requests, false);
     }
 
     private MyCosmeticsResponse.CosmeticExperienceDto convertToDto(CosmeticExperience experience) {
@@ -157,4 +163,81 @@ public class MyPageService {
                 .imageUrl(experience.getCosmetic().getImageUrl())
                 .build();
     }
+
+    // DTO 변환
+    private CosmeticExperienceDto convertToDtoAtUpdate(CosmeticExperience experience) {
+        List<CosmeticExperienceDto.SymptomDto> symptoms =
+                experience.isSuitable() ? new ArrayList<>() : // 잘 맞는 화장품이면 빈 리스트
+                        experience.getCosmeticSymptoms().stream()
+                                .map(cosmeticSymptom -> CosmeticExperienceDto.SymptomDto.builder()
+                                        .symptomId(cosmeticSymptom.getSymptom().getSymptomId())
+                                        .symptomName(cosmeticSymptom.getSymptom().getName())
+                                        .build())
+                                .toList();
+
+        return CosmeticExperienceDto.builder()
+                .cosmeticId(experience.getCosmetic().getCosmeticId())
+                .cosmeticBrand(experience.getCosmetic().getCosmeticBrand())
+                .cosmeticName(experience.getCosmetic().getCosmeticName())
+                .cosmeticVolume(experience.getCosmetic().getCosmeticVolume())
+                .imageUrl(experience.getCosmetic().getImageUrl())
+                .symptoms(symptoms)
+                .build();
+    }
+
+    // 화장품 경험 업데이트 공통 메서드
+    private void updateCosmeticExperiences(User user, List<CosmeticUpdateRequest> requests, boolean isSuitable) {
+        // 1. 기존 화장품 경험 목록 조회
+        List<CosmeticExperience> existingExperiences = isSuitable ?
+                cosmeticExperienceRepository.findByUser_UserIdAndIsSuitableTrue(user.getUserId()) :
+                cosmeticExperienceRepository.findByUser_UserIdAndIsSuitableFalse(user.getUserId());
+
+        // 2. 요청된 화장품 ID 목록
+        List<Integer> newCosmeticIds = requests.stream()
+                .map(CosmeticUpdateRequest::getCosmeticId)
+                .toList();
+
+        // 3. 삭제할 경험 찾기
+        List<CosmeticExperience> experiencesToDelete = existingExperiences.stream()
+                .filter(exp -> !newCosmeticIds.contains(exp.getCosmetic().getCosmeticId()))
+                .toList();
+
+        // 4. 새로 추가할 경험 생성
+        List<Integer> existingIds = existingExperiences.stream()
+                .map(exp -> exp.getCosmetic().getCosmeticId())
+                .toList();
+
+        List<CosmeticExperience> experiencesToAdd = requests.stream()
+                .filter(request -> !existingIds.contains(request.getCosmeticId()))
+                .map(request -> {
+                    Cosmetic cosmetic = cosmeticRepository.findById(request.getCosmeticId())
+                            .orElseThrow(() -> new EntityNotFoundException("화장품을 찾을 수 없습니다: " + request.getCosmeticId()));
+
+                    CosmeticExperience experience = CosmeticExperience.builder()
+                            .user(user)
+                            .cosmetic(cosmetic)
+                            .isSuitable(isSuitable)
+                            .build();
+
+                    // 안맞는 화장품일 경우 증상 추가
+                    if (!isSuitable && request.getSymptomIds() != null && !request.getSymptomIds().isEmpty()) {
+                        List<Symptom> symptoms = symptomRepository.findAllById(request.getSymptomIds());
+                        symptoms.forEach(symptom -> {
+                            CosmeticSymptom cosmeticSymptom = CosmeticSymptom.builder()
+                                    .cosmeticExperience(experience)
+                                    .symptom(symptom)
+                                    .build();
+                            experience.addSymptom(cosmeticSymptom);
+                        });
+                    }
+
+                    return experience;
+                })
+                .toList();
+
+        // 5. 변경사항 적용
+        cosmeticExperienceRepository.deleteAll(experiencesToDelete);
+        cosmeticExperienceRepository.saveAll(experiencesToAdd);
+    }
+
 }
