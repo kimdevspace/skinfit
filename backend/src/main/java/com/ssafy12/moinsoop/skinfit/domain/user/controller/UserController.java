@@ -126,4 +126,13 @@ public class UserController {
         myPageService.updateUnsuitableCosmetics(userId, request);
         return ResponseEntity.ok().build();
     }
+
+    // 맞는 성분조회
+    @GetMapping("/mypage/good-ingredients")
+    public ResponseEntity<List<IngredientExperienceDto>> getSuitableIngredients(@AuthenticationPrincipal Integer userId) {
+        return ResponseEntity.ok(myPageService.getAllSuitableIngredients(userId));
+    }
+
+
+
 }
