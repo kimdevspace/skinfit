@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import "./CosmeticDetail.scss";
 import AllIngrePopup from "../../components/cosmetics/AllIngrePopup";
 import Header from "../../components/common/Header";
 import Button from "../../components/common/Button";
@@ -33,30 +34,31 @@ function CosmeticDetail() {
     cosmeticBrand: "브랜드 A",
     category: "스킨케어",
     imageUrl: "https://example.com/images/product123.jpg",
+    safetyStatus: "유의",
     ingredients: [
       {
-        "ingredient_name": "히알루론산",
-        "ewg_score_max": 2,
-        "ewg_score_min": null,
-        "found_count": 2 // 내가 써본 화장품에서 발견된 횟수
+        ingredientName: "히알루론산",
+        ewgScoreMax: 2,
+        ewgScoreMin: null,
+        foundCount: 2, // 내가 써본 화장품에서 발견된 횟수
       },
       {
-        "ingredient_name": "카세늠듐",
-        "ewg_score_max": 3,
-        "ewg_score_min": 1,
-        "found_count": 1 // 내가 써본 화장품에서 발견된 횟수
+        ingredientName: "카세늠듐",
+        ewgScoreMax: 3,
+        ewgScoreMin: 1,
+        foundCount: 1, // 내가 써본 화장품에서 발견된 횟수
       },
       {
-        "ingredient_name": "히알루론산",
-        "ewg_score_max": 7,
-        "ewg_score_min": null,
-        "found_count": 0 // 내가 써본 화장품에서 발견된 횟수
-      }
+        ingredientName: "히알루론산",
+        ewgScoreMax: 7,
+        ewgScoreMin: null,
+        foundCount: 0, // 내가 써본 화장품에서 발견된 횟수
+      },
     ],
   };
   //#endregion
 
-  // #region 전성분 보기 팝업창
+  // #region 전성분 보기 팝업창 함수
   // 전성분 팝업창 제어
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
@@ -71,14 +73,57 @@ function CosmeticDetail() {
   };
   // #endregion
 
+  // 내 피부 맞춤 리뷰 토글
+  const [isOn, setIsOn] = useState(true);
+
+  const handleToggle = () => {
+    setIsOn(!isOn);
+  };
+
+  // 리뷰 정렬
+  const [sortOrder, setSortOrder] = useState('popular')
+  const handleSort = (order) => {
+    setSortOrder(order)
+  }
+
   return (
     <div className="cosmetic-detail">
       <Header title="상세 정보" />
 
+      {/* 화장품 정보 */}
       <CosmeticInfo cosmeticData={cosmeticData} />
 
+      {/* 전성분 보기 버튼 */}
       <Button text="전성분 보기" color="white" onClick={openPopup} />
       {isPopupOpen && <AllIngrePopup closePopup={closePopup} />}
+
+      {/* 리뷰 */}
+      <div className="reviews">
+        <p className="title">리뷰</p>
+
+        {/* 내 피부 맞춤 리뷰 */}
+        <div className="skin-type-review">
+          <div
+            className={`toggle-btn ${isOn ? "on" : "off"}`}
+            onClick={handleToggle}
+          >
+            <div className="slider"></div>
+          </div>
+          <p>내 피부 맞춤 리뷰</p>
+        </div>
+
+        {/* 리뷰 컨트롤(정렬, 글 작성) */}
+        <div className="review-controls">
+          <div className="sort-order-btn">
+            <button className={`popular ${sortOrder === 'popular' ? 'active' : ''}`} onClick={() => handleSort("popular")}>좋아요순</button>
+            <button className={`latest ${sortOrder === 'latest' ? 'active' : ''}`} onClick={() => handleSort("latest")}>최신순</button>
+          </div>
+          <Link to={'/review'} className="write-btn">작성하기</Link>
+        </div>
+
+        {/* 리뷰 리스트 */}
+        <div className="review-list"></div>
+      </div>
     </div>
   );
 }
