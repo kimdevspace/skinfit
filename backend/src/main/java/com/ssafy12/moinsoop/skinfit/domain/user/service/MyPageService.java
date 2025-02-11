@@ -175,6 +175,19 @@ public class MyPageService {
         updateIngredientExperiences(userId, requests, true);
     }
 
+    // 안 맞는 성분 조회
+    @Transactional(readOnly = true)
+    public List<IngredientExperienceDto> getAllUnsuitableIngredients(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자 정보를 찾을 수 없습니다"));
+
+        List<IngredientExperience> experiences = ingredientExperienceRepository.findByUser_UserIdAndIsSuitableFalse(userId);
+
+        return experiences.stream()
+                .map(this::convertToDtoAtUpdateIngredient)
+                .toList();
+    }
+
 
     private MyCosmeticsResponse.CosmeticExperienceDto convertToDto(CosmeticExperience experience) {
         return MyCosmeticsResponse.CosmeticExperienceDto.builder()
