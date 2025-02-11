@@ -141,5 +141,11 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    // 안 맞는 성분 조회
+    @GetMapping("/mypage/bad-ingredients")
+    public ResponseEntity<List<IngredientExperienceDto>> getUnsuitableIngredients(@AuthenticationPrincipal Integer userId) {
+        return ResponseEntity.ok(myPageService.getAllUnsuitableIngredients(userId));
+    }
+
 
 }
