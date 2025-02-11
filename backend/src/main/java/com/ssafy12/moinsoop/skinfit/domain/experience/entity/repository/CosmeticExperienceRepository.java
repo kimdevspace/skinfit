@@ -13,4 +13,6 @@ public interface CosmeticExperienceRepository extends JpaRepository<CosmeticExpe
             "JOIN FETCH ce.cosmetic " +
             "WHERE ce.user.userId = :userId")
     List<CosmeticExperience> findByUserId(Integer userId);
+
+    List<CosmeticExperience> findByUser_UserIdAndIsSuitableTrue(Integer userId);
 }

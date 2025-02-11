@@ -110,4 +110,11 @@ public class UserController {
     public ResponseEntity<List<MyCosmeticsResponse.CosmeticExperienceDto>> getAllSuitableCosmetics(@AuthenticationPrincipal Integer userId) {
         return ResponseEntity.ok(myPageService.getAllSuitableCosmetics(userId));
     }
+
+    @PutMapping("/mypage/good-cosmetics")
+    public ResponseEntity<Void> updateSuitableCosmetics(@AuthenticationPrincipal Integer userId,
+                                                        @RequestBody List<CosmeticUpdateRequest> request) {
+        myPageService.updateSuitableCosmetics(userId, request);
+        return ResponseEntity.ok().build();
+    }
 }
