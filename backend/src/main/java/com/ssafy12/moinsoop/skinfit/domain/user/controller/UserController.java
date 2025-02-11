@@ -133,6 +133,13 @@ public class UserController {
         return ResponseEntity.ok(myPageService.getAllSuitableIngredients(userId));
     }
 
+    // 맞는 성분 수정
+    @PutMapping("/mypage/good-ingredients")
+    public ResponseEntity<Void> updateSuitableIngredients(@AuthenticationPrincipal Integer userId,
+                                                          @RequestBody List<IngredientUpdateRequest> request) {
+        myPageService.updateSuitableIngredients(userId, request);
+        return ResponseEntity.ok().build();
+    }
 
 
 }
