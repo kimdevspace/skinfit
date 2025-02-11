@@ -134,6 +134,7 @@ public class MyPageService {
     }
 
     // 안맞는 화장품 목록 조회
+    @Transactional(readOnly = true)
     public List<CosmeticExperienceDto> getAllUnsuitableCosmetics(Integer userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자 정보를 찾을 수 없습니다"));
