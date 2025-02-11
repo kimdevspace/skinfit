@@ -1,5 +1,6 @@
 package com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository;
 
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.CosmeticExperience;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.IngredientExperience;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,6 +18,7 @@ public interface IngredientExperienceRepository extends JpaRepository<Ingredient
             "ORDER BY count DESC")
     List<Object[]> findTop3UnSuitableIngredientsWithCount(Integer userId, Pageable pageable);
 
+    List<IngredientExperience> findByUserUserId(Integer userId);
     List<IngredientExperience> findByUser_UserIdAndIsSuitableTrue(Integer userId);
     List<IngredientExperience> findByUser_UserIdAndIsSuitableFalse(Integer userId);
 }
