@@ -7,11 +7,10 @@ import {
   useMyIngredients,
   useReviews,
 } from "../../stores/Mypage";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import ReviewItem from "../../components/review/ReviewItem";
+import PwCheckPopUp from "../../components/auth/PwCheckPopUp";
+import { Link } from "react-router-dom";
 
 function MyPage() {
   //1. 스토어 데이터 불러오기
@@ -31,7 +30,6 @@ function MyPage() {
   const { myReviews, likedReviews } = useReviews();
 
   //2. 액션 감지
-
   // 내가 등록한 화장품 토글 버튼 감지
   const [isCosmeticClicked, setIsCosmeticClicked] = useState("맞는 화장품");
   const cosmeticHandler = (text) => {
@@ -53,6 +51,18 @@ function MyPage() {
     console.log("마이페이지에서 리뷰감지", text); // 업데이트된 값을 직접 출력
   };
 
+  // 내 정보수정 비밀번호 확인 팝업 관리
+  const [isMyInfoOpen, setyMyInfoOpen] = useState(false);
+  const handlePwPopup = () => {
+    setyMyInfoOpen(!isMyInfoOpen);
+  };
+
+  // 회원탈퇴 비밀번호 확인 팝업 관리
+  const [isWithdrawOpen, setWithdrawIsOpen] = useState(false);
+  const handleWithdrawPopup = () => {
+    setWithdrawIsOpen(!isWithdrawOpen);
+  };
+
   return (
     <div className="wrapper">
       {/* 유저 닉네임, 피부타입 정보 */}
@@ -66,7 +76,12 @@ function MyPage() {
             ))}
         </div>
         <div>
-          <button className="edit-info-btn">내 정보 수정하기</button>
+          <button className="edit-info-btn" onClick={handlePwPopup}>
+            내 정보 수정하기
+          </button>
+          {isMyInfoOpen && (
+            <PwCheckPopUp onClose={handlePwPopup} state="myinfo" />
+          )}
         </div>
       </div>
 
@@ -167,7 +182,12 @@ function MyPage() {
 
       {/* 회원탈퇴 */}
       <hr className="hr-line" />
-      <p className="signout">회원탈퇴</p>
+      <div>
+        <p className="signout" onClick={handleWithdrawPopup}>회원탈퇴</p>
+        {isWithdrawOpen && (
+          <PwCheckPopUp onClose={handleWithdrawPopup} state="withdraw" />
+        )}
+      </div>
     </div>
   );
 }
