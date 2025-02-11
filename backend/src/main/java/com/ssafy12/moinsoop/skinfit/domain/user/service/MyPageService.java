@@ -2,13 +2,12 @@ package com.ssafy12.moinsoop.skinfit.domain.user.service;
 
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.repository.CosmeticRepository;
-import com.ssafy12.moinsoop.skinfit.domain.experience.entity.CosmeticExperience;
-import com.ssafy12.moinsoop.skinfit.domain.experience.entity.CosmeticSymptom;
-import com.ssafy12.moinsoop.skinfit.domain.experience.entity.IngredientExperience;
-import com.ssafy12.moinsoop.skinfit.domain.experience.entity.Symptom;
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.*;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.CosmeticExperienceRepository;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.IngredientExperienceRepository;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.SymptomRepository;
+import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.Ingredient;
+import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.repository.IngredientRepository;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.ReviewLike;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.repository.ReviewLikeRepository;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.repository.ReviewRepository;
@@ -16,6 +15,7 @@ import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.SkinType;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.UserSkinType;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.repository.UserSkinTypeRepository;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.CosmeticUpdateRequest;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.IngredientUpdateRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.*;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.repository.UserRepository;
@@ -40,6 +40,7 @@ public class MyPageService {
     private final CosmeticRepository cosmeticRepository;
     private final SymptomRepository symptomRepository;
     private final IngredientExperienceRepository ingredientExperienceRepository;
+    private final IngredientRepository ingredientRepository;
 
     @Transactional(readOnly = true)
     public UserNicknameAndUserSkinTypeResponse getUserNicknameAndSkinTypes(Integer userId) {
@@ -155,6 +156,7 @@ public class MyPageService {
     }
 
     // 잘 맞는 성분 목록 조회
+    @Transactional(readOnly = true)
     public List<IngredientExperienceDto> getAllSuitableIngredients(Integer userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자 정보를 찾을 수 없습니다"));
@@ -165,6 +167,12 @@ public class MyPageService {
         return experiences.stream()
                 .map(this::convertToDtoAtUpdateIngredient)
                 .toList();
+    }
+
+    // 잘 맞는 성분 목록 수정
+    @Transactional
+    public void updateSuitableIngredients(Integer userId, List<IngredientUpdateRequest> requests) {
+        updateIngredientExperiences(userId, requests, true);
     }
 
 
@@ -270,6 +278,66 @@ public class MyPageService {
                 .ingredientName(experience.getIngredient().getIngredientName())
                 .symptoms(symptoms)
                 .build();
+    }
+
+    public void updateIngredientExperiences(Integer userId, List<IngredientUpdateRequest> requests, boolean isSuitable) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자 정보를 찾을 수 없습니다"));
+
+        // 1. 기존 성분 경험 목록 조회
+        List<IngredientExperience> existingExperiences = isSuitable ?
+                ingredientExperienceRepository.findByUser_UserIdAndIsSuitableTrue(userId) :
+                ingredientExperienceRepository.findByUser_UserIdAndIsSuitableFalse(userId);
+
+        // 2. 요청된 성분 ID 목록
+        List<Integer> newIngredientIds = requests.stream()
+                .map(IngredientUpdateRequest::getIngredientId)
+                .toList();
+
+        // 3. 삭제할 경험 찾기
+        List<IngredientExperience> experiencesToDelete = existingExperiences.stream()
+                .filter(exp -> !newIngredientIds.contains(exp.getIngredient().getIngredientId()))
+                .toList();
+
+        // 4. 새로 추가할 경험 생성
+        List<Integer> existingIds = existingExperiences.stream()
+                .map(exp -> exp.getIngredient().getIngredientId())
+                .toList();
+
+        List<IngredientExperience> experiencesToAdd = requests.stream()
+                .filter(request -> !existingIds.contains(request.getIngredientId()))
+                .map(request -> {
+                    Ingredient ingredient = ingredientRepository.findById(request.getIngredientId())
+                            .orElseThrow(() -> new EntityNotFoundException("성분을 찾을 수 없습니다: " + request.getIngredientId()));
+
+                    IngredientExperience experience = IngredientExperience.builder()
+                            .user(user)
+                            .ingredient(ingredient)
+                            .isSuitable(isSuitable)
+                            .build();
+
+                    // 안맞는 성분일 경우 증상 추가
+                    if (!isSuitable && request.getSymptomIds() != null && !request.getSymptomIds().isEmpty()) {
+                        request.getSymptomIds().forEach(symptomId -> {
+                            Symptom symptom = symptomRepository.findById(symptomId)
+                                    .orElseThrow(() -> new EntityNotFoundException("증상을 찾을 수 없습니다: " + symptomId));
+
+                            IngredientSymptom ingredientSymptom = IngredientSymptom.builder()
+                                    .ingredientExperience(experience)
+                                    .symptom(symptom)
+                                    .build();
+
+                            experience.getIngredientSymptoms().add(ingredientSymptom);
+                        });
+                    }
+
+                    return experience;
+                })
+                .toList();
+
+        // 5. 변경사항 적용
+        ingredientExperienceRepository.deleteAll(experiencesToDelete);
+        ingredientExperienceRepository.saveAll(experiencesToAdd);
     }
 
 }
