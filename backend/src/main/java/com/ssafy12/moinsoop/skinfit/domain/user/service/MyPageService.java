@@ -70,12 +70,12 @@ public class MyPageService {
 
         List<MyCosmeticsResponse.CosmeticExperienceDto> suitableList = experiences.stream()
                 .filter(CosmeticExperience::isSuitable)
-                .map(this::convertToDto)
+                .map(this::convertToDtoCosmetic)
                 .toList();
 
         List<MyCosmeticsResponse.CosmeticExperienceDto> unsuitalbeList = experiences.stream()
                 .filter(exp -> !exp.isSuitable())
-                .map(this::convertToDto)
+                .map(this::convertToDtoCosmetic)
                 .toList();
 
         return MyCosmeticsResponse.builder()
@@ -83,6 +83,32 @@ public class MyPageService {
                 .unsuitableCosmetics(unsuitalbeList)
                 .build();
     }
+
+    // 내가 등록한 성분, 맞는 것과 안 맞는 것으로 구분하여 응답
+    public MyIngredientsResponse getAllMyIngredients(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+
+        List<IngredientExperience> experiences =
+                ingredientExperienceRepository.findByUserUserId(userId);
+
+        List<MyIngredientsResponse.IngredientExperienceDto> suitableIngredients = experiences.stream()
+                .filter(IngredientExperience::isSuitable)
+                .map(this::convertToDtoIngredient)
+                .toList();
+
+        List<MyIngredientsResponse.IngredientExperienceDto> unsuitableIngredients = experiences.stream()
+                .filter(experience -> !experience.isSuitable())
+                .map(this::convertToDtoIngredient)
+                .toList();
+
+        return MyIngredientsResponse.builder()
+                .suitableIngredients(suitableIngredients)
+                .unsuitableIngredients(unsuitableIngredients)
+                .build();
+    }
+
 
     @Transactional(readOnly = true)
     public MyReviewResponse getAllMyReviews(Integer userId) {
@@ -197,7 +223,7 @@ public class MyPageService {
     }
 
 
-    private MyCosmeticsResponse.CosmeticExperienceDto convertToDto(CosmeticExperience experience) {
+    private MyCosmeticsResponse.CosmeticExperienceDto convertToDtoCosmetic(CosmeticExperience experience) {
         return MyCosmeticsResponse.CosmeticExperienceDto.builder()
                 .cosmeticId(experience.getCosmetic().getCosmeticId())
                 .cosmeticBrand(experience.getCosmetic().getCosmeticBrand())
@@ -207,7 +233,18 @@ public class MyPageService {
                 .build();
     }
 
-    // DTO 변환
+    // 성분 DTO 변환
+    private MyIngredientsResponse.IngredientExperienceDto convertToDtoIngredient(IngredientExperience experience) {
+        return MyIngredientsResponse.IngredientExperienceDto.builder()
+                .ingredientId(experience.getIngredient().getIngredientId())
+                .ingredientName(experience.getIngredient().getIngredientName())
+                .ewgScoreMin(experience.getIngredient().getEwgScoreMin())
+                .ewgScoreMax(experience.getIngredient().getEwgScoreMax())
+                .build();
+    }
+
+
+    // 업데이트 화장품 DTO 변환
     private CosmeticExperienceDto convertToDtoAtUpdateCosmetic(CosmeticExperience experience) {
         List<CosmeticExperienceDto.SymptomDto> symptoms =
                 experience.isSuitable() ? new ArrayList<>() : // 잘 맞는 화장품이면 빈 리스트
@@ -283,7 +320,7 @@ public class MyPageService {
         cosmeticExperienceRepository.saveAll(experiencesToAdd);
     }
 
-    // DTO 변환
+    // 업데이트 성분 DTO 변환
     private IngredientExperienceDto convertToDtoAtUpdateIngredient(IngredientExperience experience) {
         List<IngredientExperienceDto.SymptomDto> symptoms =
                 experience.isSuitable() ? new ArrayList<>() :

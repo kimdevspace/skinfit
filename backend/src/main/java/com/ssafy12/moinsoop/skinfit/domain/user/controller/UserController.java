@@ -83,6 +83,12 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/mypage/ingredients")
+    public ResponseEntity<MyIngredientsResponse> getAllMyIngredients(@AuthenticationPrincipal Integer userId) {
+        MyIngredientsResponse response = myPageService.getAllMyIngredients(userId);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/mypage/review")
     public ResponseEntity<MyReviewResponse> getAllMyReviews(@AuthenticationPrincipal Integer userId) {
         return ResponseEntity.ok(myPageService.getAllMyReviews(userId));
