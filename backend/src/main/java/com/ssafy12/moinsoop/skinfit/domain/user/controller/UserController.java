@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -103,5 +104,10 @@ public class UserController {
                                               @RequestBody UpdateProfileRequest request) {
         userService.updateProfile(userId, token, request);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/mypage/good-cosmetics")
+    public ResponseEntity<List<MyCosmeticsResponse.CosmeticExperienceDto>> getAllSuitableCosmetics(@AuthenticationPrincipal Integer userId) {
+        return ResponseEntity.ok(myPageService.getAllSuitableCosmetics(userId));
     }
 }
