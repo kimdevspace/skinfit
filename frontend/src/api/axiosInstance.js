@@ -5,6 +5,9 @@ import axios from 'axios';
 // 서버 주소가 "http://localhost:8080/api/v1/"로 시작하는 경우:
 const axiosInstance = axios.create({
   baseURL: '/api/v1/', // 서버 기본 URL 설정
+  headers: {
+    'Content-Type': 'application/json'
+  }
 });
 
 export default axiosInstance;
