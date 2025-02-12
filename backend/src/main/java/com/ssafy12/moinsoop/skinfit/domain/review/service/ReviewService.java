@@ -59,16 +59,16 @@ public class ReviewService {
                 ReviewImage reviewImage = ReviewImage.builder()
                         .review(savedReview)
                         .imageUrl(imageUrl)
-                        .sequence(sequenceCounter++)  // 순서대로 번호 할당 (1부터 시작)
+                        .sequence(sequenceCounter++)
                         .build();
                 reviewImageRepository.save(reviewImage);
             }
         }
     }
 
-    //
+    // 리뷰 텍스트 및 평점 수정
     @Transactional
-    public void updateReview(Integer userId, Integer cosmeticId, Integer reviewId, ReviewUpdateRequest request) {
+    public void updateReviewContent(Integer userId, Integer cosmeticId, Integer reviewId, ReviewUpdateRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ReviewException(ReviewErrorCode.USER_NOT_FOUND));
         Cosmetic cosmetic = cosmeticRepository.findById(cosmeticId)
@@ -77,8 +77,43 @@ public class ReviewService {
                 .orElseThrow(() -> new ReviewException(ReviewErrorCode.REVIEW_NOT_FOUND));
 
         if (!review.getUser().getUserId().equals(userId)) {
-            throw new ReviewException(ReviewErrorCode.USER_NOT_FOUND); // 에러코드 이게 맞는지?
+            throw new ReviewException(ReviewErrorCode.REVIEW_PERMISSION_DENIED);
         }
+        // 텍스트와 평점만 업데이트
         review.updateReview(request.getReviewContent(), request.getScore());
+    }
+
+    // 리뷰 이미지 수정 (기존 이미지 삭제 후 새 이미지 업로드)
+    @Transactional
+    public void updateReviewImages(Integer userId, Integer cosmeticId, Integer reviewId, List<MultipartFile> images) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorCode.USER_NOT_FOUND));
+        Cosmetic cosmetic = cosmeticRepository.findById(cosmeticId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorCode.COSMETIC_NOT_FOUND));
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorCode.REVIEW_NOT_FOUND));
+
+        if (!review.getUser().getUserId().equals(userId)) {
+            throw new ReviewException(ReviewErrorCode.REVIEW_PERMISSION_DENIED);
+        }
+
+        // 기존 이미지 삭제 (데이터베이스 상에서 ReviewImage 엔티티만 삭제)
+        if (!review.getReviewImages().isEmpty()) {
+            reviewImageRepository.deleteAll(review.getReviewImages());
+        }
+
+        // 새로운 이미지가 있으면 업로드 후 저장
+        if (images != null && !images.isEmpty()) {
+            int sequenceCounter = 1;
+            for (MultipartFile file : images) {
+                String imageUrl = s3Uploader.uploadFile(file, "reviews");
+                ReviewImage reviewImage = ReviewImage.builder()
+                        .review(review)
+                        .imageUrl(imageUrl)
+                        .sequence(sequenceCounter++)
+                        .build();
+                reviewImageRepository.save(reviewImage);
+            }
+        }
     }
 }

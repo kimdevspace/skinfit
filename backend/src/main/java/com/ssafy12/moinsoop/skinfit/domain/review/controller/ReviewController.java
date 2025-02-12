@@ -32,13 +32,27 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.CREATED).body("리뷰가 성공적으로 작성되었습니다.");
     }
 
-    @PutMapping("/{reviewId}")
-    public ResponseEntity<String> updateReview(
+    // 리뷰 텍스트 수정
+    @PutMapping(value = "/{reviewId}/content", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> updateReviewContent(
             @AuthenticationPrincipal Integer userId,
             @PathVariable Integer cosmeticId,
             @PathVariable Integer reviewId,
             @Valid @RequestBody ReviewUpdateRequest request) {
-        reviewService.updateReview(userId, cosmeticId, reviewId, request);
-        return ResponseEntity.ok("리뷰가 성공적으로 수정되었습니다.");
+
+        reviewService.updateReviewContent(userId, cosmeticId, reviewId, request);
+        return ResponseEntity.ok("리뷰 내용이 성공적으로 수정되었습니다.");
+    }
+
+    // 리뷰 이미지 수정: 파일 업데이트만 처리 (multipart/form-data)
+    @PutMapping(value = "/{reviewId}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> updateReviewImages(
+            @AuthenticationPrincipal Integer userId,
+            @PathVariable Integer cosmeticId,
+            @PathVariable Integer reviewId,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+
+        reviewService.updateReviewImages(userId, cosmeticId, reviewId, images);
+        return ResponseEntity.ok("리뷰 이미지가 성공적으로 수정되었습니다.");
     }
 }
