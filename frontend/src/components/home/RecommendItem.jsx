@@ -4,8 +4,7 @@ import './RecommendItem.scss'
 
 function RecommendItem({ cosmetic }) {
   return (
-    // <Link to={`/cosmetics/${cosmetic.cosmeticId}`} className='recommend-item'>
-    <Link to={`/cosmetics/`} className='recommend-item'>
+    <Link to={`/cosmetics/${cosmetic.cosmeticId}`} className='recommend-item'>
       {/* <img className='recomend-img' src={cosmetic.imageUrl} alt={cosmetic.cosmeticName} /> */}
       <div className="recommend-txt">
         <p className='brand-name'>{cosmetic.brandName}</p>

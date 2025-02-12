@@ -7,6 +7,7 @@ import AllIngrePopup from "../../components/cosmetics/AllIngrePopup";
 import Header from "../../components/common/Header";
 import Button from "../../components/common/Button";
 import CosmeticInfo from "../../components/cosmetics/CosmeticInfo";
+import NavBar from "../../components/common/NavBar";
 // import ReviewItem from "../../components/review/ReviewItem";
 
 // 화장품 정보 요청 함수
@@ -177,6 +178,9 @@ function CosmeticDetail() {
           ))} */}
         </div>
       </div>
+
+      {/* 네브바 */}
+      <NavBar />
     </div>
   );
 }
