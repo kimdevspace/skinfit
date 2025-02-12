@@ -1,0 +1,162 @@
+.cosmetic-info {
+  margin: 2rem 3rem;
+  padding: 2rem 1.5rem;
+  border: 0.5px solid #8E8E8E;
+  border-radius: 1.5rem;
+  background-color: #fff;
+
+  // 화장품 이미지
+  .cosmetic-img-box {
+    position: relative;
+    width: 40%;
+    aspect-ratio: 1/1;
+    margin: 0 auto;
+    border-radius: 50%;
+    background-color: #FFF0E8;
+
+    img {
+      object-fit: contain;
+    }
+
+    .badge {
+      position: absolute;
+      top: 1.5rem;
+      right: -1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width:  25%;
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 50%;
+      font-weight: 700;
+
+      &.caution {
+        background-color: #F38B71;
+      }
+
+      &.safe {
+        background-color: #69B293;
+      }
+    }
+  }
+
+  // 화장품 주요 정보
+  .cosmetic-info-text {
+    margin: 0.5rem 2rem 0;
+
+    .brand-name {
+      color: #8E8E8E;
+    }
+
+    .cosmetic-name {
+      font-size: 1.2rem;
+    }
+  }
+
+  // 내 피부 분석 박스
+  .skin-analysis-box {
+    margin-top: 2rem;
+    padding: 1rem;
+    border: 0.5px solid #E1E1E1;
+    border-radius: 1.2rem;
+    text-align: center;
+
+    img {
+      width: 20%;
+      aspect-ratio: 1/1;
+      margin: 0 auto;
+    }
+
+    .title {
+      margin-top: 0.8rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    // 성분 정보 공통 스타일
+    .info-msg {
+      margin-top: 2rem;
+      color: #FFAA7C;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    // 민감 성분 있을 때 분석 부분 스타일
+    .skin-analysis {
+      margin-top: 1.2rem;
+
+      .analysis {
+        display: grid;
+        grid-template-columns: 2fr 1.2fr 1.2fr;
+        align-items: center;
+
+        // 분석 부분 제목
+        &.analysis-title {
+          margin-bottom: 0.2rem;
+          color: #8E8E8E;
+          font-size: 1.1rem;
+
+          .found-count,
+          .ewg-score {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            svg {
+              margin-left: 0.3rem;
+              font-size: 1rem;
+            }
+          }
+        }
+
+        // 성분명 왼쪽정렬
+        .ingredient-name {
+          justify-self: start;
+        }
+
+        // 분석 부분 결과
+        &.analysis-result {
+          padding-top: 0.3rem;
+
+          .ingredient-name {
+            font-size: 1.1rem;
+          }
+
+          .found-count {
+            color: #8E8E8E;
+            font-size: 1.2rem;
+          }
+
+          .ewg-score {
+            font-size: 1.2rem;
+            font-weight: 700;
+
+            &.low {
+              color: #A5CF96;
+            }
+
+            &.moderate {
+              color: #FFB58C;
+            }
+
+            &.high {
+              color: #FF7D8A;
+            }
+          }
+        }
+      }
+
+      .found-count-info {
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        letter-spacing: -0.05rem;
+
+        svg {
+          margin-right: 0.2rem;
+        }
+      }
+    }
+  }
+}

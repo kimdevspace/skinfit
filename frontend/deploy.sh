@@ -14,10 +14,12 @@ docker run -d \
   $IMAGE_NAME
 
 # 컨테이너에서 빌드 파일들을 EC2의 Nginx 디렉토리로 복사
-sudo docker cp $CONTAINER_NAME:/usr/share/nginx/html/. /var/www/html/
+sudo docker cp $CONTAINER_NAME:/app/dist/. /var/www/html/
 
 sudo chown -R www-data:www-data /var/www/html
 sudo chmod -R 755 /var/www/html
+
+sudo systemctl restart nginx
 
 echo "미사용 이미지 정리"
 docker image prune -f

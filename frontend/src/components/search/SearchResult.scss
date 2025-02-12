@@ -1,0 +1,62 @@
+
+
+.search-wrapper2 {
+  margin: 1rem 3rem;
+}
+
+.search-result {
+  padding: 1rem 0.2rem;
+
+  p {
+    font-size: 1.4rem;
+  }
+  
+  hr {
+    height: 0.1rem;
+    border: none;
+    background-color: #dedede;
+  }
+}
+
+
+
+.wrong-search {
+  text-align: center;
+
+  p {
+    font-weight: bold;
+    color: #8E8E8E;
+    line-height: 2rem;
+    font-size: 1.2rem;
+    font-weight: normal; /* 기본 굵기 (400과 동일) */
+
+
+  }
+
+  .ptag-2{
+    margin-top: 4.5rem;
+    font-weight: normal; /* 기본 굵기 (400과 동일) */
+
+    
+  }
+  
+  h2 {
+    font-size: 1.4rem;
+    color: #565656;
+
+  }
+}
+
+
+.register-btn {
+    border-color: #DEDEDE;
+    border-style: solid;  
+    border-radius: 2rem;
+    padding: 0.5rem 1rem;
+    right: 0.3rem;
+    color:#565656;
+    border-width: 0.1rem;
+    font-size: 1rem;
+    font-weight: bold;
+}
+

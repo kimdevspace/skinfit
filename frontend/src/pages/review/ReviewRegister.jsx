@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import axios from "../../api/axiosInstance.js";
 import "./ReviewRegister.scss";
 import Header from "../../components/common/Header";
 import Button from "../../components/common/Button";
@@ -9,84 +9,77 @@ import ImageUpload from "../../components/common/ImageUpload";
 function ReviewRegister(cosmeticId) {
   // 리뷰 데이터
   const [reviewData, setReviewData] = useState({
-    rating: "",
+    rating: null,
     reviewContent: "",
     images: [],
   });
-
-  // 이미지 데이터
-  const setImages = (newImages) => {
-    setReviewData(prev => ({ ...prev, images: newImages }))
-  }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setReviewData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === "rating" ? Number(value) : value, // rating이면 숫자로 변환
     }));
   };
 
   // 피부 적합 여부
   const ratingOption = [
-    { value: "GOOD", label: "잘 맞았어요" },
-    { value: "BAD", label: "안 맞았어요" },
-    { value: "UNKNOWN", label: "모르겠어요" },
+    { value: 0, label: "잘 맞았어요" },
+    { value: 1, label: "안 맞았어요" },
+    { value: 2, label: "모르겠어요" },
   ];
 
   // 리뷰 데이터 POST 요청
-  const uploadReview = async (review)=> {
-    const formData = new FormData()
-    formData.append("reviewCount", review.reviewContent)
-    formData.append("rating", review.rating)
-    review.images.forEach((file) => formData.append("images", file))
-    console.log("upload 한다")
+  const uploadReview = async (review) => {
+    const formData = new FormData();
+    formData.append("reviewCount", review.reviewContent);
+    formData.append("rating", review.rating);
+    review.images.forEach((file) => formData.append("images", file));
+    console.log("upload 한다");
 
-    return axios.post(`/api/v1/products/${cosmeticId}/reviews`, formData, {
+    return axios.post(`products/${cosmeticId}/reviews`, formData, {
       headers: {
         // Authorization: `Bearer ${jwtToken}`,
         "Content-Type": "multipart/form-data",
-      }
-    })
-  }
+      },
+    });
+  };
 
   const mutation = useMutation({
     mutationFn: uploadReview,
     onSuccess: () => {
-      alert("리뷰가 등록되었습니다.")
-      setReviewData({ rating: "", reviewContent: "", images: []})
-      setImagePreviews([])
+      alert("리뷰가 등록되었습니다.");
+      setReviewData({ rating: "", reviewContent: "", images: [] });
     },
     onError: () => {
-      alert("리뷰 등록에 실패했습니다.")
-    }
-  })
+      alert("리뷰 등록에 실패했습니다.");
+    },
+  });
 
-  const ratingErrorRef = useRef(null)
-  const contentErrorRef = useRef(null)
+  const ratingErrorRef = useRef(null);
+  const contentErrorRef = useRef(null);
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     // rating 유효성 검사
     if (!reviewData.rating) {
-      ratingErrorRef.current.classList.add("error")
-      return
+      ratingErrorRef.current.classList.add("error");
+      return;
     } else {
-      ratingErrorRef.current.classList.remove("error")
+      ratingErrorRef.current.classList.remove("error");
     }
 
     // content 유효성 검사
     if (!reviewData.reviewContent) {
       contentErrorRef.current.classList.add("error");
-      return
+      return;
     } else {
       contentErrorRef.current.classList.remove("error");
     }
 
-    mutation.mutate(reviewData)
-  }
-
+    mutation.mutate(reviewData);
+  };
 
   return (
     <div className="review-register">
@@ -117,7 +110,9 @@ function ReviewRegister(cosmeticId) {
               </label>
             ))}
           </div>
-          <p className="error-msg" ref={ratingErrorRef}>피부 적합 여부를 선택해주세요</p>
+          <p className="error-msg" ref={ratingErrorRef}>
+            피부 적합 여부를 선택해주세요
+          </p>
         </div>
 
         {/* 리뷰 작성 */}
@@ -132,14 +127,17 @@ function ReviewRegister(cosmeticId) {
             placeholder="리뷰를 작성해주세요"
             onChange={handleInputChange}
           ></textarea>
-          <p className="error-msg" ref={contentErrorRef}>리뷰가 작성되지 않았습니다</p>
+          <p className="error-msg" ref={contentErrorRef}>
+            리뷰가 작성되지 않았습니다
+          </p>
         </div>
 
         {/* 리뷰 사진 등록 */}
         <ImageUpload
           images={reviewData.images}
-          setImages={setImages}
-          maxImages={3}/>
+          setImages={setReviewData}
+          maxImages={3}
+        />
 
         <Button text="등록하기" color="pink" type="submit" />
       </form>

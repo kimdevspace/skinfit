@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import Logo from "../../components/common/Logo.jsx";
 import Button from "../../components/common/Button.jsx";
-import axios from "axios";
+import axios from "../../api/axiosInstance.js";
 import "./SignUp.scss";
 
 function SignUp() {
@@ -78,8 +78,8 @@ function SignUp() {
 
   const checkEmailDuplicate = async (email) => {
     try {
-      const response = await axios.post("/api/v1/user/email-duplicate", {
-        params: { email },
+      const response = await axios.post("user/email-duplicate", {
+        userEmail: email,
       });
       return response.status;
     } catch (error) {
@@ -114,7 +114,7 @@ function SignUp() {
    */
   const sendEmailVerification = async (email) => {
     try {
-      const response = await axios.post("/api/v1/user/email-verification", {
+      const response = await axios.post("user/email-verification", {
         email,
       });
       return response.status;
@@ -143,7 +143,7 @@ function SignUp() {
    */
   const submitSignup = async (email, password, verifyCode) => {
     try {
-      const response = await axios.post("/api/v1/user/signup", {
+      const response = await axios.post("user/signup", {
         email,
         password,
         verifyCode,

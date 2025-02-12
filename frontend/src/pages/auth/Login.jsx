@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate} from "react-router-dom";
-import axios from "axios";
+import axios from "../../api/axiosInstance.js";
 import "./Login.scss";
 import Logo from "../../components/common/Logo.jsx";
 import AuthBox from "../../components/auth/AuthBox.jsx";
@@ -15,7 +15,7 @@ function Login() {
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/v1/auth/signin", {
+      const response = await axios.post("auth/signin", {
         userEmail: email,            
         userPassword: password,
       });
@@ -45,19 +45,10 @@ function Login() {
     }
   };
   
-
-  // const handleSignUpClick = () => {
-  //   setShowSignUp(true);
-  // };
   return (
     <div className="login-container">
       {/* 상단 로고 */}
       <Logo />
-
-      {/* SIGN UP 버튼 */}
-      {/* <button className="signup-circle" onClick={handleSignUpClick}>
-            SIGN UP
-          </button> */}
 
       {/* 로그인 폼 */}
       <form onSubmit={handleLoginSubmit}>

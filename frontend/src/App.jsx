@@ -2,8 +2,8 @@ import { Routes, Route } from "react-router-dom";
 import AuthRoutes from "./routes/AuthRoutes";
 import MyPageRoute from "./routes/MyPageRoute";
 import HomeRoute from "./routes/HomeRoute";
-// import CosmeticsRoute from "./routes/CosmeticsRoute";
-// import Search from "../pages/search/Search";
+import CosmeticsRoute from "./routes/CosmeticsRoute";
+import Search from "./pages/search/Search";
 // import OcrScanner from "./pages/ocr/OcrScanner";
 
 function App() {
@@ -23,10 +23,10 @@ function App() {
       <Route path="/mypage/*" element={<MyPageRoute />} />
       
       {/* 제품 관련 페이지 라우트(제품 상세 페이지) */}
-      {/* <Route path="/cosmetics/*" element={<CosmeticsRoute />} /> */}
+      <Route path="/cosmetics/*" element={<CosmeticsRoute />} />
       
       {/* 검색 페이지 */}
-      {/* <Route path="/search" element={<Search />} /> */}
+      <Route path="/search" element={<Search />} />
 
       {/* OCR 스캐너 페이지 */}
       {/* <Route path="/ocr" element={<OcrScanner />} /> */}
