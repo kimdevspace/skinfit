@@ -1,5 +1,10 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.service;
 
+import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.SkinType;
+import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.UserSkinType;
+import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.repository.SkinTypeRepository;
+import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.repository.UserSkinTypeRepository;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.RegisterUserInfoRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.SignUpRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.ProviderType;
@@ -8,6 +13,7 @@ import com.ssafy12.moinsoop.skinfit.domain.user.entity.repository.UserRepository
 import com.ssafy12.moinsoop.skinfit.domain.user.exception.DuplicateUserEmailException;
 import com.ssafy12.moinsoop.skinfit.domain.user.exception.InvalidVerificationCodeException;
 import com.ssafy12.moinsoop.skinfit.domain.user.exception.VerificationCodeExpiredException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
@@ -18,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -29,6 +36,8 @@ public class UserService {
     private final RedisTemplate redisTemplate;
     private final JavaMailSender mailSender;
     private final PasswordEncoder passwordEncoder;
+    private final SkinTypeRepository skinTypeRepository;
+    private final UserSkinTypeRepository userSkinTypeRepository;
 
     private static final String EMAIL_VERIFICATION_PREFIX = "email:verification:";
     private static final String EMAIL_VERIFIED_PREFIX = "email:verified:";
@@ -128,6 +137,17 @@ public class UserService {
         mailSender.send(message);
     }
 
+    //  회원등록 서비스
+    public void initializeUserInfo(Integer userId, RegisterUserInfoRequest request) {
+        // 1. 사용자 기본 정보 업데이트
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+        updateUserBasicInfo(user, request);
+
+        // 2. 사용자 피부 타입 정보 저장
+        saveUserSkinTypes(user, request.getSkinTypeIds());
+    }
+
     // 인증번호 생성메서드
     private String generateRandomCode() {
         Random random = new Random();
@@ -145,5 +165,28 @@ public class UserService {
         }
 
         return password.toString();
+    }
+
+
+    // 기본 회원정보 최초 등록 메서드
+    private void updateUserBasicInfo(User user, RegisterUserInfoRequest request) {
+        user.updateInitialInfo(
+                request.getNickname(),
+                request.getGender(),
+                request.getYear()
+        );
+        user.setRegistered(true);
+    }
+
+    // 사용자 피부 타입 정보 저장 메서드
+    private void saveUserSkinTypes(User user, List<Integer> skinTypeIds) {
+        List<UserSkinType> userSkinTypes = skinTypeIds.stream()
+                .map(typeId -> {
+                    SkinType skinType = skinTypeRepository.findById(typeId)
+                            .orElseThrow(() -> new EntityNotFoundException("SkinType Not found"));
+                    return UserSkinType.create(user, skinType);
+                })
+                .toList();
+        userSkinTypeRepository.saveAll(userSkinTypes);
     }
 }

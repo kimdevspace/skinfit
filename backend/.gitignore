@@ -40,3 +40,4 @@ application-oauth.yml
 application-dev.yml
 application-mail.yml
 application-prod.yml
+application.yml
