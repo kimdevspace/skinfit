@@ -1,7 +1,7 @@
 //react query 기반(key값 조회, 캐싱싱)
 
 import { create } from "zustand"
-import axios from "../../api/axiosInstance.js"
+import axios from "../api/axiosInstance.js"
 import { useQuery } from "@tanstack/react-query"
 
 //#region 화장품명 검색
