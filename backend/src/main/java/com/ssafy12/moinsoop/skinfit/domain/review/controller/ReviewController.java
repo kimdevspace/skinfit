@@ -1,6 +1,7 @@
 package com.ssafy12.moinsoop.skinfit.domain.review.controller;
 
 import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewRequest;
+import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewUpdateRequest;
 import com.ssafy12.moinsoop.skinfit.domain.review.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,5 +30,15 @@ public class ReviewController {
 
         reviewService.createReview(userId, cosmeticId, request, images);
         return ResponseEntity.status(HttpStatus.CREATED).body("리뷰가 성공적으로 작성되었습니다.");
+    }
+
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<String> updateReview(
+            @AuthenticationPrincipal Integer userId,
+            @PathVariable Integer cosmeticId,
+            @PathVariable Integer reviewId,
+            @Valid @RequestBody ReviewUpdateRequest request) {
+        reviewService.updateReview(userId, cosmeticId, reviewId, request);
+        return ResponseEntity.ok("리뷰가 성공적으로 수정되었습니다.");
     }
 }
