@@ -144,7 +144,11 @@ function Home() {
       {/* 네브바 */}
       <NavBar />
 
-      <SearchPopup/>
+      <SearchPopup
+        type="cosmetic"
+        suitability="unsuitable"
+        category="unsuitableCosmetics"
+      />
     </div>
   );
 }

@@ -1,16 +1,30 @@
 //SearchResult : 검색 결과(검색 결과 없어요, 검색 결과 리스트(searchItem) -> if뮨 처리)
-import "./SearchResult.scss"
-import SearchItem from "../../components/search/SearchItem.jsx"
+import "./SearchResult.scss";
+import SearchItem from "../../components/search/SearchItem.jsx";
+import SearchPopupItem from "./SearchPopupItem.jsx";
 
-// 서치 아이템 컴포넌트트
-// 아래 코드 정리
-
-function SearchResult({ cosmetics }) {
+// 서치 아이템 컴포넌트
+// data : 검색 결과 배열
+// location : 어디에서 사용하는지(page or popup)
+// type : 화장품(cosmetic)인지 성분(ingredient)인지
+// category : suitableCosmetics, suitableIngredients, unsuitableCosmetics, unsuitableIngredients
+function SearchResult({ data, location, type, category }) {
   return (
     <>
-      {cosmetics ? (
+      {data ? (
         // 반복문으로 검색 목록 풀어서, searchitem에 하나씩 전달
-        cosmetics.map((cosmetic) => <SearchItem key={cosmetic.id} cosmetic={cosmetic} />)
+        location === "page" ? (
+          data.map((item, idx) => <SearchItem key={idx} data={item} />)
+        ) : (
+          data.map((item, idx) => (
+            <SearchPopupItem
+              key={idx}
+              data={item}
+              type={type}
+              category={category}
+            />
+          ))
+        )
       ) : (
         <div className="wrong-search">
           <h2>검색 결과가 없어요</h2>
@@ -20,7 +34,7 @@ function SearchResult({ cosmetics }) {
         </div>
       )}
     </>
-  )
+  );
 }
 
-export default SearchResult
+export default SearchResult;
