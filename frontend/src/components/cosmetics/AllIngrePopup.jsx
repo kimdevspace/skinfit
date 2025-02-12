@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import axios from "../../api/axiosInstance.js";
 import "./AllIngrePopup.scss";
 import IngredientList from "./IngredientList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,7 +8,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 // 전성분 정보 가져오는 api 요청
 const fetchAllIngredient = async (cosmeticId) => {
-  const response = await axios.get(`/api/v1/${cosmeticId}/all-ingredients`, {
+  const response = await axios.get(`${cosmeticId}/all-ingredients`, {
     headers: {
       // 'Authorization': `Bearer ${token}`,
       "Content-Type": "application/json",

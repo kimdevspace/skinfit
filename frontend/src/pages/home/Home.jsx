@@ -1,19 +1,20 @@
 import { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import axios from "../../api/axiosInstance.js";
 import './Home.scss'
 import Logo from "../../components/common/Logo"
 import RecommendItem from "../../components/home/RecommendItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
+import NavBar from "../../components/common/NavBar";
 
 
 function Home() {
   // 메인 페이지(추천 상품, 화장품 정보) 필요한 정보 api 요청
   const fetchMainPageInfo = async () => {
-    const response = await axios.get('/api/v1/mainpage', {
+    const response = await axios.get('mainpage', {
       headers: {
         // 'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -126,6 +127,9 @@ function Home() {
           }
         </div>
       </div>
+
+      {/* 네브바 */}
+      <NavBar />
     </div>
   );
 }

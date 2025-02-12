@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axios from "../../api/axiosInstance.js";
 import AuthBox from "../../components/auth/AuthBox.jsx";
 import Button from "../../components/common/Button.jsx";
 import Logo from "../../components/common/Logo.jsx";
@@ -12,7 +12,7 @@ function FindPW() {
   const sendEmailCode = async (email) => {
     try
     {
-      const response = await axios.get("/api/v1/user/password-temporary",
+      const response = await axios.get("user/password-temporary",
         {
           params: {email},
         });
@@ -50,7 +50,7 @@ function FindPW() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/v1/auth/signin", {
+      const response = await axios.post("auth/signin", {
         userEmail: email,            
         userPassword: tempPassword,
       });
