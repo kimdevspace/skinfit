@@ -4,6 +4,7 @@
   header {
     position: relative;
     padding: 3.5rem 0 4.5rem;
+    overflow: hidden;
 
     .logo {
       margin-top: 0;
@@ -40,17 +41,6 @@
       height: 16.5rem;
       top: -6.5rem;
       right: -7.7rem;
-      // overflow: hidden;
-
-      &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 50%;
-        height: 110%;
-        background-color: white; // 배경색과 같은 색으로 설정
-      }
     }
   }
 
