@@ -2,10 +2,9 @@ import "./ReviewItem.scss";
 import thumbsUpEmoji from "../../assets/images/thumsUp.png";
 import ReviewComplaintPopup from "./ReviewComplaintPopup";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import dayjs from 'dayjs';
 
-export default function ReviewItem({ review }) {
+export default function ReviewItem({ review, reviewType }) {
   //리뷰 점수(잘맞아요 등)
   const scoreMap = {
     0: { text: "GOOD", class: "good" },
@@ -23,11 +22,14 @@ export default function ReviewItem({ review }) {
   return (
     <>
       <div key={review.reviewId} className="review-box">
-        <div className="name-brand">
-        <span className="cosmetic-name">{review.cosmetic.name} </span>
-        <span className="cosmetic-brand"> {review.cosmetic.brand} </span>
-        </div>
-        {review === 'likedReviews' ? (
+        { reviewType === 'generalReviews'? (
+          <div className="name-brand">
+          <span className="cosmetic-name">{review.cosmetic.name} </span>
+          <span className="cosmetic-brand"> {review.cosmetic.brand} </span>
+          </div>
+        ) : 'null' }
+
+        {reviewType !== 'myReviews' ? (
           <div className="user-info-section">
             <span className="user-name">{review.userNickname}님</span>
             <div className="age-skintype">
@@ -56,8 +58,9 @@ export default function ReviewItem({ review }) {
               {review.likeCount}개
             </button>
             <button className="report-btn" onClick={handlePopup}>
-              신고| {review.createdAt}
-            </button>
+              신고| {dayjs(review.createdAt).format('YYYY-MM-DD')}
+            </button> 
+
             {isPopupOpen && <ReviewComplaintPopup onClose={handlePopup} />}
           </div>
         </div>
