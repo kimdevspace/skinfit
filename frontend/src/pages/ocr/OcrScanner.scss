@@ -1,0 +1,59 @@
+@use "../../assets/styles/mixin" as *;
+
+.ocr-register-form {
+  margin: 1rem 3rem 0;
+
+  // 공통 style
+  .input-wrapper {
+    @include input-group();
+
+    .input-title {
+      @include input-title();
+    }
+
+    #name {
+      @include input-text();
+      @include input-border();
+      width: 100%;
+      height: 3.3rem;
+      resize: none;
+      padding-right: 1rem;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+  }
+
+  .category-group {
+    margin-bottom: 2.5rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.8rem;
+      font-size: 1.4rem;
+      color: #333;
+    }
+
+    .skintype-options {
+      display: flex;
+      /* 5개 버튼이 전부 한 줄에서 균등 분배되길 원한다면 flex-wrap: nowrap (기본값) */
+      /* 만약 좁은 화면에서 줄바꿈되길 원하면 flex-wrap: wrap; 을 사용 */
+      gap: 0.8rem; // 버튼들 사이 간격
+
+      .skin-btn {
+        flex: 1; /* 5개의 피부타입 버튼이 한 줄을 균등 분할 */
+        text-align: center; /* 텍스트 가운데 정렬 */
+        border: 1px solid #e1e1e1;
+        padding: 0.6rem 0.4rem;
+        border-radius: 2rem;
+        cursor: pointer;
+        font-size: 1rem;
+        color: #8e8e8e;
+
+        &.selected {
+          background-color: #FFF0E8;
+        }
+      }
+    }
+  }
+}
