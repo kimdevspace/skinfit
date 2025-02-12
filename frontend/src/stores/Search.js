@@ -1,13 +1,13 @@
 //react query 기반(key값 조회, 캐싱싱)
 
 import { create } from "zustand"
-import axios from "axios"
+import axios from "../../api/axiosInstance.js"
 import { useQuery } from "@tanstack/react-query"
 
 //#region 화장품명 검색
 // 액션
 const FetchCosmetics = async (params) => {
-  const response = await axios.get("/api/v1/search/cosmetic", {
+  const response = await axios.get("search/cosmetic", {
     params,
     // headers : {
     //     Authorization :
@@ -56,7 +56,7 @@ export default useSearchStore
 // //#region 모든 화장품 조회
 // // 액션
 // const fetchAllCosmetics = async () => {
-//   const response = await axios.get('/api/v1/all-cosmetics');
+//   const response = await axios.get('all-cosmetics');
 //   if (response.data.status === 'success') {
 //     return response.data.data;
 //   }

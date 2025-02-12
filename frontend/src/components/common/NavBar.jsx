@@ -3,11 +3,11 @@ import './NavBar.scss'
 import { Link, useNavigate } from "react-router-dom";
 import { House, Search, User, LogOut  } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios"
+import axios from "../../api/axiosInstance.js"
 
 // 로그아웃 api 요청 함수
 const handleLogout = async () => {
-  const response = await axios.delete('/auth/logout', {
+  const response = await axios.delete('auth/logout', {
     headers: {
       // 'Authorization': `Bearer ${token}`,
       "Content-Type": "application/json",

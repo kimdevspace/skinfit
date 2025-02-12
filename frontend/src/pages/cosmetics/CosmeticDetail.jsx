@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import axios from "../../api/axiosInstance.js";
 import "./CosmeticDetail.scss";
 import AllIngrePopup from "../../components/cosmetics/AllIngrePopup";
 import Header from "../../components/common/Header";
@@ -12,7 +12,7 @@ import NavBar from "../../components/common/NavBar";
 
 // 화장품 정보 요청 함수
 const fetchCosmeticDetails = async (cosmeticId) => {
-  const response = await axios.get(`/api/v1/cosmetics/${cosmeticId}`, {
+  const response = await axios.get(`cosmetics/${cosmeticId}`, {
     headers: {
       // 'Authorization': `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -23,7 +23,7 @@ const fetchCosmeticDetails = async (cosmeticId) => {
 
 // 리뷰 요청 함수
 const fetchReviews = async ({ cosmeticId, sort, page, limit, isMyReview }) => {
-  const response = await axios.get(`/api/v1/cosmetics/${cosmeticId}/reviews`, {
+  const response = await axios.get(`cosmetics/${cosmeticId}/reviews`, {
     headers: {
       // 'Authorization': `Bearer ${token}`,
       "Content-Type": "application/json",

@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import axios from "../../api/axiosInstance.js";
 import "./ReviewRegister.scss";
 import Header from "../../components/common/Header";
 import Button from "../../components/common/Button";
@@ -37,7 +37,7 @@ function ReviewRegister(cosmeticId) {
     review.images.forEach((file) => formData.append("images", file));
     console.log("upload 한다");
 
-    return axios.post(`/api/v1/products/${cosmeticId}/reviews`, formData, {
+    return axios.post(`products/${cosmeticId}/reviews`, formData, {
       headers: {
         // Authorization: `Bearer ${jwtToken}`,
         "Content-Type": "multipart/form-data",
