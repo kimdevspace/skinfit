@@ -173,10 +173,10 @@ function MyPage() {
         {/* 리뷰 데이터를 하나씩 전달 */}
         {isReviewClicked === "내가 좋아요한 리뷰"
           ? likedReviews?.map((review) => (
-              <ReviewItem key={review.reviewId} review={review} />
+              <ReviewItem key={review.reviewId} review={review} reviewType='likedReviews' />
             ))
           : myReviews?.map((review) => (
-              <ReviewItem key={review.reviewId} review={review} />
+              <ReviewItem key={review.reviewId} review={review} reviewType='myReviews'/>
             ))}
       </div>
 
