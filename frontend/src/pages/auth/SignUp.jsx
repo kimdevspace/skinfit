@@ -46,9 +46,9 @@ function SignUp() {
     // 간단한 예: 10자 이상 + 특수문자 포함 여부
     if (value.length > 0) {
       if (value.length < 10) {
-        setPasswordErrorMsg("10글자 이하입니다.");
+        setPasswordErrorMsg("총 10글자 이하에요");
       } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
-        setPasswordErrorMsg("특수문자가 포함되어 있지 않습니다.");
+        setPasswordErrorMsg("특수문자가 포함되어 있지 않아요");
       } else {
         setPasswordErrorMsg("");
       }
