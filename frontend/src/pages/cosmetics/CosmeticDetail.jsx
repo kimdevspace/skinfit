@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import "./CosmeticDetail.scss";
 import AllIngrePopup from "../../components/cosmetics/AllIngrePopup";
 import Header from "../../components/common/Header";
 import Button from "../../components/common/Button";
 import CosmeticInfo from "../../components/cosmetics/CosmeticInfo";
+import ReviewItem from "../../components/review/ReviewItem";
 
 // 화장품 정보 요청 함수
 const fetchCosmeticDetails = async (cosmeticId) => {
@@ -16,6 +18,23 @@ const fetchCosmeticDetails = async (cosmeticId) => {
     },
   });
   return response.data.cosmetic;
+};
+
+// 리뷰 요청 함수
+const fetchReviews = async ({ cosmeticId, sort, page, limit, isMyReview }) => {
+  const response = await axios.get(`/api/v1/cosmetics/${cosmeticId}/reviews`, {
+    headers: {
+      // 'Authorization': `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    params: {
+      sort,
+      page,
+      limit,
+      MyReview: isMyReview ? "true" : "false",
+    },
+  });
+  return response.data;
 };
 
 function CosmeticDetail() {
@@ -81,10 +100,28 @@ function CosmeticDetail() {
   };
 
   // 리뷰 정렬
-  const [sortOrder, setSortOrder] = useState('popular')
+  const [sortOrder, setSortOrder] = useState("likes");
   const handleSort = (order) => {
-    setSortOrder(order)
-  }
+    setSortOrder(order);
+  };
+
+  // 리뷰 요청
+  const [page, setPage] = useState(1);
+  const {
+    data: reviews,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["reviews", cosmeticId, sortOrder, page, isOn],
+    queryFn: () =>
+      fetchReviews({
+        cosmeticId,
+        sort: sortOrder,
+        page,
+        limit,
+        isMyReview: isOn,
+      }),
+  });
 
   return (
     <div className="cosmetic-detail">
@@ -115,14 +152,30 @@ function CosmeticDetail() {
         {/* 리뷰 컨트롤(정렬, 글 작성) */}
         <div className="review-controls">
           <div className="sort-order-btn">
-            <button className={`popular ${sortOrder === 'popular' ? 'active' : ''}`} onClick={() => handleSort("popular")}>좋아요순</button>
-            <button className={`latest ${sortOrder === 'latest' ? 'active' : ''}`} onClick={() => handleSort("latest")}>최신순</button>
+            <button
+              className={`likes ${sortOrder === "likes" ? "active" : ""}`}
+              onClick={() => handleSort("likes")}
+            >
+              좋아요순
+            </button>
+            <button
+              className={`latest ${sortOrder === "latest" ? "active" : ""}`}
+              onClick={() => handleSort("latest")}
+            >
+              최신순
+            </button>
           </div>
-          <Link to={'/review'} className="write-btn">작성하기</Link>
+          <Link to={"/review"} className="write-btn">
+            작성하기
+          </Link>
         </div>
 
         {/* 리뷰 리스트 */}
-        <div className="review-list"></div>
+        <div className="review-list">
+          {reviews.map((review, idx) => (
+            <ReviewItem key={idx} review={review} />
+          ))}
+        </div>
       </div>
     </div>
   );
