@@ -30,7 +30,7 @@
     hr {
       width: max(5rem, 15%);
       margin: 0 auto;
-      border: 1.5px solid #E1E1E1;
+      border: 1.5px solid #e1e1e1;
     }
 
     // 검색바
@@ -41,12 +41,77 @@
     // 검색 결과 박스
     .search-result-box {
       flex-grow: 1;
+      margin: 0 1rem;
     }
 
-    // 내가 선택한 화장품 / 성분 확인 박스
+    // 검색 결과, 내가 선택한 화장품/성분 아이템 스타일
+    .search-popup-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #dedede;
+
+      // 화장품 이미지
+      img {
+        width: 4rem;
+        aspect-ratio: 1/1;
+      }
+
+      // 브랜드, 화장품명/성분명
+      .text-box {
+        flex-grow: 1;
+        margin: 0 0.5rem;
+        overflow: hidden;
+
+        .brand-name {
+          color: #8e8e8e;
+        }
+
+        .main-text {
+          font-size: 1.1rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+
+      // 추가/삭제 버튼
+      .btn-box {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .btn {
+          width: 5rem;
+          padding: 0.4rem 0;
+          font-size: 1rem;
+          border-radius: 2rem;
+          display: none;
+
+          &.add-btn {
+            color: #565656;
+            border: 1px solid #8e8e8e;
+            background-color: #fff0e8;
+          }
+
+          &.remove-btn {
+            color: #8e8e8e;
+            border: 1px solid #dedede;
+            background-color: #fff;
+          }
+
+          &.active {
+            display: block;
+          }
+        }
+      }
+    }
+
+    // 내가 선택한 화장품/성분 확인 박스
     .my-list-box {
       margin-top: 1rem;
-      
+
       .title {
         color: #565656;
         font-size: 1.4rem;
@@ -54,17 +119,22 @@
         text-align: center;
       }
 
-      .my-list {
+      .my-search-list {
         height: 15rem;
         margin: 1.5rem 0 2.5rem;
-        padding: 1.5rem 2rem;
-        border: 1px solid #E1E1E1;
+        padding: 1.5rem;
+        border: 1px solid #e1e1e1;
         border-radius: 1.2rem;
         overflow: auto;
 
+        // 안내 메시지
         .info-msg {
           font-size: 1.1rem;
-          color: #8E8E8E;
+          color: #8e8e8e;
+        }
+
+        .search-popup-item {
+          border-bottom: none;
         }
       }
     }
