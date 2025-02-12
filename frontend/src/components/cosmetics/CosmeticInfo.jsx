@@ -14,9 +14,7 @@ function CosmeticInfo({ cosmeticData }) {
           src={cosmeticData.imageUrl}
           alt={`${cosmeticData.cosmeticName}-img`}
         />
-        <p className="badge caution">
-          {cosmeticData.ingredients.length ? "유의" : "안전"}
-        </p>
+        <p className="badge caution">{cosmeticData.safetyStatus}</p>
       </div>
 
       {/* 화장품 주요 정보 */}
@@ -50,25 +48,27 @@ function CosmeticInfo({ cosmeticData }) {
               {cosmeticData.ingredients.map((ingredient, idx) => (
                 <div key={idx} className="analysis analysis-result">
                   <p className="ingredient-name">
-                    {ingredient.ingredient_name}
+                    {ingredient.ingredientName}
                   </p>
                   <p className="found-count">
-                    {ingredient.found_count
-                      ? `${ingredient.found_count}회`
+                    {ingredient.foundCount
+                      ? `${ingredient.foundCount}회`
                       : "-"}
                   </p>
-                  <p className={`ewg-score ${
-                    ingredient.ewg_score_max <= 2
-                      ? "low"
-                      : ingredient.ewg_score_max <= 6
-                      ? "moderate"
-                      : "high"
-                  }`}
-                >
-                  {ingredient.ewg_score_min === null
-                    ? `${ingredient.ewg_score_max}`
-                    : `${ingredient.ewg_score_min} - ${ingredient.ewg_score_max}`}
-                </p>
+                  <p
+                    className={`ewg-score ${
+                      ingredient.ewgScoreMax <= 2
+                        ? "low"
+                        : ingredient.ewgScoreMax <= 6
+                        ? "moderate"
+                        : "high"
+                    }`}
+                  >
+                    {ingredient.ewgScoreMin && `${ingredient.ewgScoreMin}-`}
+                    {ingredient.ewgScoreMax !== null
+                      ? `${ingredient.ewgScoreMax}`
+                      : "-"}
+                  </p>
                 </div>
               ))}
               <p className="found-count-info">
