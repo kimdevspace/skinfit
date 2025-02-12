@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query"
 //#region 마이페이지 메인(닉네임, 피부타입 등등)
 // 액션
 const fetchMyPage = async () => {
-  const response = await axios.get("/api/v1/user/mypage")
+  const response = await axios.get("/user/mypage")
   if (response.data.status === "success") {
     return response.data
   }
@@ -44,7 +44,7 @@ export default useMyPageStore
 //#region top3 데이터 불러오기
 
 const fetchTop3Data = async () => {
-  const response = await axios.get("/api/v1/user/mypage/bad-ingredient-three")
+  const response = await axios.get("/user/mypage/bad-ingredient-three")
   return response.data
 }
 
@@ -74,7 +74,7 @@ export const useTop3Data = () => {
 
 //#region 내가 등록한 화장품 목록 불러오기
 const fetchMyCosmetics = async () => {
-  const response = await axios.get("/api/v1/users/mypage/cosmetics")
+  const response = await axios.get("/users/mypage/cosmetics")
   return response.data
 }
 
@@ -113,7 +113,7 @@ export const useMyCosmetics = () => {
 
 //#region 내가 등록한 성분 목록 불러오기
 const fetchMyIngredients = async () => {
-  const response = await axios.get("/api/v1/user/mypage/ingredients")
+  const response = await axios.get("/user/mypage/ingredients")
   return response.data
 }
 
@@ -144,7 +144,7 @@ export const useMyIngredients = () => {
 
 //#region 리뷰 데이터 불러오기
 export const fetchReviews = async () => {
-  const response = await axios.get("/api/v1/user/mypage/review")
+  const response = await axios.get("/user/mypage/review")
   return response.data
 }
 
