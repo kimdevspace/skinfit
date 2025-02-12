@@ -5,7 +5,7 @@ import Category from "../../components/common/Category.jsx";
 import Button from "../../components/common/Button.jsx";
 import UserInfo2 from "../../components/auth/UserInfo2.jsx";
 import {useMutation} from "@tanstack/react-query"
-import axios from "axios";
+import axios from "../../api/axiosInstance.js";
 import { useNavigate } from "react-router-dom";
 
 function UserForm() {
@@ -28,7 +28,7 @@ function UserForm() {
 
   const nicknameMutation = useMutation({
     mutationFn: async (payload) => {
-      return axios.post("/api/v1/user/nickname-duplicate", payload);
+      return axios.post("user/nickname-duplicate", payload);
     },
     onSuccess: (response) => {
       // response.data에 응답 메시지가 있다고 가정합니다.
@@ -92,7 +92,7 @@ function UserForm() {
   //#endregion
 
   const uploadUserInit = async (payload) => {
-    return axios.post("/api/v1/user/init", payload);
+    return axios.post("user/init", payload);
   };
 
   const mutation = useMutation({
