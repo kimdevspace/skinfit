@@ -24,7 +24,7 @@ function Login() {
       console.log("로그인 성공:", response.data);
   
       // isRegistered 값이 "true" 또는 "false" 문자열로 온다고 가정
-      if (isRegistered === "true") {
+      if (isRegistered === true) {
         // 이미 추가 등록된 사용자
         navigate("/"); 
       } else {
