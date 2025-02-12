@@ -2,6 +2,7 @@ package com.ssafy12.moinsoop.skinfit.domain.review.service;
 
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
 import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewRequest;
+import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewUpdateRequest;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.Review;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.ReviewImage;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.repository.ReviewImageRepository;
@@ -29,6 +30,7 @@ public class ReviewService {
     private final CosmeticRepository cosmeticRepository;
     private final S3Uploader s3Uploader;  // 파일 업로드 서비스 주입
 
+    // 리뷰 등록
     @Transactional
     public void createReview(Integer userId, Integer cosmeticId, ReviewRequest request, List<MultipartFile> images) {
         // 사용자 확인
@@ -62,5 +64,21 @@ public class ReviewService {
                 reviewImageRepository.save(reviewImage);
             }
         }
+    }
+
+    //
+    @Transactional
+    public void updateReview(Integer userId, Integer cosmeticId, Integer reviewId, ReviewUpdateRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorCode.USER_NOT_FOUND));
+        Cosmetic cosmetic = cosmeticRepository.findById(cosmeticId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorCode.COSMETIC_NOT_FOUND));
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorCode.REVIEW_NOT_FOUND));
+
+        if (!review.getUser().getUserId().equals(userId)) {
+            throw new ReviewException(ReviewErrorCode.USER_NOT_FOUND); // 에러코드 이게 맞는지?
+        }
+        review.updateReview(request.getReviewContent(), request.getScore());
     }
 }

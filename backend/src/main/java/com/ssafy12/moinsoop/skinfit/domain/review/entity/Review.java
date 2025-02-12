@@ -58,4 +58,11 @@ public class Review {
         this.score = score;
         this.createdAt = LocalDateTime.now();
     }
+
+    @Builder
+    public void updateReview(String reviewContent, int score){
+        this.content = reviewContent;
+        this.score = score;
+        // 업데이트 날짜는 따로 없는지?
+    }
 }
