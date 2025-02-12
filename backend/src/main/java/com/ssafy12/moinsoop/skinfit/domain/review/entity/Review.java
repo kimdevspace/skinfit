@@ -59,7 +59,6 @@ public class Review {
         this.createdAt = LocalDateTime.now();
     }
 
-    @Builder
     public void updateReview(String reviewContent, int score){
         this.content = reviewContent;
         this.score = score;
