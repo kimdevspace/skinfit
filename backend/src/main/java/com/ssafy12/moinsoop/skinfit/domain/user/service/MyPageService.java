@@ -19,6 +19,7 @@ import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.IngredientUpdateRequ
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.*;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.repository.UserRepository;
+import com.ssafy12.moinsoop.skinfit.global.core.analysis.IngredientAnalysisCacheManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,7 @@ public class MyPageService {
     private final SymptomRepository symptomRepository;
     private final IngredientExperienceRepository ingredientExperienceRepository;
     private final IngredientRepository ingredientRepository;
+    private final IngredientAnalysisCacheManager ingredientAnalysisCacheManager;
 
     @Transactional(readOnly = true)
     public UserNicknameAndUserSkinTypeResponse getUserNicknameAndSkinTypes(Integer userId) {
@@ -59,6 +61,12 @@ public class MyPageService {
     }
 
     // top3 .. 다시 구현해야 함.
+    /**
+     * TODO
+     * 1. 이 부분에서 레디스 캐싱을 진행한다.
+     * 2. 캐시 히트 시 로직 실행x 캐시 미스 시 로직 실행
+     * 3. 레디스에 저장되어 있는걸 다 가져와서 검출 횟수 기준 내림차순하여 최대 3개까지 응답해준다.
+     */
 
     // 내가 등록한 화장품, 맞는 것과 안맞는 것으로 구분하여 응답
     @Transactional(readOnly = true)
