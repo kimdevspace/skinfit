@@ -6,7 +6,5 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# 빌드된 파일을 /app/dist에 저장
+RUN mv /app/build /app/dist
