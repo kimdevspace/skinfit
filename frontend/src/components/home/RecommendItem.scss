@@ -1,0 +1,33 @@
+.recommend-item {
+  padding: 1rem;
+  border: 1px solid #E1E1E1;
+  border-radius: 1.2rem;
+  overflow: hidden;
+
+  .recomend-img {
+    width: 80%;
+    aspect-ratio: 1/1;
+    margin: 0 auto;
+    object-fit: cover;
+  }
+
+  .recommend-txt {
+    width: 100%;
+    margin-top: 1rem;
+    text-align: start;
+
+    .brand-name {
+      font-size: 1rem;
+      color: #8E8E8E;
+    }
+
+    .cosmetic-name {
+      width: 90%;
+      font-size: 1.1rem;
+      color: #565656;
+      white-space: nowrap; // 줄바꿈 방지
+      overflow: hidden; // 넘치는 텍스트 숨기기
+      text-overflow: ellipsis; // '...' 표시
+    }
+  }
+}
