@@ -1,38 +1,19 @@
-@mixin input-text {
-  padding: 1rem;
-  color: #8e8e8e;
-  font-size: 1.2rem;
-}
-
-@mixin input-border {
-  border: 0.5px solid #e1e1e1;
-  border-radius: 0.5rem;
-}
-
-@mixin error-msg {
-  display: none;
-  margin-top: 0.5rem;
-  color: #ffae82;
-  font-size: 1rem;
-}
+@use '../../assets/styles/mixin' as *;
 
 .review-register form {
   margin: 1rem 3rem 0;
 
   // 공통 style
   .input-wrapper {
-    margin-bottom: 2.5rem;
+    @include input-group();
 
     .input-title {
-      display: block;
-      margin-bottom: 1rem;
-      font-size: 1.4rem;
+      @include input-title();
     }
 
     // input style
     .radio-box label .radio-label,
-    &.review-content textarea,
-    &.review-images .custom-file-input {
+    &.review-content textarea {
       @include input-text();
       @include input-border();
     }
@@ -83,73 +64,6 @@
       width: 100%;
       height: 12rem;
       resize: none;
-    }
-
-    // 리뷰 사진 등록 style
-    &.review-images {
-      .custom-file-input {
-        width: 100%;
-        aspect-ratio: 3/1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        // 등록한 사진 미리보기 style
-        .preview-container {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-
-          .preview-box {
-            position: relative;
-            width: 30%;
-            aspect-ratio: 1/1; // 정방형 유지
-
-            img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-              border-radius: 0.5rem;
-            }
-
-            .delete-btn {
-              position: absolute;
-              top: -0.8rem;
-              right: -0.8rem;
-
-              svg {
-                padding: 0.3rem 0.4rem;
-                border-radius: 50%;
-                color: #fff;
-                background-color: #d9d9d9;
-              }
-            }
-          }
-        }
-
-        .custom-file-input-btn {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          cursor: pointer;
-
-          p {
-            margin-bottom: 10px;
-          }
-
-          .plus-icon {
-            padding: 0.4rem 0.5rem;
-            border: 0.5px solid #8e8e8e;
-            border-radius: 50%;
-            font-size: 1.5rem;
-          }
-        }
-      }
-
-      input {
-        display: none;
-      }
     }
   }
 }

@@ -1,14 +1,20 @@
-import "./Header.scss";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 
-function Header({ title }) {
+import "./Header.scss";
+
+/**
+ * @param {string} title - 헤더에 표시할 텍스트
+ * @param {Function} onBack - 뒤로가기 버튼 클릭 시 실행될 함수
+ */
+function Header({ title, onBack }) {
   return (
-    <header>
-      <button className="back-btn">
+    <header className="header">
+      <button className="back-button" onClick={onBack}>
         <FontAwesomeIcon icon={faChevronLeft} />
       </button>
-      <h2>{title}</h2>
+      <h1 className="page-title">{title}</h1>
     </header>
   );
 }

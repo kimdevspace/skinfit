@@ -48,6 +48,25 @@
         margin: 1rem 0;
         cursor: pointer;
       }
+      .toggle-eye-tempPassword{
+        position: absolute;
+        top: 0;
+        right: 8.2rem;
+        margin: 1rem 0;
+        cursor: pointer;
+      }
+      .email-send-btn {
+        position: absolute;
+        top: 0.3rem;
+        right: 0;
+        padding: 0.3rem 0.9rem;
+        font-size: 1.2rem;
+        background-color: #fff;
+        border: 1px solid #ffae82;
+        border-radius: 2rem;
+        color: #ffae82;
+        cursor: pointer;
+      }
     }
   }
 
