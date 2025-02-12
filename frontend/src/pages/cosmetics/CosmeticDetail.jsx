@@ -7,7 +7,7 @@ import AllIngrePopup from "../../components/cosmetics/AllIngrePopup";
 import Header from "../../components/common/Header";
 import Button from "../../components/common/Button";
 import CosmeticInfo from "../../components/cosmetics/CosmeticInfo";
-import ReviewItem from "../../components/review/ReviewItem";
+// import ReviewItem from "../../components/review/ReviewItem";
 
 // 화장품 정보 요청 함수
 const fetchCosmeticDetails = async (cosmeticId) => {
@@ -165,16 +165,16 @@ function CosmeticDetail() {
               최신순
             </button>
           </div>
-          <Link to={"/review"} className="write-btn">
+          <Link to={'review'} className="write-btn">
             작성하기
           </Link>
         </div>
 
         {/* 리뷰 리스트 */}
         <div className="review-list">
-          {reviews.map((review, idx) => (
+          {/* {reviews.map((review, idx) => (
             <ReviewItem key={idx} review={review} />
-          ))}
+          ))} */}
         </div>
       </div>
     </div>

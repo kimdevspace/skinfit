@@ -121,7 +121,7 @@ function Home() {
         <div className="recommend-list">
           {
             recomCosmetic.map((cosmetic) => (
-              <RecommendItem key={cosmetic.id} cosmetic={cosmetic}/>
+              <RecommendItem key={cosmetic.cosmeticId} cosmetic={cosmetic}/>
             ))
           }
         </div>
