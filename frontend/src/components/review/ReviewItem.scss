@@ -1,0 +1,114 @@
+.review-box {
+  margin-top: 1rem;
+  border-radius: 1rem;
+  border: 1px solid #e1e1e1;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+
+  .name-brand {
+    display: flex;
+
+  }
+
+  .cosmetic-name {
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    font-size: 1rem;
+    color: #565656;
+  }
+
+  .user-info-section {
+    display: flex;
+    gap: 0.5rem;
+
+    .user-name {
+      font-size: 1rem;
+      color: #565656;
+    }
+
+    .age-skintype {
+      flex-grow: 1;
+      .user-age {
+        font-size: 1rem;
+        color: #8e8e8e;
+      }
+
+      .user-skintype {
+        font-size: 1rem;
+        color: #8e8e8e;
+      }
+    }
+    .user-answer {
+      font-size: 1rem;
+      font-weight: bold;
+
+      &.good {
+        color: #a5cf96;
+      }
+
+      &.bad {
+        color: #ff7d8a;
+      }
+
+      &.unknown {
+        color: #FF975F;
+      }
+    }
+  }
+
+  hr {
+    margin-top: 1rem;
+    background-color: #dedede;
+    border: 0;
+    height: 0.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .review-content {
+    font-size: 1.2rem;
+    color: #565656;
+
+    .review-photo {
+        width:9rem;
+        height:6rem;
+        margin-top: 1rem;
+    }
+
+  }
+
+  .btn-set {
+    display: flex;
+    justify-content: space-between;
+
+    .liked-btn {
+      color: #565656;
+      font-size: 1rem;
+      border-radius: 2rem;
+      border: 0.5px solid #dedede;
+      margin-top: 3rem;
+      margin-bottom: 1.5rem;
+      padding: 0.3rem 1.5rem;
+      gap: 0.5rem;
+      display: flex;
+
+      .emoji {
+        width: 1.5rem;
+        height: 1.7rem;
+
+        &.active {
+            background-color: #FFF0E8;
+        }
+      }
+
+      
+    }
+
+    .report-btn {
+      color: #8e8e8e;
+      font-size: 1rem;
+      margin-top: 3rem;
+      margin-bottom: 1.5rem;
+    }
+  }
+}

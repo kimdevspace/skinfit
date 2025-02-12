@@ -1,0 +1,225 @@
+.wrapper {
+  margin-left: 2rem;
+  margin-right: 2rem;
+
+  hr {
+    margin: 1rem 2rem;
+    background-color: #dedede;
+    border: 0;
+    height: 0.1rem;
+  }
+
+  h2 {
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    text-align: center;
+  }
+
+  .edit-user-info {
+    border: solid #8e8a8a 0.1rem;
+    padding: 1rem;
+    border-radius: 1.5rem;
+    display: flex;
+    align-items: center;
+    background-color: #fff0e8;
+
+    .user-name {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .user-name2 {
+      font-size: 18px;
+    }
+    .user-skin-type {
+      flex-grow: 1; // 얘만 조절하면 양쪽으로 밀림!!>.<
+      padding-left: 0.5rem;
+      align-self: end; //개별 요소 self
+    }
+
+    .edit-info-btn {
+      font-size: 1rem;
+      font-style: bold;
+      color: #565656;
+      border-radius: 2rem;
+      padding: 0.2rem 1rem;
+      font-weight: bold;
+      background-color: #fff;
+    }
+  }
+
+  .top3-box {
+    margin-top: 1.5rem;
+    padding: 1rem 2rem;
+    border: solid #8e8a8a 0.1rem;
+    border-radius: 1.5rem;
+    position: relative;
+    background-color: #fff;
+
+    .title {
+      text-align: center;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+
+      span {
+        font-size: 1.4rem;
+        font-weight: bold;
+
+        &.color-text {
+          color: #ff975f;
+        }
+      }
+    }
+
+    .ranking-text {
+      display: flex;
+      align-items: center;
+      margin: 3rem 1rem;
+
+      .rank-num {
+        font-size: 16px;
+        font-weight: bold;
+        flex-grow: 0.5;
+      }
+
+      .ingredient-name {
+        flex-grow: 10;
+        font-size: 1.1rem;
+        color: #565656;
+      }
+    }
+    // 뒷 배경
+    &::before {
+      // before: 부모 요소 앞에 가상의 요소(가상의 html 태그) 생성
+      content: "";
+      position: absolute;
+      top: -1rem; // 부모 요소의 상단 경계 위로 위쪽으로 이동
+      left: 0; // 부모 왼쪽 경계에 맞춤춤
+      width: 100%;
+      height: 50px;
+      border: 0.5px solid #8e8e8e;
+      border-radius: 1.5rem;
+      background-color: #fff0e8;
+      transform: scale(0.95); //95% 사이즈
+      -webkit-transform: scale(0.95);
+      -ms-transform: scale(0.95);
+      z-index: -1; //뒤로 보내기
+    }
+  }
+
+  .ingredient-detail-btn {
+    text-align: center;
+    margin-bottom: 0.3rem;
+
+    .detail-btn {
+      font-size: 1rem;
+      font-style: bold;
+      color: #565656;
+      border: solid #8e8a8a 0.1rem;
+      border-radius: 2rem;
+      padding: 0.2rem 1rem;
+      font-weight: bold;
+    }
+  }
+
+  .cosmetic-wrapper {
+    .set-position {
+      position: relative;
+    }
+
+    .edit-del-btn {
+      border-radius: 1.5rem;
+      border: solid 0.1rem #8e8a8a;
+      font-size: 1rem;
+      padding: 0.2rem 1rem;
+      position: absolute;
+      right: 1rem;
+      margin-top: 0.8rem;
+    }
+
+    .cosmetic-item {
+      margin-top: 4rem;
+      margin-left: 2rem;
+      margin-right: 2rem;
+      display: flex;
+      justify-content: space-between;
+
+      .cosmetic-name {
+        font-size: 1.1rem;
+        align-self: center;
+      }
+
+      img {
+        width: 2rem;
+        height: 4rem;
+      }
+    }
+  }
+
+  @mixin ingredient-list-common {
+    margin-top: 1rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    display: flex;
+    justify-content: space-between;
+    padding-right: 1rem;
+    padding-left: 1rem;
+
+    .ewg-level {
+      font-size: 1.1rem;
+      font-weight: bold;
+
+      &.green {
+        color: #a5cf96;
+      }
+
+      &.red {
+        color: #ff7d8a;
+      }
+      &.orange {
+        color: #ffb58c;
+      }
+    }
+    .ingredient-name {
+      font-size: 1.1rem;
+      color: #8e8e8e;
+    }
+  }
+  .my-ingredient-box {
+    .set-position {
+      position: relative;
+
+      .edit-del-btn {
+        border-radius: 1.5rem;
+        border: solid 0.1rem #8e8a8a;
+        font-size: 1rem;
+        padding: 0.2rem 1rem;
+        position: absolute;
+        right: 1rem;
+        margin-top: 0.8rem;
+      }
+    }
+
+    .ingredient-list {
+      @include ingredient-list-common();
+      margin-top: 4rem;
+    }
+  }
+
+  .hr-line {
+    margin-top: 3rem;
+    background-color: #dedede;
+    border: 0;
+    height: 0.1rem;
+  }
+
+  .signout {
+    text-align: center;
+    color: #8e8e8e;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    cursor: pointer;
+
+  }
+
+}
