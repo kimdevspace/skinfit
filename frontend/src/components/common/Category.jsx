@@ -1,6 +1,7 @@
 import React from "react";
 import "./Category.scss";
 
+
 /**
  * @param {string[]} skinTypes - 현재 선택된 피부타입 목록
  * @param {Function} onToggleType - 피부타입 클릭 시 선택/해제하는 함수
@@ -23,6 +24,7 @@ function Category({ skinTypes, onToggleType }) {
           </button>
         ))}
       </div>
+
     </div>
   );
 }
