@@ -116,4 +116,28 @@ public class ReviewService {
             }
         }
     }
+
+    // 리뷰 삭제
+    @Transactional
+    public void deleteReview(Integer userId, Integer cosmeticId, Integer reviewId) {
+        // 사용자 확인
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorCode.USER_NOT_FOUND));
+
+        // 화장품 확인
+        Cosmetic cosmetic = cosmeticRepository.findById(cosmeticId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorCode.COSMETIC_NOT_FOUND));
+
+        // 리뷰 확인
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorCode.REVIEW_NOT_FOUND));
+
+        // 작성자 권한 검사
+        if (!review.getUser().getUserId().equals(userId)) {
+            throw new ReviewException(ReviewErrorCode.REVIEW_PERMISSION_DENIED);
+        }
+
+        // 리뷰 삭제
+        reviewRepository.delete(review);
+    }
 }
