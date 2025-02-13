@@ -1,11 +1,14 @@
 package com.ssafy12.moinsoop.skinfit.domain.review.service;
 
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
+import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewReportRequest;
 import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewRequest;
 import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewUpdateRequest;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.Review;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.ReviewImage;
+import com.ssafy12.moinsoop.skinfit.domain.review.entity.ReviewReport;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.repository.ReviewImageRepository;
+import com.ssafy12.moinsoop.skinfit.domain.review.entity.repository.ReviewReportRepository;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.repository.ReviewRepository;
 import com.ssafy12.moinsoop.skinfit.domain.review.exception.ReviewErrorCode;
 import com.ssafy12.moinsoop.skinfit.domain.review.exception.ReviewException;
@@ -29,6 +32,7 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final CosmeticRepository cosmeticRepository;
     private final S3Uploader s3Uploader;  // 파일 업로드 서비스 주입
+    private final ReviewReportRepository reviewReportRepository;
 
     // 리뷰 등록
     @Transactional
@@ -136,8 +140,36 @@ public class ReviewService {
         if (!review.getUser().getUserId().equals(userId)) {
             throw new ReviewException(ReviewErrorCode.REVIEW_PERMISSION_DENIED);
         }
-
         // 리뷰 삭제
         reviewRepository.delete(review);
+    }
+
+    // 리뷰 신고
+    @Transactional
+    public void reportReview(Integer userId, Integer cosmeticId, Integer reviewId, ReviewReportRequest request) {
+        // 사용자 확인
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorCode.USER_NOT_FOUND));
+
+        // 화장품 확인
+        Cosmetic cosmetic = cosmeticRepository.findById(cosmeticId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorCode.COSMETIC_NOT_FOUND));
+
+        // 리뷰 확인
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorCode.REVIEW_NOT_FOUND));
+
+        // 신고 엔티티 생성
+        ReviewReport report = ReviewReport.builder()
+                .user(user)
+                .review(review)
+                .reason(request.getReason())
+                .build();
+
+        reviewReportRepository.save(report);
+
+        //신고 횟수 업데이트
+        review.incrementReportCount();
+        reviewRepository.save(review);
     }
 }

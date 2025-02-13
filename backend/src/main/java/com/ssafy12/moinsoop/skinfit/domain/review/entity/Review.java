@@ -64,4 +64,9 @@ public class Review {
         this.score = score;
         // 업데이트 날짜는 따로 없는지?
     }
+
+    // 신고 횟수 증가
+    public void incrementReportCount() {
+        this.reportCount++;
+    }
 }
