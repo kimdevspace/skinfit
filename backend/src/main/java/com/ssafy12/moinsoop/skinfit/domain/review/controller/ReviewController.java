@@ -21,6 +21,7 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
+    // 리뷰 작성
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> createReview(
             @AuthenticationPrincipal Integer userId,
@@ -54,5 +55,16 @@ public class ReviewController {
 
         reviewService.updateReviewImages(userId, cosmeticId, reviewId, images);
         return ResponseEntity.ok("리뷰 이미지가 성공적으로 수정되었습니다.");
+    }
+
+    // 리뷰 삭제
+    @DeleteMapping(value = "/{reviewId}")
+    public ResponseEntity<String> deleteReview(
+            @AuthenticationPrincipal Integer userId,
+            @PathVariable Integer cosmeticId,
+            @PathVariable Integer reviewId) {
+
+        reviewService.deleteReview(userId, cosmeticId, reviewId);
+        return ResponseEntity.ok("리뷰가 성공적으로 삭제되었습니다.");
     }
 }
