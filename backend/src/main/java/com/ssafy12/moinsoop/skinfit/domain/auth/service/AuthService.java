@@ -49,6 +49,7 @@ public class AuthService {
                 .builder()
                 .accessToken(accessToken)
                 .isRegistered(isRegistered)
+                .roleType(user.getRoleType())
                 .build();
 
         return response;
