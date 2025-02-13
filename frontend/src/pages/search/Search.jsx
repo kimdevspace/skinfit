@@ -1,7 +1,7 @@
 import SearchBar from "../../components/search/SearchBar.jsx"
 import SearchResult from "../../components/search/SearchResult.jsx"
 import { useState, useEffect } from "react"
-import useSearchStore, { useSearchCosmetics } from "../../stores/Search.js" // 검색 store (pinia)
+import { useSearchCompleteStore }from "../../stores/Search.js" // 검색 store (pinia)
 import "./Search.scss"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
@@ -10,10 +10,13 @@ import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 // 카테고리 옵션
 const categoryOptions = [
   { id: null, name: "전체" },
-  { id: 0, name: "스킨/로션" },
-  { id: 1, name: "에센스" },
-  { id: 2, name: "크림" },
-  { id: 3, name: "클렌징" },
+  { id: 0, name: "로션" },
+  { id: 1, name: "스킨" },
+  { id: 2, name: "에센스" },
+  { id: 3, name: "크림" },
+  { id: 4, name: "클렌징" },
+  { id: 5, name: "바디" },
+  { id: 6, name: "선케어어" },
 ];
 
 
@@ -22,8 +25,18 @@ function Search() {
   const [searchWord, setSearchWord] = useState("")
 
 
-  // 화장품명 검색 스토어
-  const { setQuery, setFilterByUserPreference, setCategory } = useSearchStore()
+  // 검색바 결과목록
+  // 데이터 상태 업데이트트
+  // const setQuery = useSearchCompleteStore((state) => state.setQuery);
+  // const setCategory = useSearchCompleteStore((state) => state.setCategory);
+  // const setFilterByUserPreference = useSearchCompleteStore(
+  //   (state) => state.setFilterByUserPreference
+  // );
+  // const setLimit = useSearchCompleteStore((state) => state.setLimit);
+  // const setPage = useSearchCompleteStore((state) => state.setPage);
+
+
+  const { setQuery, setFilterByUserPreference, setCategory } = useSearchCompleteStore()
   const { data: cosmetics, isLoading, isError, error } = useSearchCosmetics()
 
 
