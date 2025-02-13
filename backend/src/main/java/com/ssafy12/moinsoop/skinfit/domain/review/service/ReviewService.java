@@ -4,6 +4,8 @@ import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
 import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewReportRequest;
 import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewRequest;
 import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewUpdateRequest;
+import com.ssafy12.moinsoop.skinfit.domain.review.dto.response.ReviewDto;
+import com.ssafy12.moinsoop.skinfit.domain.review.dto.response.ReviewResponse;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.Review;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.ReviewImage;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.ReviewReport;
@@ -17,11 +19,16 @@ import com.ssafy12.moinsoop.skinfit.domain.user.entity.repository.UserRepository
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.repository.CosmeticRepository;
 import com.ssafy12.moinsoop.skinfit.infrastructure.S3Uploader;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -172,4 +179,80 @@ public class ReviewService {
         review.incrementReportCount();
         reviewRepository.save(review);
     }
+
+    // 리뷰 조회
+    @Transactional(readOnly = true)
+    public ReviewResponse getReviews(Integer cosmeticId, String sort, int page, int limit, boolean custom, Integer userId) {
+        // 정렬 (최신순/좋아요순) - 기본 : 최신순
+        // 좋아요 기능 구현 후 수정 필요
+        Sort sortOrder = "likes".equalsIgnoreCase(sort)
+                ? Sort.by("likeCount").descending()
+                : Sort.by("createdAt").descending();
+
+        PageRequest pageable = PageRequest.of(page - 1, limit, sortOrder);
+        Page<Review> reviewPage;
+
+        // "내 피부 맞춤 리뷰" 설정
+        if (custom) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new ReviewException(ReviewErrorCode.USER_NOT_FOUND));
+            // 현재 사용자의 피부 타입 정보 추출
+            List<Integer> userSkinTypeIds = user.getUserSkinTypes().stream()
+                    .map(ust -> ust.getSkinType().getTypeId())
+                    .collect(Collectors.toList());
+            long userSkinTypeCount = userSkinTypeIds.size();
+            reviewPage = reviewRepository.findCustomReviews(cosmeticId, userSkinTypeIds, userSkinTypeCount, pageable);
+        } else {
+            reviewPage = reviewRepository.findByCosmetic_CosmeticId(cosmeticId, pageable);
+        }
+
+        // 조회한 리뷰 엔티티를 Dto로 변경
+        List<ReviewDto> reviewDtos = reviewPage.getContent().stream().map(review -> {
+
+            int likes = review.getReviewLikes().size(); // 좋아요 구현 후 수정 필요
+            int isLiked = review.getReviewLikes().stream() // 좋아요 구현 후 수정 필요
+                    .anyMatch(like -> like.getUser().getUserId().equals(userId)) ? 1 : 0;
+
+            List<String> imageUrls = review.getReviewImages().stream()
+                    .map(ReviewImage::getImageUrl)
+                    .collect(Collectors.toList());
+
+            User reviewUser = review.getUser();
+            String nickname = reviewUser.getNickname();
+            Integer scoreValue = review.getScore();
+
+            // 작성자 피부 타입 모두 출력
+            String skinType = reviewUser.getUserSkinTypes().stream()
+                    .map(ust -> ust.getSkinType().getTypeName())
+                    .collect(Collectors.joining(", "));
+
+            // 연령대 계산 : (현재 연도 - birthYear)의 십의 자리
+            String ageGroup = "Unknown";
+            if (reviewUser.getBirthYear() != null) {
+                int currentYear = LocalDate.now().getYear();
+                int age = currentYear - reviewUser.getBirthYear().getValue();
+                int decade = (age / 10) * 10;
+                ageGroup = decade + "대";
+            }
+
+            return ReviewDto.builder()
+                    .reviewId(review.getReviewId())
+                    .userNickname(nickname)
+                    .userSkinType(skinType)
+                    .userAgeGroup(ageGroup)
+                    .reviewContent(review.getContent())
+                    .score(scoreValue)
+                    .likes(likes)
+                    .images(imageUrls)
+                    .isLiked(isLiked)
+                    .createdAt(review.getCreatedAt())
+                    .build();
+        }).collect(Collectors.toList());
+
+        return ReviewResponse.builder()
+                .totalCount((int) reviewPage.getTotalElements())
+                .reviews(reviewDtos)
+                .build();
+    }
 }
+
