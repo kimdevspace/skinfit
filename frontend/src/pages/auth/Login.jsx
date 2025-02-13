@@ -20,12 +20,12 @@ function Login() {
         userPassword: password,
       });
   
-      const { accessToken, isRegistered } = response.data;
+      const { accessToken, registered  } = response.data;
+      console.log("registered 값:", registered, " | 타입:", typeof registered);
       console.log("로그인 성공:", response.data);
-      console.log("최초 로그인 여부: ", isRegistered);
-  
+      
       // isRegistered 값이 "true" 또는 "false" 문자열로 온다고 가정
-      if (isRegistered === true) {
+      if (registered === true) {
         // 이미 추가 등록된 사용자
         navigate("/"); 
       } else {
