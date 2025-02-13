@@ -152,6 +152,8 @@ public class MyPageService {
                         Integer id = Integer.parseInt(entry.getKey());
                         return AllBadIngredientsResponse.BadIngredientInfo.builder()
                                 .ingredientName(ingredientMap.get(id).getIngredientName())
+                                .ewgScoreMin(ingredientMap.get(id).getEwgScoreMin())
+                                .ewgScoreMax(ingredientMap.get(id).getEwgScoreMax())
                                 .detectionCount(entry.getValue())
                                 .build();
                     })

@@ -18,6 +18,8 @@ public class AllBadIngredientsResponse {
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     public static class BadIngredientInfo {
         private String ingredientName;
+        private Integer ewgScoreMin;
+        private Integer ewgScoreMax;
         private int detectionCount;
     }
 }
