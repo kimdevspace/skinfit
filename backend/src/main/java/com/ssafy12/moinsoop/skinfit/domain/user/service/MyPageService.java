@@ -119,6 +119,53 @@ public class MyPageService {
                 .build();
     }
 
+    // 모든 안맞는 성분 자세히 보기, 성분명과 검출횟수
+    public AllBadIngredientsResponse getAllBadIngredients(Integer userId) {
+        String key = "ingredient:analysis:" + userId;
+        Object value = redisTemplate.opsForValue().get(key);
+
+        if (value instanceof Map) {
+            Map<String, Integer> detectionMap = (Map<String, Integer>) value;
+
+            // 검출 횟수로 정렬된 Entry 리스트 생성 (이번에는 limit 없이)
+            List<Map.Entry<String, Integer>> sortedEntries = detectionMap.entrySet()
+                    .stream()
+                    .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                    .collect(Collectors.toList());
+
+            // ID 리스트 생성
+            List<Integer> ingredientIds = sortedEntries.stream()
+                    .map(entry -> Integer.parseInt(entry.getKey()))
+                    .collect(Collectors.toList());
+
+            // 데이터베이스에서 조회한 결과를 Map으로 변환
+            Map<Integer, Ingredient> ingredientMap = ingredientRepository.findByIngredientIdIn(ingredientIds)
+                    .stream()
+                    .collect(Collectors.toMap(
+                            Ingredient::getIngredientId,
+                            ingredient -> ingredient
+                    ));
+
+            // 원래 순서대로 BadIngredientInfo 리스트 생성
+            List<AllBadIngredientsResponse.BadIngredientInfo> badIngredients = sortedEntries.stream()
+                    .map(entry -> {
+                        Integer id = Integer.parseInt(entry.getKey());
+                        return AllBadIngredientsResponse.BadIngredientInfo.builder()
+                                .ingredientName(ingredientMap.get(id).getIngredientName())
+                                .detectionCount(entry.getValue())
+                                .build();
+                    })
+                    .collect(Collectors.toList());
+
+            return AllBadIngredientsResponse.builder()
+                    .ingredients(badIngredients)
+                    .build();
+        }
+
+        return AllBadIngredientsResponse.builder()
+                .ingredients(Collections.emptyList())
+                .build();
+    }
 
     // 내가 등록한 화장품, 맞는 것과 안맞는 것으로 구분하여 응답
     @Transactional(readOnly = true)
