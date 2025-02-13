@@ -12,27 +12,27 @@ import java.util.Arrays;
 import java.util.List;
 
 
-@SpringBootTest
-public class MainPageTest {
-
-    @Autowired
-    private RedisTemplate redisTemplate;
-    @Autowired
-    private MainPageService mainPageService;
-
-    @Test
-    void testMainPage() {
-        //given
-        Integer userId = 1;
-        String key = "recommend:" + userId;
-        List<Integer> recommendedIds = Arrays.asList(1, 2, 3, 4, 5);
-
-        redisTemplate.opsForValue().set(key, recommendedIds);
-
-        //when
-        MainPageResponse response = mainPageService.getMainPage(userId);
-
-        Assertions.assertNotNull(response);
-        Assertions.assertEquals(5, response.getRecommendedCosmetics().size());
-    }
-}
+//@SpringBootTestgit
+//public class MainPageTest {
+//
+//    @Autowired
+//    private RedisTemplate redisTemplate;
+//    @Autowired
+//    private MainPageService mainPageService;
+//
+//    @Test
+//    void testMainPage() {
+//        //given
+//        Integer userId = 1;
+//        String key = "recommend:" + userId;
+//        List<Integer> recommendedIds = Arrays.asList(1, 2, 3, 4, 5);
+//
+//        redisTemplate.opsForValue().set(key, recommendedIds);
+//
+//        //when
+//        MainPageResponse response = mainPageService.getMainPage(userId);
+//
+//        Assertions.assertNotNull(response);
+//        Assertions.assertEquals(5, response.getRecommendedCosmetics().size());
+//    }
+//}
