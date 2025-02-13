@@ -1,6 +1,4 @@
 import { create } from "zustand";
-import axios from "../api/axiosInstance";
-import { useQuery } from "@tanstack/react-query";
 
 // 화장품/성분 등록 및 수정 시 사용할 스토어
 export const useSearchPopupStore = create((set, get) => ({
@@ -88,30 +86,6 @@ export const useSearchPopupStore = create((set, get) => ({
       .filter(Boolean)
       .join(", ");
   },
-
-  // // 수정 모드에서 개별 카테고리 업데이트
-  // updateCategory: async (category) => {
-  //   try {
-  //     const payload = get().getApiPayload(category);
-  //     await axios.patch("/api/user-items", { [category]: payload });
-  //     return true;
-  //   } catch (error) {
-  //     console.error("Failed to update items:", error);
-  //     return false;
-  //   }
-  // },
-
-  // // 전체 데이터 등록
-  // registerItems: async () => {
-  //   try {
-  //     const payload = get().getApiPayload();
-  //     await axios.post("/api/user-items", payload);
-  //     return true;
-  //   } catch (error) {
-  //     console.error("Failed to register items:", error);
-  //     return false;
-  //   }
-  // },
 
   // 전체 데이터 초기화
   resetItems: () =>

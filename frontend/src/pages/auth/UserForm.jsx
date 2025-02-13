@@ -99,6 +99,7 @@ function UserForm() {
     mutationFn: uploadUserInit,
     onSuccess: () => {
       alert("회원 정보 등록에 성공했습니다.");
+      useSearchPopupStore.getState().resetItems(); // 스토어 초기화
       navigate("/");
     },
     onError: () => {
