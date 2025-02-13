@@ -75,8 +75,13 @@ public class UserController {
     /**
      * 레디스에 저장 된 나와 맞지 않는 성분들을 가져온 후 3개만 반환한다.
      */
+    @GetMapping("/mypage/bad-ingredients-three")
+    public ResponseEntity<Top3BadIngredientsResponse> getTop3BadIngredients(@AuthenticationPrincipal Integer userId) {
+        Top3BadIngredientsResponse response = myPageService.getTop3BadIngredients(userId);
+        return ResponseEntity.ok(response);
+    }
 
-    // 내가 등록한 화장품 가져오기
+    // 내가 등록한 화장품 가져오기`
     @GetMapping("/mypage/cosmetics")
     public ResponseEntity<MyCosmeticsResponse> getAllMyCosmetics(@AuthenticationPrincipal Integer userId) {
         MyCosmeticsResponse response = myPageService.getAllMyCosmetics(userId);
