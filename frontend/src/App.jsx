@@ -4,7 +4,7 @@ import MyPageRoute from "./routes/MyPageRoute";
 import HomeRoute from "./routes/HomeRoute";
 import CosmeticsRoute from "./routes/CosmeticsRoute";
 import Search from "./pages/search/Search";
-// import OcrScanner from "./pages/ocr/OcrScanner";
+import OcrScanner from "./pages/ocr/OcrScanner";
 
 function App() {
   return (
@@ -29,7 +29,7 @@ function App() {
       <Route path="/search" element={<Search />} />
 
       {/* OCR 스캐너 페이지 */}
-      {/* <Route path="/ocr" element={<OcrScanner />} /> */}
+      <Route path="/ocr" element={<OcrScanner />} />
       
     </Routes>
   );

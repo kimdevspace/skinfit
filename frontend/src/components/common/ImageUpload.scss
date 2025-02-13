@@ -9,7 +9,7 @@
 
   .custom-file-input {
     width: 100%;
-    aspect-ratio: 3/1;
+    aspect-ratio: 4/1;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -24,7 +24,8 @@
 
       .preview-box {
         position: relative;
-        width: 30%;
+        // 업로드 이미지 크기 고정
+        width: 8rem;
         aspect-ratio: 1/1; // 정방형 유지
 
         img {
