@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
+    List<Review> findByUser_UserIdOrderByCreatedAtDesc(Integer userId);
     // cosmeticId 기준 조회
     Page<Review> findByCosmetic_CosmeticId(Integer cosmeticId, Pageable pageable);
 
