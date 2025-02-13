@@ -22,11 +22,12 @@ import com.ssafy12.moinsoop.skinfit.domain.user.entity.repository.UserRepository
 import com.ssafy12.moinsoop.skinfit.global.core.analysis.IngredientAnalysisCacheManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -43,7 +44,7 @@ public class MyPageService {
     private final IngredientExperienceRepository ingredientExperienceRepository;
     private final IngredientRepository ingredientRepository;
     private final IngredientAnalysisCacheManager ingredientAnalysisCacheManager;
-
+    private final RedisTemplate redisTemplate;
     @Transactional(readOnly = true)
     public UserNicknameAndUserSkinTypeResponse getUserNicknameAndSkinTypes(Integer userId) {
         User user = userRepository.findById(userId)
@@ -67,6 +68,57 @@ public class MyPageService {
      * 2. 캐시 히트 시 로직 실행x 캐시 미스 시 로직 실행
      * 3. 레디스에 저장되어 있는걸 다 가져와서 검출 횟수 기준 내림차순하여 최대 3개까지 응답해준다.
      */
+    @Transactional(readOnly = true)
+    public Top3BadIngredientsResponse getTop3BadIngredients(Integer userId) {
+        User user = userRepository.findById(userId)
+                        .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
+
+        // 캐싱
+        ingredientAnalysisCacheManager.initializeUserCache(userId);
+
+        // 레디스에서 가져오기
+        String key = "ingredient:analysis:" + userId;
+        Object value = redisTemplate.opsForValue().get(key);
+
+        if (value instanceof Map) {
+            Map<String, Integer> detectionMap = (Map<String, Integer>) value;
+
+            // 정렬된 Entry 리스트를 유지
+            List<Map.Entry<String, Integer>> sortedEntries = detectionMap.entrySet()
+                    .stream()
+                    .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                    .limit(3)
+                    .toList();
+
+            // ID 리스트 생성
+            List<Integer> top3IngredientIds = sortedEntries.stream()
+                    .map(entry -> Integer.parseInt(entry.getKey()))
+                    .toList();
+
+            // 데이터베이스에서 조회한 결과를 원래 순서대로 재정렬
+            Map<Integer, Ingredient> ingredientMap = ingredientRepository.findByIngredientIdIn(top3IngredientIds)
+                    .stream()
+                    .collect(Collectors.toMap(
+                            Ingredient::getIngredientId,
+                            ingredient -> ingredient
+                    ));
+
+            // 원래 순서대로 이름 리스트 생성
+            List<String> ingredientNames = top3IngredientIds.stream()
+                    .map(id -> ingredientMap.get(id).getIngredientName())
+                    .collect(Collectors.toList());
+
+            return Top3BadIngredientsResponse.builder()
+                    .ingredientNames(ingredientNames)
+                    .build();
+        }
+
+        // 데이터가 없는 경우 빈 리스트 반환
+        return Top3BadIngredientsResponse.builder()
+                .ingredientNames(Collections.emptyList())
+                .build();
+    }
+
 
     // 내가 등록한 화장품, 맞는 것과 안맞는 것으로 구분하여 응답
     @Transactional(readOnly = true)
