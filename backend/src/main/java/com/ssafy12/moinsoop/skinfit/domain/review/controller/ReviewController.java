@@ -1,5 +1,6 @@
 package com.ssafy12.moinsoop.skinfit.domain.review.controller;
 
+import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewReportRequest;
 import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewRequest;
 import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewUpdateRequest;
 import com.ssafy12.moinsoop.skinfit.domain.review.service.ReviewService;
@@ -66,5 +67,17 @@ public class ReviewController {
 
         reviewService.deleteReview(userId, cosmeticId, reviewId);
         return ResponseEntity.ok("리뷰가 성공적으로 삭제되었습니다.");
+    }
+
+    // 리뷰 신고
+    @PostMapping(value = "/{reviewId}/report")
+    public ResponseEntity<String> reportReview(
+            @AuthenticationPrincipal Integer userId,
+            @PathVariable Integer cosmeticId,
+            @PathVariable Integer reviewId,
+            @Valid @RequestBody ReviewReportRequest request) {
+
+        reviewService.reportReview(userId, cosmeticId, reviewId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body("리뷰 신고가 성공적으로 접수되었습니다.");
     }
 }
