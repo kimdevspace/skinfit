@@ -81,6 +81,13 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    // 모든 안맞는 성분과 검출횟수 제공
+    @GetMapping("/mypage/detail-unsuit-ingredients")
+    public ResponseEntity<AllBadIngredientsResponse> getAllBadIngredients(@AuthenticationPrincipal Integer userId) {
+        AllBadIngredientsResponse response = myPageService.getAllBadIngredients(userId);
+        return ResponseEntity.ok(response);
+    }
+
     // 내가 등록한 화장품 가져오기`
     @GetMapping("/mypage/cosmetics")
     public ResponseEntity<MyCosmeticsResponse> getAllMyCosmetics(@AuthenticationPrincipal Integer userId) {
