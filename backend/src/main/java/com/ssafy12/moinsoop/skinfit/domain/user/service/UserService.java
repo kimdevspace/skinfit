@@ -1,11 +1,20 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.service;
 
+import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
+import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.repository.CosmeticRepository;
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.*;
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.*;
+import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.Ingredient;
+import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.repository.IngredientRepository;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.SkinType;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.UserSkinType;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.repository.SkinTypeRepository;
 import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.repository.UserSkinTypeRepository;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.RegisterUserInfoRequest;
 import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.SignUpRequest;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.UpdateProfileRequest;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.request.UserPasswordRequest;
+import com.ssafy12.moinsoop.skinfit.domain.user.dto.response.UserProfileResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.ProviderType;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.RoleType;
@@ -14,6 +23,7 @@ import com.ssafy12.moinsoop.skinfit.domain.user.exception.DuplicateUserEmailExce
 import com.ssafy12.moinsoop.skinfit.domain.user.exception.InvalidVerificationCodeException;
 import com.ssafy12.moinsoop.skinfit.domain.user.exception.VerificationCodeExpiredException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.Id;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
@@ -22,10 +32,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -38,16 +53,29 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final SkinTypeRepository skinTypeRepository;
     private final UserSkinTypeRepository userSkinTypeRepository;
+    private final CosmeticRepository cosmeticRepository;
+    private final CosmeticExperienceRepository cosmeticExperienceRepository;
+    private final SymptomRepository symptomRepository;
+    private final CosmeticSymptomRepository cosmeticSymptomRepository;
+    private final IngredientRepository ingredientRepository;
+    private final IngredientExperienceRepository ingredientExperienceRepository;
+    private final IngredientSymptomRepository ingredientSymptomRepository;
 
     private static final String EMAIL_VERIFICATION_PREFIX = "email:verification:";
     private static final String EMAIL_VERIFIED_PREFIX = "email:verified:";
     private static final long VERIFICATION_CODE_TTL = 300; // 5분
-
+    private static final long VERIFICATION_TIMEOUT = 30 * 60; // 30분 (개인정보 수정전 비밀번호 검증)
 
     public void checkDuplicateUserEmail(String userEmail) {
         // 이메일 중복 체크
         if (userRepository.existsByUserEmail(userEmail)) {
             throw new DuplicateUserEmailException("이미 가입된 메일입니다.");
+        }
+    }
+
+    public void checkDuplicateUserNickname(String nickname) {
+        if (userRepository.existsByNickname(nickname)) {
+            throw new IllegalArgumentException("이미 사용중인 닉네임입니다.");
         }
     }
 
@@ -137,6 +165,7 @@ public class UserService {
         mailSender.send(message);
     }
 
+    @Transactional
     //  회원등록 서비스
     public void initializeUserInfo(Integer userId, RegisterUserInfoRequest request) {
         // 1. 사용자 기본 정보 업데이트
@@ -146,7 +175,103 @@ public class UserService {
 
         // 2. 사용자 피부 타입 정보 저장
         saveUserSkinTypes(user, request.getSkinTypeIds());
+
+        // 3. 잘 맞는 화장품 정보 저장
+        if (request.getSuitableCosmetics() != null) {
+            saveSuitableCosmetics(user, request.getSuitableCosmetics());
+        }
+
+        // 4. 잘 맞지 않는 화장품 정보 저장
+        if (request.getUnsuitableCosmetics() != null) {
+            saveUnsuitableCosmetics(user, request.getUnsuitableCosmetics());
+        }
+
+        // 5. 잘 맞는 성분 정보 저장
+        if (request.getSuitableIngredients() != null) {
+            saveSuitableIngredients(user, request.getSuitableIngredients());
+        }
+
+        // 6. 잘 맞지 않는 성분 정보 저장
+        if (request.getUnsuitableCosmetics() != null) {
+            saveUnsuitableIngredients(user, request.getUnsuitableIngredients());
+        }
     }
+
+    // 개인정보 수정 전 비밀번호 검증
+    public String verifyPassword(Integer userId, UserPasswordRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
+
+        if (!passwordEncoder.matches(request.getUserPassword(), user.getUserPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
+        }
+
+        // 검증 성공 시 토큰 생성 및 저장
+        String token = UUID.randomUUID().toString();
+        redisTemplate.opsForValue().set(
+                "profile_verify:" + userId,
+                token,
+                VERIFICATION_TIMEOUT,
+                TimeUnit.SECONDS
+        );
+
+        return token;
+    }
+
+    // 수정폼으로 넘어가기
+    public UserProfileResponse getUserProfile(Integer userId, String token) {
+        validateVerificationToken(userId, token);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        List<SkinType> allSkinTypes = skinTypeRepository.findAll();
+        List<UserSkinType> userSkinTypes = userSkinTypeRepository.findAllByUser_UserId(userId);
+
+        // 현재 사용자가 선택한 피부타입 ID 목록
+        Set<Integer> selectedTypeIds = userSkinTypes.stream()
+                .map(ust -> ust.getSkinType().getTypeId())
+                .collect(Collectors.toSet());
+
+        // 모든 피부타입에 대해 현재 사용자의 선택 여부 표시
+        List<UserProfileResponse.SkinTypeInfo> skinTypes = allSkinTypes.stream()
+                .map(type -> UserProfileResponse.SkinTypeInfo.of(
+                        type,
+                        selectedTypeIds.contains(type.getTypeId())
+                ))
+                .collect(Collectors.toList());
+
+        return UserProfileResponse.builder()
+                .nickname(user.getNickname())
+                .skinTypes(skinTypes)
+                .build();
+    }
+
+    // 개인정보 수정하기
+    @Transactional
+    public void updateProfile(Integer userId, String token, UpdateProfileRequest request) {
+        validateVerificationToken(userId, token);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        // 닉네임 업데이트
+        user.updateNickname(request.getNickname());
+
+        // 비밀번호가 입력된 경우에만 변경
+        if (StringUtils.hasText(request.getNewPassword())) {
+            user.updatePassword(passwordEncoder.encode(request.getNewPassword()));
+        }
+
+        // 피부타입 업데이트
+        userSkinTypeRepository.deleteByUser_UserId(userId);  // 기존 피부타입 삭제
+        request.getSkinTypeIds().forEach(typeId -> {
+            SkinType skinType = skinTypeRepository.findById(typeId)
+                    .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 피부타입입니다."));
+            userSkinTypeRepository.save(UserSkinType.create(user, skinType));
+        });
+    }
+
 
     // 인증번호 생성메서드
     private String generateRandomCode() {
@@ -188,5 +313,107 @@ public class UserService {
                 })
                 .toList();
         userSkinTypeRepository.saveAll(userSkinTypes);
+    }
+
+    // 잘 맞는 화장품 저장하는 메서드
+    private void saveSuitableCosmetics(User user, List<RegisterUserInfoRequest.SuitableCosmeticRequest> suitableCosmetics) {
+        for (RegisterUserInfoRequest.SuitableCosmeticRequest cosmeticRequest : suitableCosmetics) {
+            Cosmetic cosmetic = cosmeticRepository.findById(cosmeticRequest.getCosmeticId())
+                    .orElseThrow(() -> new EntityNotFoundException("Cosmetic Not found"));
+
+            CosmeticExperience experience = CosmeticExperience.builder()
+                    .user(user)
+                    .cosmetic(cosmetic)
+                    .isSuitable(true)
+                    .build();
+
+            cosmeticExperienceRepository.save(experience);
+        }
+    }
+
+    // 잘 안맞는 화장품 저장하는 메서드 (증상과 같이 저장)
+    private void saveUnsuitableCosmetics(User user, List<RegisterUserInfoRequest.UnsuitableCosmeticRequest> unsuitableCosmetics) {
+        for(RegisterUserInfoRequest.UnsuitableCosmeticRequest cosmeticRequest : unsuitableCosmetics) {
+            Cosmetic cosmetic = cosmeticRepository.findById(cosmeticRequest.getCosmeticId())
+                    .orElseThrow(() -> new EntityNotFoundException("Cosmetic Not found"));
+
+            CosmeticExperience experience = CosmeticExperience.builder()
+                    .user(user)
+                    .cosmetic(cosmetic)
+                    .isSuitable(false)
+                    .build();
+
+            cosmeticExperienceRepository.save(experience);
+
+            // 증상 정보 저장
+            List<Symptom> symptoms = symptomRepository.findAllById(cosmeticRequest.getSymptomIds());
+            if (symptoms.size() != cosmeticRequest.getSymptomIds().size()) {
+                throw new EntityNotFoundException("Symptom Not found");
+            }
+
+            for (Symptom symptom : symptoms) {
+                CosmeticSymptom cosmeticSymptom = CosmeticSymptom.builder()
+                        .cosmeticExperience(experience)
+                        .symptom(symptom)
+                        .build();
+
+                cosmeticSymptomRepository.save(cosmeticSymptom);
+            }
+        }
+    }
+
+    
+    // 잘 맞는 성분 저장하기
+    private void saveSuitableIngredients(User user, List<RegisterUserInfoRequest.SuitableIngredientRequest> suitableIngredients) {
+        for (RegisterUserInfoRequest.SuitableIngredientRequest ingredientRequest : suitableIngredients) {
+            Ingredient ingredient = ingredientRepository.findById(ingredientRequest.getIngredientId())
+                    .orElseThrow(() -> new EntityNotFoundException("Ingredient Not found"));
+
+            IngredientExperience experience = IngredientExperience.builder()
+                    .user(user)
+                    .ingredient(ingredient)
+                    .isSuitable(true)
+                    .build();
+
+            ingredientExperienceRepository.save(experience);
+        }
+    }
+    
+    // 잘 안맞는 성분 저장하기
+    private void saveUnsuitableIngredients(User user, List<RegisterUserInfoRequest.UnsuitableIngredientRequest> unsuitableIngredients) {
+        for (RegisterUserInfoRequest.UnsuitableIngredientRequest ingredientRequest : unsuitableIngredients) {
+            Ingredient ingredient = ingredientRepository.findById(ingredientRequest.getIngredientId())
+                    .orElseThrow(() -> new EntityNotFoundException("Ingredient Not found"));
+
+            IngredientExperience experience = IngredientExperience.builder()
+                    .user(user)
+                    .ingredient(ingredient)
+                    .isSuitable(false)
+                    .build();
+
+            ingredientExperienceRepository.save(experience);
+
+            // 증상
+            List<Symptom> symptoms = symptomRepository.findAllById(ingredientRequest.getSymptomIds());
+            if (symptoms.size() != ingredientRequest.getSymptomIds().size()) {
+                throw new EntityNotFoundException("Symptom Not found");
+            }
+
+            for (Symptom symptom : symptoms) {
+                IngredientSymptom ingredientSymptom = IngredientSymptom.builder()
+                        .ingredientExperience(experience)
+                        .symptom(symptom)
+                        .build();
+
+                ingredientSymptomRepository.save(ingredientSymptom);
+            }
+        }
+    }
+
+    private void validateVerificationToken(Integer userId, String token) {
+        String savedToken = (String) redisTemplate.opsForValue().get("profile_verify:" + userId);
+        if (savedToken == null || !savedToken.equals(token)) {
+            throw new EntityNotFoundException("비밀번호 검증이 필요합니다.");
+        }
     }
 }
