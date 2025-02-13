@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const FetchRelatedCosmetics = async (queryKey) => {
   const params = queryKey[1]; // 바로 params 가져오기
-  const response = await axios.get("search/cosmetic/details", {
+  const response = await axios.get("search/cosmetic", {
     params,
     // headers : {
     //     Authorization :
@@ -26,23 +26,14 @@ const FetchRelatedCosmetics = async (queryKey) => {
 export const useRelatedCosmeticsStore = create((set) => ({
   // 디폴트값 세팅
   query: "",
-  page: 1,
-  limit: 10,
-  filterByUserPreference: false,
-  category: null,
 
-  setQuery: (query) => set({ query }),
-  setPage: (page) => set({ page }),
-  setLimit: (limit) => set({ limit }),
-  setFilterByUserPreference: (filter) =>
-    set({ filterByUserPreference: filter }),
-  setCategory: (category) => set({ category }),
+  setRelatedQuery: (query) => set({ query }),
 }));
 //#endregion
 
 // React Query (캐싱된 데이터를 불러온다다)
 export const useRelatedCosmetics = () => {
-  const { query, page, limit, filterByUserPreference, category } =
+  const { query } =
   useRelatedCosmeticsStore();
 
   //useQuery 는 서버로부터 데이터를 요청하여 받아오는 GET api
@@ -51,7 +42,7 @@ export const useRelatedCosmetics = () => {
   return useQuery({
     queryKey: [
       "relatedCosmetics", //queryId
-      { query, page, limit, filterByUserPreference, category },
+       query ,
     ],
     queryFn: FetchRelatedCosmetics,
     enabled: !!query, // 검색어 있을때만 검색되게 
@@ -84,14 +75,11 @@ const FetchSearchComplete = async (queryKey) => {
 export const useSearchCompleteStore = create((set) => ({
   // 디폴트값 세팅
   query: "",
-  page: 1,
-  limit: 10,
   filterByUserPreference: false,
   category: null,
 
+  // 업데이트 역할
   setQuery: (query) => set({ query }),
-  setPage: (page) => set({ page }),
-  setLimit: (limit) => set({ limit }),
   setFilterByUserPreference: (filter) =>
     set({ filterByUserPreference: filter }),
   setCategory: (category) => set({ category }),
@@ -100,7 +88,7 @@ export const useSearchCompleteStore = create((set) => ({
 
 // React Query (캐싱된 데이터를 불러온다다)
 export const useSearchComplete = () => {
-  const { query, page, limit, filterByUserPreference, category } =
+  const { query ,filterByUserPreference, category } =
     useSearchCompleteStore();
 
   //useQuery 는 서버로부터 데이터를 요청하여 받아오는 GET api
@@ -109,7 +97,7 @@ export const useSearchComplete = () => {
   return useQuery({
     queryKey: [
       "searchComplete", //queryId
-      { query, page, limit, filterByUserPreference, category },
+      { query,filterByUserPreference, category },
     ],
     queryFn: FetchSearchComplete,
     enabled: !!query, // 검색어 있을때만 검색되게 
