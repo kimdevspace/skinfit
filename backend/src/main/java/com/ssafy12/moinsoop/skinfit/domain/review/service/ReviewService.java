@@ -6,10 +6,9 @@ import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewRequest;
 import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewUpdateRequest;
 import com.ssafy12.moinsoop.skinfit.domain.review.dto.response.ReviewDto;
 import com.ssafy12.moinsoop.skinfit.domain.review.dto.response.ReviewResponse;
-import com.ssafy12.moinsoop.skinfit.domain.review.entity.Review;
-import com.ssafy12.moinsoop.skinfit.domain.review.entity.ReviewImage;
-import com.ssafy12.moinsoop.skinfit.domain.review.entity.ReviewReport;
+import com.ssafy12.moinsoop.skinfit.domain.review.entity.*;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.repository.ReviewImageRepository;
+import com.ssafy12.moinsoop.skinfit.domain.review.entity.repository.ReviewLikeRepository;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.repository.ReviewReportRepository;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.repository.ReviewRepository;
 import com.ssafy12.moinsoop.skinfit.domain.review.exception.ReviewErrorCode;
@@ -40,6 +39,7 @@ public class ReviewService {
     private final CosmeticRepository cosmeticRepository;
     private final S3Uploader s3Uploader;  // 파일 업로드 서비스 주입
     private final ReviewReportRepository reviewReportRepository;
+    private final ReviewLikeRepository reviewLikeRepository;
 
     // 리뷰 등록
     @Transactional
@@ -180,6 +180,29 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
+    // 리뷰 좋아요
+    public void addLikeReview(Integer userId, Integer cosmeticId, Integer reviewId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorCode.USER_NOT_FOUND));
+        Cosmetic cosmetic = cosmeticRepository.findById(cosmeticId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorCode.COSMETIC_NOT_FOUND));
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorCode.REVIEW_NOT_FOUND));
+
+        ReviewLikeId likeId = new ReviewLikeId(reviewId, userId);
+        if (reviewLikeRepository.existsById(likeId)) {
+            throw new ReviewException(ReviewErrorCode.ALREADY_LIKED);
+        }
+
+        ReviewLike reviewLike = ReviewLike.builder()
+                .id(likeId)
+                .review(review)
+                .user(user)
+                .build();
+        reviewLikeRepository.save(reviewLike);
+    }
+
+
     // 리뷰 조회
     @Transactional(readOnly = true)
     public ReviewResponse getReviews(Integer cosmeticId, String sort, int page, int limit, boolean custom, Integer userId) {
@@ -254,5 +277,6 @@ public class ReviewService {
                 .reviews(reviewDtos)
                 .build();
     }
+
 }
 

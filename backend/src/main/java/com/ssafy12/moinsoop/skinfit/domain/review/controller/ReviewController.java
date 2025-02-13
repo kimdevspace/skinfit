@@ -82,6 +82,17 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.CREATED).body("리뷰 신고가 성공적으로 접수되었습니다.");
     }
 
+    // 리뷰 좋아요
+    @PostMapping(value = "/{reviewId}/add-like")
+    public ResponseEntity<String> addLikeReview(
+            @AuthenticationPrincipal Integer userId,
+            @PathVariable Integer cosmeticId,
+            @PathVariable Integer reviewId) {
+
+        reviewService.addLikeReview(userId, cosmeticId, reviewId);
+        return ResponseEntity.ok("좋아요가 성공적으로 반영되었습니다.");
+    }
+
     // 리뷰 조회
     @GetMapping
     public ResponseEntity<ReviewResponse> getReviews(
