@@ -5,7 +5,6 @@ import SearchResult from "./SearchResult";
 import SearchPopupItem from "./SearchPopupItem";
 import Button from "../common/Button";
 import { useUserInfoStore } from "../../stores/userInfo";
-import { useSearchStore } from "../../stores/Search";
 
 // type : 화장품(cosmetic)인지 성분(ingredient)인지
 // suitability : 잘 맞는(suitable) / 맞지 않는(unsuitable)
@@ -21,13 +20,6 @@ function SearchPopup({ type, suitability, category }) {
   } = useUserInfoStore();
 
   // search 스토어 : 화장품 검색 api 요청
-  const {
-    setQuery,
-    setPage,
-    setLimit,
-    setFilterByUserPreference,
-    setCategory,
-  } = useSearchStore();
 
   // 현재 카테고리의 아이템 목록 선택
   const currentItems = {
