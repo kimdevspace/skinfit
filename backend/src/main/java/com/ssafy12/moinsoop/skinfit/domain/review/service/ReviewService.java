@@ -144,6 +144,7 @@ public class ReviewService {
         reviewRepository.delete(review);
     }
 
+    // 리뷰 신고
     @Transactional
     public void reportReview(Integer userId, Integer cosmeticId, Integer reviewId, ReviewReportRequest request) {
         // 사용자 확인
