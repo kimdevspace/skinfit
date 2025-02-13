@@ -10,6 +10,12 @@ export const useUserInfoStore = create((set) => ({
   unsuitableCosmetics: [],
   unsuitableIngredients: [],
 
+  // 잘 맞는/안 맞는, 화장품/성분의 id 저장할 변수
+  suitableCosmeticsId: [],
+  suitableIngredientsId: [],
+  unsuitableCosmeticsId: [],
+  unsuitableIngredientsId: [],
+
   // 선택한 아이템(화장품/성분) 추가
   addItem: (category, item) =>
     set((state) => ({
@@ -20,6 +26,18 @@ export const useUserInfoStore = create((set) => ({
   removeItem: (category, item) =>
     set((state) => ({
       [category]: state[category].filter((selected) => selected.id !== item.id),
+    })),
+
+  // 선택한 아이템(화장품/성분) id 추가
+  addId: (category, id) =>
+    set((state) => ({
+      [category]: [...state[category], id],
+    })),
+
+  // 선택한 아이템(화장품/성분) id 삭제
+  removeId: (category, id) =>
+    set((state) => ({
+      [category]: state[category].filter((selected) => selected.id !== id.id),
     })),
 
   // 특정 카테고리 아이템 한번에 설정
@@ -35,5 +53,9 @@ export const useUserInfoStore = create((set) => ({
       suitableIngredients: [],
       unsuitableCosmetics: [],
       unsuitableIngredients: [],
+      suitableCosmeticsId: [],
+      suitableIngredientsId: [],
+      unsuitableCosmeticsId: [],
+      unsuitableIngredientsId: [],
     }),
 }));

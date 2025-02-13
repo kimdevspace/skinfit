@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import "./SearchPopupItem.scss";
 import { useUserInfoStore } from "../../stores/userInfo";
+import SymptomPopup from "./SymptomPopup";
 
 // item : 현재 해당하는 화장품 또는 성분 데이터
 // type : 화장품인지 성분인지
@@ -29,11 +30,32 @@ function SearchPopupItem({ item, type, category }) {
     (selectedItem) => selectedItem.id === item.id // 아이디값 이렇게 쓰는지 확인해야함
   );
 
+  // 아이템 안 증상 담기 위한 변수
+  const [currentItem, setCurrentItem] = useState(null);
+
+  // 증상 팝업 상태 관리
+  const [isSymptomPopupOpen, setIsSymptomPopupOpen] = useState(false);
+
   // 아이템 추가 핸들러
-  const handleAdd = () => addItem(category, item);
+  const handleAdd = () => {
+    if (["unsuitableCosmetics", "unsuitableIngredients"].includes(category)) {
+      // 안 맞는 화장품, 성분 팝업
+      setCurrentItem(item) // 현재 아이템 설정
+      setIsSymptomPopupOpen(true);
+    } else {
+      addItem(category, item);
+    }
+  };
 
   // 아이템 제거 핸들러
   const handleRemove = () => removeItem(category, item);
+
+  // 증상 팝업 닫기 및 아이템 업데이트 핸들러
+  const handleSymptomSubmit = (updateItem) => {
+    console.log(updateItem)
+    addItem(category, currentItem);
+    setIsSymptomPopupOpen(false);
+  }
 
   return (
     <div className="search-popup-item">
@@ -68,6 +90,17 @@ function SearchPopupItem({ item, type, category }) {
           삭제
         </button>
       </div>
+
+      {/* 증상 팝업(안 맞는 화장품, 성분 팝업일 때) */}
+      {isSymptomPopupOpen && (
+        <SymptomPopup
+          type={type}
+          currentItem={currentItem}
+          setCurrentItem={setCurrentItem}
+          onClose={() => setIsSymptomPopupOpen(false)}
+          onSubmit={handleSymptomSubmit}
+        />
+      )}
     </div>
   );
 }

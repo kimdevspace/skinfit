@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 //#region 화장품명 검색
 // 액션
 const FetchCosmetics = async (params) => {
-  const response = await axios.get("search/cosmetic/details", {
+  const response = await axios.get("search/cosmetic", {
     params,
     // headers : {
     //     Authorization :
