@@ -29,7 +29,7 @@ function ImageUpload({ images, setImages, maxImages, dataType, onError, error })
 
     e.target.value = ""
 
-    if (onError) {
+    if (error) {
       onError(false) // 이미지가 업로드되면 에러 상태를 false로 설정
     }
 
@@ -48,7 +48,7 @@ function ImageUpload({ images, setImages, maxImages, dataType, onError, error })
       const updatedImages = [...prevData.images]
       updatedImages.splice(index, 1)
 
-      if (onError && updatedImages.length === 0) {
+      if (error && updatedImages.length === 0) {
         onError(true) // 모든 이미지 삭제됐을 경우 에러 true 
       }
       return {
@@ -57,6 +57,8 @@ function ImageUpload({ images, setImages, maxImages, dataType, onError, error })
       }
     })
   }
+
+  console.log(error)
 
   return (
     <div className="review-images">
@@ -88,7 +90,7 @@ function ImageUpload({ images, setImages, maxImages, dataType, onError, error })
         ref={fileInputRef}
         onChange={handleImageUpload}
       />
-      {error && <p className="error-msg"> 사진 등록은 필수예요</p>}
+      <p className={`error-msg ${error ? 'error' : ''}`}> 사진 등록은 필수예요</p>
     </div>
   )
 }

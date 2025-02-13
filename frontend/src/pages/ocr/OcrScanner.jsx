@@ -144,7 +144,7 @@ export default function OcrScanner() {
       </div>
 
       {/* 리뷰 사진 등록 */}
-      <ImageUpload images={ocrData.images} setImages={setOcrData} maxImages={1} dataType="ocr" onError={setImageError} error={imageError} />
+      <ImageUpload images={ocrData.images} setImages={setOcrData} maxImages={3} dataType="ocr" onError={setImageError} error={imageError} />
 
       <Button text="등록하기" color="pink" type="submit" onSubmit={handleSubmit} />
     </div>
