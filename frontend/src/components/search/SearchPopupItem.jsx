@@ -1,4 +1,4 @@
-import 1{ useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import "./SearchPopupItem.scss";
 import { useSearchPopupStore } from "../../stores/SearchPopup";
 import SymptomPopup from "./SymptomPopup";

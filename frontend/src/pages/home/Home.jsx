@@ -9,8 +9,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 import NavBar from "../../components/common/NavBar";
-import SearchPopup from "../../components/search/SearchPopup.jsx";
-import SymptomPopup from "../../components/search/SymptomPopup.jsx";
 
 function Home() {
   // 메인 페이지(추천 상품, 화장품 정보) 필요한 정보 api 요청
@@ -144,13 +142,6 @@ function Home() {
 
       {/* 네브바 */}
       <NavBar />
-
-      {/* <SearchPopup
-        type="cosmetic"
-        suitability="unsuitable"
-        category="unsuitableCosmetics"
-      /> */}
-      <SymptomPopup/>
     </div>
   );
 }

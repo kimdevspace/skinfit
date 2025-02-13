@@ -2,27 +2,18 @@ import React, { useState } from "react";
 import "./SymptomPopup.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { useSearchPopupStore } from "../../stores/SearchPopup";
 
 // type : 'cosmetic' or 'ingredient'
 // item : 선택된 화장품/성분 데이터
 // onClose : 팝업 닫기 함수
 // onSubmit : 증상 선택 완료 함수
 function SymptomPopup({ type, item, onClose, onSubmit }) {
+  // 스토어에서 증상 리스트 가져오기
+  const symptoms = useSearchPopupStore((state) => state.symptoms);
+
   // 선택된 증상들 저장하는 상태
   const [selectedSymptoms, setSelectedSymptoms] = useState([]);
-
-  // 증상 리스트
-  const symptomList = [
-    { name: "부음", value: 0 },
-    { name: "열감", value: 1 },
-    { name: "건조함", value: 2 },
-    { name: "여드름", value: 3 },
-    { name: "두드러기", value: 4 },
-    { name: "가려움", value: 5 },
-    { name: "따가움", value: 6 },
-    { name: "기타", value: 7 },
-    { name: "모름", value: 8 },
-  ];
 
   // 증상 체크박스 변경 처리
   const handleCheckboxChange = (symptomValue) => {
@@ -53,20 +44,20 @@ function SymptomPopup({ type, item, onClose, onSubmit }) {
         </button>
 
         {/* 화장품/성분 사진, 이름 */}
-        <div className="popup-item">
+        {/* <div className="popup-item">
           {type === "cosmetic" ? (
             <img src={item.imageUrl} alt={item.cosmeticName} />
           ) : null}
           <p className="title">
-            {type === "cosmetic" ? item.cosmeticName : item.ingrediendName}
+            {type === "cosmetic" ? item.cosmeticName : item.ingredientName}
           </p>
-        </div>
+        </div> */}
 
         {/* 증상 박스 */}
         <div className="symptom-box">
           <p className="info-text">사용 시 나타난 증상(중복선택 가능)</p>
           <div className="symptom-group">
-            {symptomList.map((symptom) => (
+            {symptoms.map((symptom) => (
               <label key={symptom.value}>
                 <input
                   type="checkbox"

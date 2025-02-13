@@ -4,23 +4,19 @@ import UserInfo1 from "../../components/auth/UserInfo1.jsx";
 import Category from "../../components/common/Category.jsx";
 import Button from "../../components/common/Button.jsx";
 import UserInfo2 from "../../components/auth/UserInfo2.jsx";
-import {useMutation} from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query";
 import axios from "../../api/axiosInstance.js";
 import { useNavigate } from "react-router-dom";
+import { useSearchPopupStore } from "../../stores/SearchPopup.js";
+import SearchPopup from "../../components/search/SearchPopup.jsx";
 
 function UserForm() {
   // ===== 1단계: 기본 회원정보 =====
-  const [gender, setGender] = useState("");          
-  const [birthYear, setBirthYear] = useState("");      // 문자열로 입력됨 (최종 payload에서는 숫자로 변환)
+  const [gender, setGender] = useState("");
+  const [birthYear, setBirthYear] = useState(""); // 문자열로 입력됨 (최종 payload에서는 숫자로 변환)
   const [nickname, setNickname] = useState("");
   const [skinTypes, setSkinTypes] = useState([]);
   const [nicknameChecked, setNicknameChecked] = useState(false);
-
-  // ===== 2단계: 화장품/성분 정보 =====
-  const [suitableCosmetics, setSuitableCosmetics] = useState([]);
-  const [suitableIngredients, setSuitableIngredients] = useState([]);     
-  const [unsuitableCosmetics, setUnsuitableCosmetics] = useState([]);
-  const [unsuitableIngredients, setUnsuitableIngredients] = useState([]);
 
   // 멀티 스텝 관리
   const [step, setStep] = useState(1);
@@ -54,7 +50,7 @@ function UserForm() {
   // 피부타입 토글
   const toggleSkinType = (typeId) => {
     if (skinTypes.includes(typeId)) {
-      setSkinTypes(skinTypes.filter((id) => id !== type));
+      setSkinTypes(skinTypes.filter((id) => id !== typeId));
     } else {
       setSkinTypes([...skinTypes, typeId]);
     }
@@ -71,25 +67,29 @@ function UserForm() {
     }
   };
 
-  // ----- [2단계에서 쓰는 데모 핸들러 & 리스트 예시] -----
-  //#region 나와 잘 맞는 화장품 & 성분 데이터 찾기 구현 시 이 부분 수정
-  const handleSearch1 = () => {
-    // 나에게 잘 맞는 화장품 (필수)
-    // setSuitableCosmetics([{ cosmeticId: 2 }, { cosmeticId: 8 }, { cosmeticId: 9 }]);
+  // 스토어에서 getApiPayload 함수와 items 가져오기
+  const { getApiPayload, items } = useSearchPopupStore();
+
+  // SearchPopup 상태 관리
+  const [isSearchPopupOpen, setIsSearchPopupOpen] = useState(false);
+  const [searchPopupProps, setSearchPopupProps] = useState(null);
+
+  // 검색 팝업 열기
+  const handleSearch = (category) => {
+    const props = {
+      type: category.includes("Cosmetics") ? "cosmetic" : "ingredient",
+      suitability: category.includes("unsuitable") ? "unsuitable" : "suitable",
+      category: category,
+    };
+    setSearchPopupProps(props);
+    setIsSearchPopupOpen(true); // 팝업 열기
   };
-  const handleSearch2 = () => {
-    // 나에게 잘 맞는 성분 (선택)
-    // setSuitableIngredients([{ ingredientId: 5 }, { ingredientId: 1 }]);
+
+  // 검색 팝업 닫기
+  const handleClosePopup = () => {
+    setIsSearchPopupOpen(false); // 팝업 닫기
+    // props는 유지 (다음에 같은 카테고리 검색할 때 사용)
   };
-  const handleSearch3 = () => {
-    // 예: 나에게 맞지 않는 화장품 (필수)
-    // setUnsuitableCosmetics([{ cosmeticId: 4, symptomIds: [1, 2] }, { cosmeticId: 7, symptomIds: [6] }]);
-  };
-  const handleSearch4 = () => {
-    // 예: 나에게 맞지 않는 성분 (선택)
-    // setUnsuitableIngredients([{ ingredientId: 4, symptomIds: [1, 3] }, { ingredientId: 10, symptomIds: [2] }]);
-  };
-  //#endregion
 
   const uploadUserInit = async (payload) => {
     return axios.post("user/init", payload);
@@ -118,25 +118,25 @@ function UserForm() {
       console.log("1단계 입력 데이터: ", step1Data);
       setStep(2);
     } else if (step === 2) {
+      // 필수 항목 체크
+      if (
+        !items.suitableCosmetics.length ||
+        !items.unsuitableCosmetics.length
+      ) {
+        alert("잘 맞는 화장품과 맞지 않는 화장품은 필수로 등록해야 합니다.");
+        return;
+      }
+
       const payload = {
         gender: gender === "남" ? "MALE" : "FEMALE",
         year: Number(birthYear),
         nickname: nickname,
         skinTypeIds: skinTypes,
-        suitableCosmetics: suitableCosmetics,           
-        unsuitableCosmetics: unsuitableCosmetics,       
-        suitableIngredients: suitableIngredients,     
-        unsuitableIngredients: unsuitableIngredients, 
+        ...getApiPayload(), // 스토에의 변환 함수 사용
       };
       console.log("최종 payload: ", payload);
       mutation.mutate(payload);
     }
-  };
-
-    // ===== UserInfo2의 textarea에 표시할 데이터 포맷 =====
-  // 객체 배열을 JSON 문자열 형태로 변환하여 보여줌
-  const formatListData = (data) => {
-    return data.map((item) => JSON.stringify(item)).join("\n");
   };
 
   return (
@@ -168,34 +168,37 @@ function UserForm() {
 
       {step === 2 && (
         <>
-          {/* 4개의 UserInfo2 컴포넌트를 반복 or 직접 나열 */}
           <UserInfo2
             label="나에게 잘 맞는 화장품 등록(필수)"
             placeholder="나에게 잘 맞는 화장품을 등록해주세요"
-            onSearchClick={handleSearch1}
-            listData={formatListData(suitableCosmetics)}
+            onSearchClick={handleSearch}
+            category="suitableCosmetics"
           />
           <UserInfo2
             label="나에게 잘 맞는 성분 등록(선택)"
             placeholder="나에게 잘 맞는 성분을 등록해주세요"
-            onSearchClick={handleSearch2}
-            listData={formatListData(suitableIngredients)}
+            onSearchClick={handleSearch}
+            category="suitableIngredients"
           />
           <UserInfo2
             label="나에게 맞지 않는 화장품 등록(필수)"
             placeholder="나에게 맞지 않는 화장품을 등록해주세요"
-            onSearchClick={handleSearch3}
-            listData={formatListData(unsuitableCosmetics)}
+            onSearchClick={handleSearch}
+            category="unsuitableCosmetics"
           />
           <UserInfo2
             label="나에게 맞지 않는 성분 등록(선택)"
             placeholder="나에게 맞지 않는 성분을 등록해주세요"
-            onSearchClick={handleSearch4}
-            listData={formatListData(unsuitableIngredients)}
+            onSearchClick={handleSearch}
+            category="unsuitableIngredients"
           />
 
-          {/* "완료" 버튼 */}
           <Button text="완료" color="white" onClick={handleNextOrSubmit} />
+
+          {/* 검색 팝업 */}
+          {isSearchPopupOpen && searchPopupProps && (
+            <SearchPopup {...searchPopupProps} onClose={handleClosePopup} />
+          )}
         </>
       )}
     </div>
