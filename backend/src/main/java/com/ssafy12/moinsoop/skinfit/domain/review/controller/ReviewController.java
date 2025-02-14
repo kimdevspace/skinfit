@@ -3,6 +3,7 @@ package com.ssafy12.moinsoop.skinfit.domain.review.controller;
 import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewReportRequest;
 import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewRequest;
 import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewUpdateRequest;
+import com.ssafy12.moinsoop.skinfit.domain.review.dto.response.ReviewResponse;
 import com.ssafy12.moinsoop.skinfit.domain.review.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -80,4 +81,40 @@ public class ReviewController {
         reviewService.reportReview(userId, cosmeticId, reviewId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body("리뷰 신고가 성공적으로 접수되었습니다.");
     }
+
+    // 리뷰 좋아요
+    @PostMapping(value = "/{reviewId}/add-like")
+    public ResponseEntity<String> addLikeReview(
+            @AuthenticationPrincipal Integer userId,
+            @PathVariable Integer cosmeticId,
+            @PathVariable Integer reviewId) {
+
+        reviewService.addLikeReview(userId, cosmeticId, reviewId);
+        return ResponseEntity.ok("좋아요가 성공적으로 반영되었습니다.");
+    }
+
+    // 리뷰 좋아요 삭제
+    @DeleteMapping(value = "{reviewId}/delete-like")
+    public ResponseEntity<String> deleteLikeReview(
+            @AuthenticationPrincipal Integer userId,
+            @PathVariable Integer cosmeticId,
+            @PathVariable Integer reviewId) {
+
+        reviewService.deleteLikeReview(userId, cosmeticId, reviewId);
+        return ResponseEntity.ok("좋아요가 취소되었습니다.");
+    }
+
+    // 리뷰 조회
+    @GetMapping
+    public ResponseEntity<ReviewResponse> getReviews(
+            @AuthenticationPrincipal Integer userId,
+            @PathVariable Integer cosmeticId,
+            @RequestParam(value = "sort", defaultValue = "latest") String sort,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "limit", defaultValue = "10") int limit,
+            @RequestParam(value = "custom", defaultValue = "false") boolean custom) {
+
+        ReviewResponse response = reviewService.getReviews(cosmeticId, sort, page, limit, custom, userId);
+        return ResponseEntity.ok(response);
+}
 }

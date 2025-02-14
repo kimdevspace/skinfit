@@ -4,6 +4,7 @@ import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.Ingredient;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -37,6 +38,24 @@ public class IngredientExperience {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "ingredientExperience")
+    @OneToMany(mappedBy = "ingredientExperience", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<IngredientSymptom> ingredientSymptoms = new ArrayList<>();
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    @Builder
+    public IngredientExperience(User user, Ingredient ingredient, boolean isSuitable) {
+        this.user = user;
+        this.ingredient = ingredient;
+        this.isSuitable = isSuitable;
+    }
 }

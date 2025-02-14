@@ -10,6 +10,14 @@ public class ReviewLikeId implements Serializable {
     private Integer reviewId;
     private Integer userId;
 
+    public ReviewLikeId() {
+    }
+
+    public ReviewLikeId(Integer reviewId, Integer userId) {
+        this.reviewId = reviewId;
+        this.userId = userId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

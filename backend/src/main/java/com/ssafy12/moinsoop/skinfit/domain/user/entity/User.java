@@ -1,5 +1,6 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.entity;
 
+import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.UserSkinType;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.converter.GenderConverter;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.converter.ProviderTypeConverter;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.converter.RoleTypeConverter;
@@ -14,6 +15,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.Year;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -62,6 +65,9 @@ public class User {
     @Column(name = "provider_type", nullable = false)
     private ProviderType providerType;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<UserSkinType> userSkinTypes = new ArrayList<>();
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -102,5 +108,12 @@ public class User {
     // 회원 정보 최초 입력 시 false -> true 로 변환해줘야 한다.
     public void setRegistered(boolean registered) {
         this.isRegistered = registered;
+    }
+
+    public void updateNickname(String nickname) {
+        if (nickname == null || nickname.trim().isEmpty()) {
+            throw new IllegalArgumentException("닉네임은 비어있을 수 없습니다.");
+        }
+        this.nickname = nickname;
     }
 }
