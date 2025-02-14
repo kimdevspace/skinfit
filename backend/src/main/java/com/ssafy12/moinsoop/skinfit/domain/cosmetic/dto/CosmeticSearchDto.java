@@ -12,7 +12,7 @@ public class CosmeticSearchDto {
 
     public CosmeticSearchDto(List<Cosmetic> cosmetics) {
         this.cosmetics = cosmetics.stream()
-                .limit(10) // 최대 10개의 결과만 반환
+                .limit(10) // 최대 10개만 반환
                 .map(CosmeticSummaryDto::new)
                 .collect(Collectors.toList());
     }
@@ -28,22 +28,10 @@ class CosmeticSummaryDto {
     private final String cosmeticBrand;
     private final String imageUrl;
 
-    // 🚨 안전/유의 여부 (레디스 연동 후 추가 예정)
-    // private final String safetyStatus;
-
-    // 🚨 filterByUserPreference 관련 로직 (레디스 연동 후 추가 예정)
-    // private final boolean matchesUserPreference;
-
     public CosmeticSummaryDto(Cosmetic cosmetic) {
         this.cosmeticId = cosmetic.getCosmeticId();
         this.cosmeticName = cosmetic.getCosmeticName();
         this.cosmeticBrand = cosmetic.getCosmeticBrand();
         this.imageUrl = cosmetic.getImageUrl();
-
-        // 🚨 safetyStatus는 레디스 연동 후 추가 예정
-        // this.safetyStatus = someLogicToDetermineSafety();
-
-        // 🚨 filterByUserPreference 관련 로직 (레디스 연동 후 추가 예정)
-        // this.matchesUserPreference = checkUserPreference();
     }
 }
