@@ -4,6 +4,7 @@ import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -48,4 +49,24 @@ public class Review {
 
     @OneToMany(mappedBy = "review")
     private List<ReviewImage> reviewImages = new ArrayList<>();
+
+    @Builder
+    public Review(User user, Cosmetic cosmetic, int score, String content) {
+        this.user = user;
+        this.cosmetic = cosmetic;
+        this.content = content;
+        this.score = score;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public void updateReview(String reviewContent, int score){
+        this.content = reviewContent;
+        this.score = score;
+        // 업데이트 날짜는 따로 없는지?
+    }
+
+    // 신고 횟수 증가
+    public void incrementReportCount() {
+        this.reportCount++;
+    }
 }

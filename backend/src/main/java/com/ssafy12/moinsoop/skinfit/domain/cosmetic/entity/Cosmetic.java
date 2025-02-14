@@ -5,6 +5,7 @@ import com.ssafy12.moinsoop.skinfit.domain.experience.entity.CosmeticExperience;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,7 +31,7 @@ public class Cosmetic {
     @Column(length = 50)
     private String cosmeticBrand;
 
-    private Integer cosmeticVolume;
+    private String cosmeticVolume;
 
     @Column(nullable = false)
     private boolean status;

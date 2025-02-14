@@ -1,5 +1,6 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.entity;
 
+import com.ssafy12.moinsoop.skinfit.domain.skintype.entity.UserSkinType;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.converter.GenderConverter;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.converter.ProviderTypeConverter;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.converter.RoleTypeConverter;
@@ -14,6 +15,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.Year;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -61,6 +64,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "provider_type", nullable = false)
     private ProviderType providerType;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<UserSkinType> userSkinTypes = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {

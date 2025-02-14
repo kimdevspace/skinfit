@@ -2,14 +2,13 @@ package com.ssafy12.moinsoop.skinfit.domain.review.entity;
 
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "review_reports")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class ReviewReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +24,11 @@ public class ReviewReport {
 
     @Column(nullable = false, length = 200)
     private String reason;
+
+    @Builder
+    public ReviewReport(User user, Review review, String reason) {
+        this.user = user;
+        this.review = review;
+        this.reason = reason;
+    }
 }
