@@ -214,14 +214,9 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public ReviewResponse getReviews(Integer cosmeticId, String sort, int page, int limit, boolean custom, Integer userId) {
         // 정렬 (최신순/좋아요순) - 기본 : 최신순
-        // 좋아요 기능 구현 후 수정 필요
-        Sort sortOrder = "likes".equalsIgnoreCase(sort)
-                ? Sort.by("likeCount").descending()
-                : Sort.by("createdAt").descending();
+        PageRequest pageable = PageRequest.of(page - 1, limit);
 
-        PageRequest pageable = PageRequest.of(page - 1, limit, sortOrder);
         Page<Review> reviewPage;
-
         // "내 피부 맞춤 리뷰" 설정
         if (custom) {
             User user = userRepository.findById(userId)
@@ -230,17 +225,23 @@ public class ReviewService {
             List<Integer> userSkinTypeIds = user.getUserSkinTypes().stream()
                     .map(ust -> ust.getSkinType().getTypeId())
                     .collect(Collectors.toList());
-            long userSkinTypeCount = userSkinTypeIds.size();
-            reviewPage = reviewRepository.findCustomReviews(cosmeticId, userSkinTypeIds, userSkinTypeCount, pageable);
+            if ("likes".equalsIgnoreCase(sort)) {
+                reviewPage = reviewRepository.findCustomReviewsOrderByLikesDesc(cosmeticId, userSkinTypeIds, pageable);
+            } else {
+                reviewPage = reviewRepository.findCustomReviewsOrderByCreatedAtDesc(cosmeticId, userSkinTypeIds, pageable);
+            }
         } else {
-            reviewPage = reviewRepository.findByCosmetic_CosmeticId(cosmeticId, pageable);
+            if ("likes".equalsIgnoreCase(sort)) {
+                reviewPage = reviewRepository.findByCosmetic_CosmeticIdOrderByLikesDesc(cosmeticId, pageable);
+            } else {
+                reviewPage = reviewRepository.findByCosmetic_CosmeticIdOrderByCreatedAtDesc(cosmeticId, pageable);
+            }
         }
 
-        // 조회한 리뷰 엔티티를 Dto로 변경
         List<ReviewDto> reviewDtos = reviewPage.getContent().stream().map(review -> {
 
-            int likes = review.getReviewLikes().size(); // 좋아요 구현 후 수정 필요
-            int isLiked = review.getReviewLikes().stream() // 좋아요 구현 후 수정 필요
+            int likes = review.getReviewLikes().size();
+            int isLiked = review.getReviewLikes().stream()
                     .anyMatch(like -> like.getUser().getUserId().equals(userId)) ? 1 : 0;
 
             List<String> imageUrls = review.getReviewImages().stream()
@@ -251,7 +252,7 @@ public class ReviewService {
             String nickname = reviewUser.getNickname();
             Integer scoreValue = review.getScore();
 
-            // 작성자 피부 타입 모두 출력
+            // 작성자 피부 타입 모두 출력 (콤마로 연결)
             String skinType = reviewUser.getUserSkinTypes().stream()
                     .map(ust -> ust.getSkinType().getTypeName())
                     .collect(Collectors.joining(", "));
@@ -284,6 +285,5 @@ public class ReviewService {
                 .reviews(reviewDtos)
                 .build();
     }
-
 }
 
