@@ -27,6 +27,18 @@ public class Ingredient {
 
     private Integer ewgScoreMin;
 
+    @Column(length = 50)
+    private String rating;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    @Column(length = 255)
+    private String effect;
+
+    @Column(length = 255)
+    private String category;
+
     private Integer ewgScoreMax;
 
     @Column(nullable = false)

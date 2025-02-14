@@ -1,26 +1,18 @@
 package com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.repository;
 
-<<<<<<< HEAD
-import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.Ingredient;
-import org.springframework.data.jpa.repository.JpaRepository;
-=======
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic_ingredient.entity.CosmeticIngredient;
 import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.Ingredient;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
->>>>>>> 890bdd9c01d795493612b47328233f4fefa7d317
 
 import java.util.List;
 
 public interface IngredientRepository extends JpaRepository<Ingredient, Integer> {
     List<Ingredient> findByIngredientIdIn(List<Integer> ingredientIds);
-<<<<<<< HEAD
-=======
 
     // 성분명을 검색 (대소문자 무시)
     List<Ingredient> findByIngredientNameContainingIgnoreCase(String ingredientName);
-
 
     // ✅ 성분 자동완성 검색 (10개 제한, 가나다순 → 영어순 정렬)
     @Query(value = """
@@ -34,13 +26,10 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Integer>
     """, nativeQuery = true)
     List<Ingredient> findTop10ByIngredientNameContainingIgnoreCase(@Param("query") String query);
 
-
-
     // 전성분 조회
     @Query("SELECT ci FROM CosmeticIngredient ci " +
             "WHERE ci.cosmetic.cosmeticId = :cosmeticId " +
             "AND ci.ingredient.status = true " +
             "ORDER BY ci.sequence ASC")
     List<CosmeticIngredient> findIngredientsByCosmeticId(@Param("cosmeticId") Integer cosmeticId);
->>>>>>> 890bdd9c01d795493612b47328233f4fefa7d317
 }

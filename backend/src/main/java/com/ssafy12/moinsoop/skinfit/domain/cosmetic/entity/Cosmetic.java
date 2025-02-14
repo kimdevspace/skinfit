@@ -31,6 +31,7 @@ public class Cosmetic {
     @Column(length = 50)
     private String cosmeticBrand;
 
+    @Column(length = 50)
     private String cosmeticVolume;
 
     @Column(nullable = false)
