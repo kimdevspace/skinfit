@@ -94,7 +94,7 @@ public class ReviewController {
     }
 
     // 리뷰 좋아요 삭제
-    @DeleteMapping(value = "{reviewId}/delete-like")
+    @DeleteMapping(value = "/{reviewId}/delete-like")
     public ResponseEntity<String> deleteLikeReview(
             @AuthenticationPrincipal Integer userId,
             @PathVariable Integer cosmeticId,
