@@ -23,7 +23,7 @@ public class MyCosmeticsResponse {
         private Integer cosmeticId;
         private String cosmeticBrand;
         private String cosmeticName;
-        private Integer cosmeticVolume;
+        private String cosmeticVolume;
         private String imageUrl;
 
     }

@@ -15,7 +15,7 @@ public class CosmeticExperienceDto {
     private Integer cosmeticId;
     private String cosmeticBrand;
     private String cosmeticName;
-    private Integer cosmeticVolume;
+    private String cosmeticVolume;
     private String imageUrl;
     private List<SymptomDto> symptoms;  // 안맞는 화장품일 경우에만 포함
 
