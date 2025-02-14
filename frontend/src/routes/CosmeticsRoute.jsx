@@ -11,5 +11,4 @@ function CosmeticsRoute() {
     </Routes>
   );
 }
-
 export default CosmeticsRoute;

@@ -1,15 +1,14 @@
-import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
-import { useQuery } from "@tanstack/react-query"
-import axios from "../../api/axiosInstance.js"
-import "./Home.scss"
-import Logo from "../../components/common/Logo"
-import RecommendItem from "../../components/home/RecommendItem"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons"
-import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons"
-import NavBar from "../../components/common/NavBar"
-import LoveImg from "../../assets/images/LOVE 2.png"
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import axios from "../../api/axiosInstance.js";
+import "./Home.scss";
+import Logo from "../../components/common/Logo";
+import RecommendItem from "../../components/home/RecommendItem";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
+import NavBar from "../../components/common/NavBar";
 
 function Home() {
   // 메인 페이지(추천 상품, 화장품 정보) 필요한 정보 api 요청
@@ -19,9 +18,9 @@ function Home() {
         // 'Authorization': `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-    })
-    return response.data
-  }
+    });
+    return response.data;
+  };
 
   const {
     data: mainInfo,
@@ -31,7 +30,7 @@ function Home() {
   } = useQuery({
     queryKey: ["mainPageInfo"],
     queryFn: fetchMainPageInfo,
-  })
+  });
 
   // api에서 받아온 정보 데이터
   // const { level, goodCosmeticsCount, badCosmeticsCount, recomCosmetic } = mainInfo.data
@@ -45,9 +44,9 @@ function Home() {
   }
   // #region 더미 데이터
   // api 요청 받을 수 없어서 오류남 -> 더미 데이터 생성
-  const level = "level 1"
-  const goodCosmeticsCount = "2"
-  const badCosmeticsCount = "3"
+  const level = "level 1";
+  const goodCosmeticsCount = "2";
+  const badCosmeticsCount = "3";
   const recomCosmetic = [
     {
       cosmeticId: 101,
@@ -69,7 +68,7 @@ function Home() {
         mismatchedIngredients: [],
       },
     },
-  ]
+  ];
   // #endregion
 
   return (

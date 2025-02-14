@@ -115,7 +115,7 @@ function SignUp() {
   const sendEmailVerification = async (email) => {
     try {
       const response = await axios.post("user/email-verification", {
-        email,
+        userEmail: email,
       });
       return response.status;
     } catch (error) {
@@ -144,9 +144,9 @@ function SignUp() {
   const submitSignup = async (email, password, verifyCode) => {
     try {
       const response = await axios.post("user/signup", {
-        email,
-        password,
-        verifyCode,
+        userEmail : email,
+        userPassword : password,
+        code : verifyCode,
       });
       return response.status;
     } catch (error) {

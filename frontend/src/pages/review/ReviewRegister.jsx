@@ -137,6 +137,7 @@ function ReviewRegister(cosmeticId) {
           images={reviewData.images}
           setImages={setReviewData}
           maxImages={3}
+          dataType='review'
         />
 
         <Button text="등록하기" color="pink" type="submit" />
