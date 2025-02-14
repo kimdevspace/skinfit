@@ -1,10 +1,9 @@
 package com.ssafy12.moinsoop.skinfit.domain.ingredient.service;
 
-import com.ssafy12.moinsoop.skinfit.domain.cosmetic_ingredient.entity.CosmeticIngredient;
 import com.ssafy12.moinsoop.skinfit.domain.ingredient.dto.IngredientAutoCompleteDto;
 import com.ssafy12.moinsoop.skinfit.domain.ingredient.dto.IngredientSearchDto;
 import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.Ingredient;
-import com.ssafy12.moinsoop.skinfit.domain.ingredient.repository.IngredientRepository;
+import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.repository.IngredientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
