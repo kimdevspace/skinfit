@@ -87,6 +87,15 @@ export const useSearchPopupStore = create((set, get) => ({
       .join(", ");
   },
 
+  // 정보 수정 시 기존 정보 가져와 저장하는 함수
+  setItems: (category, items) =>
+    set((state) => ({
+      items: {
+        ...state.items,
+        [category]: items,
+      },
+    })),
+
   // 전체 데이터 초기화
   resetItems: () =>
     set({

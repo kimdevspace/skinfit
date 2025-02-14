@@ -30,11 +30,31 @@ function MyPage() {
   const { myReviews, likedReviews } = useReviews();
 
   //2. 액션 감지
+  // SearchPopup 상태 관리
+  const [editPopupProps, setEditPopupProps] = useState(null);
+
   // 내가 등록한 화장품 토글 버튼 감지
   const [isCosmeticClicked, setIsCosmeticClicked] = useState("맞는 화장품");
   const cosmeticHandler = (text) => {
     setIsCosmeticClicked(text);
     console.log("화장품 토글:", text);
+  };
+
+  // 화장품 수정 버튼 클릭 핸들러
+  const handleCosmeticEdit = () => {
+    const category =
+      isCosmeticClicked === "맞는 화장품"
+        ? "suitableCosmetics"
+        : "unsuitableCosmetics";
+
+    setEditPopupProps({
+      type: "cosmetic",
+      suitability:
+        isCosmeticClicked === "맞는 화장품" ? "suitable" : "unsuitable",
+      category: category,
+      onClose: () => setEditPopupProps(null),
+      isEdit: true,
+    });
   };
 
   // 내가 등록한 성분 토글 버튼 감지
@@ -173,17 +193,27 @@ function MyPage() {
         {/* 리뷰 데이터를 하나씩 전달 */}
         {isReviewClicked === "내가 좋아요한 리뷰"
           ? likedReviews?.map((review) => (
-              <ReviewItem key={review.reviewId} review={review} reviewType='likedReviews' />
+              <ReviewItem
+                key={review.reviewId}
+                review={review}
+                reviewType="likedReviews"
+              />
             ))
           : myReviews?.map((review) => (
-              <ReviewItem key={review.reviewId} review={review} reviewType='myReviews'/>
+              <ReviewItem
+                key={review.reviewId}
+                review={review}
+                reviewType="myReviews"
+              />
             ))}
       </div>
 
       {/* 회원탈퇴 */}
       <hr className="hr-line" />
       <div>
-        <p className="signout" onClick={handleWithdrawPopup}>회원탈퇴</p>
+        <p className="signout" onClick={handleWithdrawPopup}>
+          회원탈퇴
+        </p>
         {isWithdrawOpen && (
           <PwCheckPopUp onClose={handleWithdrawPopup} state="withdraw" />
         )}

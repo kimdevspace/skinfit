@@ -19,7 +19,7 @@ function SearchItem({ cosmetic }) {
           <p>{truncateText(cosmetic.cosmeticName, 15)}</p>
         </div>
 
-        {/* 뱃지 or 추가버튼  */}h
+        {/* 뱃지 or 추가버튼  */}
         {/* <div className="badge-or-btn">
         {showBadge ? (
           <div className="badge isSafe">안전</div>
