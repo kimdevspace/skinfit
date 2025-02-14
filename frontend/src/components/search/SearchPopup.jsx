@@ -14,6 +14,13 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
   // 스토어에서 데이터 가져오기
   const items = useSearchPopupStore((state) => state.items);
+  //실시간 검색어 연동 여부, setSearchWord : searchWord 변수를 바꿔주는 애
+  const [searchWord, setSearchWord] = useState("")
+
+  // 팝업창 관련 변수
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   // search 스토어 : 화장품 검색 api 요청
 
@@ -73,10 +80,6 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
   //#endregion
 
   //#region 팝업창 닫기
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-
   // 오버레이 클릭 시 팝업 닫기
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
@@ -135,7 +138,7 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
         onClick={(e) => e.stopPropagation()}
       >
         <hr />
-        <SearchBar />
+        <SearchBar searchWord={searchWord} setSearchWord={setSearchWord} />
 
         <div className="search-result-box">
           <SearchResult location="popup" type={type} category={category} />

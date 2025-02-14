@@ -119,20 +119,25 @@ const fetchMyIngredients = async () => {
 
 // create : 스토어 생성
 export const useMyIngredientsStore = create((set) => ({
-  myIngredientsData: [],
+  myMatchedingrsData: [],
+  myUnmatchedingrsData : [],
   //기존 객체 업데이트
+  setMyMatchedingrsData: (data) => set({ myMatchedingrsData: data }),
+  setMyUnMatchedingrsData: (data) => set({ myUnMatchedingrsData: data }),
   setMyIngredientsData: (data) => set({ myIngredientsData: data }),
 }))
 
 export const useMyIngredients = () => {
-  const setMyIngredientsData = useMyIngredientsStore((state) => state.setMyIngredientsData)
+  const setMyMatchedingrsData = useMyIngredientsStore((state) => state.setMyMatchedingrsData)
+  const setMyUnMatchedingrsData = useMyIngredientsStore((state) => state.setMyUnMatchedingrsData)
 
   return useQuery({
     queryKey: ["myIngredients"],
     queryFn: fetchMyIngredients,
     onSuccess: (data) => {
       console.log("내가 등록한 성분 데이터 조회완료", data)
-      setMyIngredientsData(data) // 데이터 저장
+      setMyMatchedingrsData(data.suitableIngredients) // 데이터 저장
+      setMyUnMatchedingrsData(data.unsuitableIngredients)
     },
     onError: (error) => {
       console.error("내가 등록한 성분분 데이터 조회 에러", error)
