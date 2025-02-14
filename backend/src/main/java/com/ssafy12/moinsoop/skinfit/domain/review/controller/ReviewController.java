@@ -93,6 +93,17 @@ public class ReviewController {
         return ResponseEntity.ok("좋아요가 성공적으로 반영되었습니다.");
     }
 
+    // 리뷰 좋아요 삭제
+    @DeleteMapping(value = "{reviewId}/delete-like")
+    public ResponseEntity<String> deleteLikeReview(
+            @AuthenticationPrincipal Integer userId,
+            @PathVariable Integer cosmeticId,
+            @PathVariable Integer reviewId) {
+
+        reviewService.deleteLikeReview(userId, cosmeticId, reviewId);
+        return ResponseEntity.ok("좋아요가 취소되었습니다.");
+    }
+
     // 리뷰 조회
     @GetMapping
     public ResponseEntity<ReviewResponse> getReviews(

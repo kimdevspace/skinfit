@@ -1,6 +1,8 @@
 package com.ssafy12.moinsoop.skinfit.domain.review.service;
 
+import aj.org.objectweb.asm.commons.CodeSizeEvaluator;
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
+import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.repository.CosmeticRepository;
 import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewReportRequest;
 import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewRequest;
 import com.ssafy12.moinsoop.skinfit.domain.review.dto.request.ReviewUpdateRequest;
@@ -15,7 +17,6 @@ import com.ssafy12.moinsoop.skinfit.domain.review.exception.ReviewErrorCode;
 import com.ssafy12.moinsoop.skinfit.domain.review.exception.ReviewException;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.repository.UserRepository;
-import com.ssafy12.moinsoop.skinfit.domain.cosmetic.repository.CosmeticRepository;
 import com.ssafy12.moinsoop.skinfit.infrastructure.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -131,15 +132,10 @@ public class ReviewService {
     // 리뷰 삭제
     @Transactional
     public void deleteReview(Integer userId, Integer cosmeticId, Integer reviewId) {
-        // 사용자 확인
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ReviewException(ReviewErrorCode.USER_NOT_FOUND));
-
-        // 화장품 확인
         Cosmetic cosmetic = cosmeticRepository.findById(cosmeticId)
                 .orElseThrow(() -> new ReviewException(ReviewErrorCode.COSMETIC_NOT_FOUND));
-
-        // 리뷰 확인
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewException(ReviewErrorCode.REVIEW_NOT_FOUND));
 
@@ -154,15 +150,10 @@ public class ReviewService {
     // 리뷰 신고
     @Transactional
     public void reportReview(Integer userId, Integer cosmeticId, Integer reviewId, ReviewReportRequest request) {
-        // 사용자 확인
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ReviewException(ReviewErrorCode.USER_NOT_FOUND));
-
-        // 화장품 확인
         Cosmetic cosmetic = cosmeticRepository.findById(cosmeticId)
                 .orElseThrow(() -> new ReviewException(ReviewErrorCode.COSMETIC_NOT_FOUND));
-
-        // 리뷰 확인
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewException(ReviewErrorCode.REVIEW_NOT_FOUND));
 
@@ -202,6 +193,22 @@ public class ReviewService {
         reviewLikeRepository.save(reviewLike);
     }
 
+    // 리뷰 좋아요 취소
+     public void deleteLikeReview(Integer userId, Integer cosmeticId, Integer reviewId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorCode.USER_NOT_FOUND));
+        Cosmetic cosmetic = cosmeticRepository.findById(cosmeticId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorCode.COSMETIC_NOT_FOUND));
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorCode.REVIEW_NOT_FOUND));
+
+        ReviewLikeId likeId = new ReviewLikeId(reviewId, userId);
+        if (!reviewLikeRepository.existsById(likeId)) {
+            throw new ReviewException(ReviewErrorCode.LIKE_NOT_FOUND);
+        }
+
+        reviewLikeRepository.deleteById(likeId);
+     }
 
     // 리뷰 조회
     @Transactional(readOnly = true)
