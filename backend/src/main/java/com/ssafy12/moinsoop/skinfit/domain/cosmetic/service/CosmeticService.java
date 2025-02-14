@@ -3,7 +3,7 @@ package com.ssafy12.moinsoop.skinfit.domain.cosmetic.service;
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.dto.CosmeticSearchDto;
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.dto.CosmeticAutoCompleteDto;
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
-import com.ssafy12.moinsoop.skinfit.domain.cosmetic.repository.CosmeticRepository;
+import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.repository.CosmeticRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

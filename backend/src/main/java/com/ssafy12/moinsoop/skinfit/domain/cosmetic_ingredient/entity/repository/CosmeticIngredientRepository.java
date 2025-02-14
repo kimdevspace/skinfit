@@ -1,4 +1,4 @@
-package com.ssafy12.moinsoop.skinfit.domain.cosmetic_ingredient.repository;
+package com.ssafy12.moinsoop.skinfit.domain.cosmetic_ingredient.entity.repository;
 
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic_ingredient.entity.CosmeticIngredient;
 import org.springframework.data.jpa.repository.JpaRepository;
