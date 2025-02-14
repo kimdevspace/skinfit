@@ -1,7 +1,6 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.service;
 
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
-import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.repository.CosmeticRepository;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.*;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.*;
 import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.Ingredient;
@@ -23,12 +22,10 @@ import com.ssafy12.moinsoop.skinfit.domain.user.exception.DuplicateUserEmailExce
 import com.ssafy12.moinsoop.skinfit.domain.user.exception.InvalidVerificationCodeException;
 import com.ssafy12.moinsoop.skinfit.domain.user.exception.VerificationCodeExpiredException;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.Id;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

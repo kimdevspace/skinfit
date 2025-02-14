@@ -1,7 +1,6 @@
 package com.ssafy12.moinsoop.skinfit.domain.experience.entity;
 
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
-import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.repository.CosmeticRepository;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -11,8 +10,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "cosmetic_experience")

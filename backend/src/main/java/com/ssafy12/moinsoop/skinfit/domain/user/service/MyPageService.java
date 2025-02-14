@@ -1,7 +1,6 @@
 package com.ssafy12.moinsoop.skinfit.domain.user.service;
 
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
-import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.repository.CosmeticRepository;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.*;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.CosmeticExperienceRepository;
 import com.ssafy12.moinsoop.skinfit.domain.experience.entity.repository.IngredientExperienceRepository;
