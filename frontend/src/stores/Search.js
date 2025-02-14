@@ -4,15 +4,15 @@ import { create } from "zustand";
 import axios from "../api/axiosInstance.js";
 import { useQuery } from "@tanstack/react-query";
 
-//#region 화장품명 검색(연관검색어)
-
+//#region 화장품/성분명 검색(연관검색어)
+// 명칭은 Cosmetics이지만 성분+화장품 둘다 해당됨
 const FetchRelatedCosmetics = async (queryKey) => {
   const params = queryKey[1]; // 바로 params 가져오기
-  const response = await axios.get("search/cosmetic", {
-    params,
-    // headers : {
-    //     Authorization :
-    // }
+  const apiCategory2 = params.apiCategory2
+  const response = await axios.get(`search/${apiCategory2}`, {
+    params : {
+      query: params.query,
+    },
   });
 
   if (response.data.status === "success") {
@@ -26,14 +26,15 @@ const FetchRelatedCosmetics = async (queryKey) => {
 export const useRelatedCosmeticsStore = create((set) => ({
   // 디폴트값 세팅
   query: "",
-
+  apiCategory: '',
   setRelatedQuery: (query) => set({ query }),
+  setApiCategory2: (apiCategory2) => set({ apiCategory2 }),
 }));
 //#endregion
 
 // React Query (캐싱된 데이터를 불러온다다)
 export const useRelatedCosmetics = () => {
-  const { query } =
+  const { query, apiCategory2} =
   useRelatedCosmeticsStore();
 
   //useQuery 는 서버로부터 데이터를 요청하여 받아오는 GET api
@@ -42,7 +43,7 @@ export const useRelatedCosmetics = () => {
   return useQuery({
     queryKey: [
       "relatedCosmetics", //queryId
-       query ,
+       {query ,apiCategory2}
     ],
     queryFn: FetchRelatedCosmetics,
     enabled: !!query, // 검색어 있을때만 검색되게 
@@ -53,12 +54,17 @@ export default useRelatedCosmeticsStore;
 
 //#endregion
 
-//#region 화장품명 검색(검색바 서치)
+//#region 화장품/성분명 검색(검색바 서치)
 // 액션
 const FetchSearchComplete = async (queryKey) => {
   const params = queryKey[1]; // 바로 params 가져오기
-  const response = await axios.get("search/cosmetic/details", {
-    params,
+  const apiCategory = params.apiCategory
+  const response = await axios.get(`search/${apiCategory}/details`, {
+    params : {
+     query: params.query,
+     filterByUserPreference: params.filterByUserPreference,
+     category: params.category
+   },
     // headers : {
     //     Authorization :
     // }
@@ -77,18 +83,20 @@ export const useSearchCompleteStore = create((set) => ({
   query: "",
   filterByUserPreference: false,
   category: null,
+  apiCategory: '', // 성분명, 화장품명 검색 구분 
 
   // 업데이트 역할
   setQuery: (query) => set({ query }),
   setFilterByUserPreference: (filter) =>
     set({ filterByUserPreference: filter }),
   setCategory: (category) => set({ category }),
+  setApiCategory: (apiCategory) => set({ apiCategory }),
 }));
 //#endregion
 
 // React Query (캐싱된 데이터를 불러온다다)
 export const useSearchComplete = () => {
-  const { query ,filterByUserPreference, category } =
+  const { query ,filterByUserPreference, category, apiCategory } =
     useSearchCompleteStore();
 
   //useQuery 는 서버로부터 데이터를 요청하여 받아오는 GET api
@@ -97,7 +105,7 @@ export const useSearchComplete = () => {
   return useQuery({
     queryKey: [
       "searchComplete", //queryId
-      { query,filterByUserPreference, category },
+      { query,filterByUserPreference, category, apiCategory },
     ],
     queryFn: FetchSearchComplete,
     enabled: !!query, // 검색어 있을때만 검색되게 

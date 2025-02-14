@@ -49,7 +49,7 @@ function MyPage() {
         : "unsuitableCosmetics";
 
     setEditPopupProps({
-      type: "cosmetic",
+      type: "cosmetics",
       suitability:
         isCosmeticClicked === "맞는 화장품" ? "suitable" : "unsuitable",
       category: category,
