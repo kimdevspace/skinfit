@@ -2,13 +2,15 @@ spring:
   application:
     name: skinfit
   profiles:
+    active: dev  # 또는 prod (운영 환경의 경우)
     group:
-      dev:  # 로컬 개발 환경
+      dev:
         - mail
         - oauth
-      prod:  # 운영 환경
+      prod:
         - mail
         - oauth
+      default: dev
   jpa:
     properties:
       hibernate:
