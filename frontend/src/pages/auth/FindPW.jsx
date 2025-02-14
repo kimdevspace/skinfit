@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link, useNavigate} from "react-router-dom";
 import axios from "../../api/axiosInstance.js";
 import AuthBox from "../../components/auth/AuthBox.jsx";
 import Button from "../../components/common/Button.jsx";
@@ -6,15 +7,16 @@ import Logo from "../../components/common/Logo.jsx";
 import "./FindPW.scss";
 
 function FindPW() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [tempPassword, setTempPassword] = useState("");
 
   const sendEmailCode = async (email) => {
     try
     {
-      const response = await axios.get("user/password-temporary",
+      const response = await axios.post("user/password-temporary",
         {
-          params: {email},
+          userEmail:email
         });
         return response.status;
     }
@@ -46,7 +48,6 @@ function FindPW() {
   };
 
 
-  // 전체 폼 제출 시
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -54,25 +55,30 @@ function FindPW() {
         userEmail: email,            
         userPassword: tempPassword,
       });
-
-      const { accessToken, isRegistered } = response.data;
+  
+      const { accessToken, registered  } = response.data;
+      console.log("registered 값:", registered, " | 타입:", typeof registered);
       console.log("로그인 성공:", response.data);
-
-      // isRegistered 값이 "true" / "false" 로 온다고 가정
-      if (isRegistered === "true") {
-        // 이미 추가 등록된 사용자 -> 다른 사이트 or 페이지
+      
+      // isRegistered 값이 "true" 또는 "false" 문자열로 온다고 가정
+      if (registered === true) {
+        // 이미 추가 등록된 사용자
         navigate("/"); 
       } else {
-        // 추가 등록이 필요하다는 의미
+        // 추가 등록이 필요한 사용자
         navigate("/auth/userform");
       }
     } catch (error) {
-      if (error.response.data.message) 
-      {
-        alert(`로그인에 실패했습니다: ${error.response.data.message}`)
+      let errorMsg = "로그인 중 오류가 발생했습니다.";
+      if (error.response && error.response.data) {
+        // 응답 데이터가 문자열이면 바로 사용, 객체라면 message 프로퍼티 사용
+        errorMsg =
+          typeof error.response.data === "string"
+            ? error.response.data
+            : error.response.data.message || errorMsg;
       }
+      alert(`로그인에 실패했습니다: ${errorMsg}`);
       console.error("로그인 실패:", error);
-      alert("로그인 중 오류가 발생했습니다.");
     }
   };
 

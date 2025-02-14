@@ -1,71 +1,76 @@
-import { useState, useRef, useEffect } from "react";
-import "./ImageUpload.scss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { useState, useRef, useEffect } from "react"
+import "./ImageUpload.scss"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons"
 
-function ImageUpload({ images, setImages, maxImages }) {
-  const [imagePreviews, setImagePreviews] = useState([]); // 미리보기용 URL 저장 변수
-  const fileInputRef = useRef(null); // 미리보기 보여줄 Dom 찾는 변수
+function ImageUpload({ images, setImages, maxImages, dataType, onError, error }) {
+  const [imagePreviews, setImagePreviews] = useState([]) // 미리보기용 URL 저장 변수
+  const fileInputRef = useRef(null) // 미리보기 보여줄 Dom 찾는 변수
 
   const handleFileButtonClick = () => {
-    fileInputRef.current.click();
-  };
+    fileInputRef.current.click()
+  }
 
   // 이미지 업로드 함수
   const handleImageUpload = (e) => {
-    if (!e.target.files.length) return;
+    if (!e.target.files.length) return
 
-    const newFiles = Array.from(e.target.files);
-    const allFiles = [...images, ...newFiles].slice(0, maxImages);
+    const newFiles = Array.from(e.target.files)
+    const allFiles = [...images, ...newFiles].slice(0, maxImages)
 
     setImages((prev) => ({
       ...prev,
       images: allFiles,
-    }));
+    }))
 
     // 사진 미리보기를 위한 URL 생성
-    const newPreviewUrls = newFiles.map((file) => URL.createObjectURL(file));
-    setImagePreviews((prevPreviews) =>
-      [...prevPreviews, ...newPreviewUrls].slice(0, maxImages)
-    );
+    const newPreviewUrls = newFiles.map((file) => URL.createObjectURL(file))
+    setImagePreviews((prevPreviews) => [...prevPreviews, ...newPreviewUrls].slice(0, maxImages))
 
-    e.target.value = "";
-  };
+    e.target.value = ""
+
+    if (error) {
+      onError(false) // 이미지가 업로드되면 에러 상태를 false로 설정
+    }
+
+  }
 
   // 업로드한 사진 삭제
   const handleDeleteImage = (index) => {
     setImagePreviews((prevPreviews) => {
-      const updatedPreviews = [...prevPreviews];
-      URL.revokeObjectURL(updatedPreviews[index]); // 사진 URL 해제
-      updatedPreviews.splice(index, 1);
-      return updatedPreviews;
-    });
+      const updatedPreviews = [...prevPreviews]
+      URL.revokeObjectURL(updatedPreviews[index]) // 사진 URL 해제
+      updatedPreviews.splice(index, 1)
+      return updatedPreviews
+    })
 
     setImages((prevData) => {
-      const updatedImages = [...prevData.images];
-      updatedImages.splice(index, 1);
+      const updatedImages = [...prevData.images]
+      updatedImages.splice(index, 1)
+
+      if (error && updatedImages.length === 0) {
+        onError(true) // 모든 이미지 삭제됐을 경우 에러 true 
+      }
       return {
         ...prevData,
         images: updatedImages,
-      };
-    });
-  };
+      }
+    })
+  }
+
+  console.log(error)
 
   return (
     <div className="review-images">
       <label className="input-title" htmlFor="images">
-        사진을 등록해주세요(선택)
+        {dataType === "review" ? "사진을 등록해주세요(선택)" : "전성분표 사진 등록(필수)"}
       </label>
       <div className="custom-file-input">
         <div className="preview-container">
           {imagePreviews.map((url, index) => (
             <div key={index} className="preview-box">
               <img src={url} alt={`preview-${index}`} className="preview-img" />
-              <button
-                className="delete-btn"
-                type="button"
-                onClick={() => handleDeleteImage(index)}
-              >
+              <button className="delete-btn" type="button" onClick={() => handleDeleteImage(index)}>
                 <FontAwesomeIcon icon={faXmark} />
               </button>
             </div>
@@ -85,8 +90,9 @@ function ImageUpload({ images, setImages, maxImages }) {
         ref={fileInputRef}
         onChange={handleImageUpload}
       />
+      <p className={`error-msg ${error ? 'error' : ''}`}> 사진 등록은 필수예요</p>
     </div>
-  );
+  )
 }
 
-export default ImageUpload;
+export default ImageUpload

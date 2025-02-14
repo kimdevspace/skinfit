@@ -20,6 +20,7 @@
 
     .error-msg {
       @include error-msg();
+      
 
       &.error {
         display: block;
