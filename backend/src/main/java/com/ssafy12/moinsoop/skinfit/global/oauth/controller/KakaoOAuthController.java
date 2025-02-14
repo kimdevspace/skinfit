@@ -1,5 +1,6 @@
 package com.ssafy12.moinsoop.skinfit.global.oauth.controller;
 
+import com.ssafy12.moinsoop.skinfit.domain.auth.dto.response.SignInResponse;
 import com.ssafy12.moinsoop.skinfit.domain.auth.dto.response.TokenResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
 import com.ssafy12.moinsoop.skinfit.global.config.RefreshTokenService;
@@ -84,8 +85,6 @@ public class KakaoOAuthController {
                 userInfoHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
                 userInfoHeaders.setBearerAuth(tokenResponse.getBody().getAccessToken());
 
-                System.out.println(tokenResponse.getBody().getAccessToken());
-
                 // 사용자 정보 요청
                 ResponseEntity<KakaoUserInfo> userInfoResponse = restTemplate.exchange(
                         "https://kapi.kakao.com/v2/user/me",
@@ -107,7 +106,13 @@ public class KakaoOAuthController {
 
                     refreshTokenService.saveRefreshToken(user.getUserId(), jwtRefreshToken);
 
-                    return ResponseEntity.ok("로그인 성공!, 액세스토큰 : " + jwtAccessToken + "최초 로그인 여부 : " + isRegistered);
+                    SignInResponse response = SignInResponse.builder()
+                            .accessToken(jwtAccessToken)
+                            .isRegistered(isRegistered)
+                            .roleType(user.getRoleType())
+                            .build();
+
+                    return ResponseEntity.ok(response);
                 }
             }
 
