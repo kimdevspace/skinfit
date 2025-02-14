@@ -1,70 +1,64 @@
+@use "../../assets/styles/mixin" as *;
+
 .user-info-1 {
-    .form-group {
-      margin-bottom: 2.5rem;
-  
-      label {
-        display: block;
-        margin-bottom: 0.8rem;
-        font-size: 1.4rem;
-        color: #333;
-      }
-  
-      select,
-      input {
-        width: 100%;
-        font-size: 1.2rem;
-        padding: 0.8rem;
-        border: 1px solid #ccc;
-        border-radius: 0.4rem;
-        outline: none;
-      }
+  margin: 0 3rem;
+
+  .form-group {
+    @include input-group();
+
+    label {
+      @include input-title();
     }
-  
-    .gender-group {
-      .gender-options {
-        display: flex;
-        /* 버튼들 사이 간격 */
-        gap: 1rem; 
-        
-        .gender-btn {
-          flex: 1;               /* 남/여 버튼 각각 가로 공간 균등 분배 */
-          text-align: center;    /* 텍스트 가운데 정렬 */
-          border: 1px solid #ccc;
-          background-color: #fff;
-          padding: 0.8rem 1.2rem;
-          border-radius: 0.4rem;
-          cursor: pointer;
-          font-size: 1.2rem;
-  
-          &.selected {
-            border-color: #ffae82;
-            color: #fff;
-            background-color: #ffae82;
-          }
-        }
-      }
+
+    select,
+    input,
+    .gender-btn {
+      width: 100%;
+      @include input-text();
+      @include input-border();
     }
-  
-    .nickname-group {
-      .nickname-row {
-        display: flex;
-        gap: 0.8rem;
-  
-        input {
-          flex: 1;
-        }
-  
-        .dup-check-btn {
-          border: 1px solid #ffae82;
-          background-color: #fff;
-          color: #ffae82;
-          border-radius: 0.4rem;
-          padding: 0.8rem 1.2rem;
-          cursor: pointer;
-          font-size: 1.2rem;
-          white-space: nowrap;
+  }
+
+  .gender-group {
+    .gender-options {
+      display: flex;
+      /* 버튼들 사이 간격 */
+      gap: 1rem;
+
+      .gender-btn {
+        flex: 1; /* 남/여 버튼 각각 가로 공간 균등 분배 */
+        text-align: center; /* 텍스트 가운데 정렬 */
+        padding: 0.8rem 1.2rem;
+        cursor: pointer;
+
+        &.selected {
+          color: #565656;
+          border: 0.5px solid #8e8e8e;
+          background-color: #fff0e8;
         }
       }
     }
   }
-  
+
+  .nickname-group {
+    .nickname-row {
+      display: flex;
+      gap: 0.8rem;
+
+      input {
+        flex: 1;
+      }
+
+      .dup-check-btn {
+        border: 0.5px solid #8e8e8e;
+        background-color: #fff;
+        color: #565656;
+        border-radius: 0.5rem;
+        padding: 0.4rem 1.2rem;
+        cursor: pointer;
+        font-size: 1.2rem;
+        white-space: nowrap;
+      }
+    }
+  }
+}
