@@ -9,6 +9,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 import NavBar from "../../components/common/NavBar";
+import level1Img from "../../assets/images/level1.png"
+import level2Img from "../../assets/images/level2.png"
+import level3Img from "../../assets/images/level3.png"
 
 function Home() {
   // 메인 페이지(추천 상품, 화장품 정보) 필요한 정보 api 요청
@@ -42,9 +45,16 @@ function Home() {
   if (isError) {
     return console.log("에러", isLoading)
   }
+
+  const levelImg = {
+    1 : level1Img,
+    2 : level2Img,
+    3 : level3Img,
+  }
+
   // #region 더미 데이터
   // api 요청 받을 수 없어서 오류남 -> 더미 데이터 생성
-  const level = "level 1";
+  const level = 3;
   const goodCosmeticsCount = "2";
   const badCosmeticsCount = "3";
   const recomCosmetic = [
@@ -98,9 +108,9 @@ function Home() {
           {/* 분석 정확도 */}
           <div className="accuracy-level-box">
             <div className="heart">
-              <img src={LoveImg} alt="" />
+              <img src={levelImg[level]} alt="" />
             </div>
-            <p className="level">{level}</p>
+            <p className="level">Level {level}</p>
           </div>
           {/* 화장품 개수 박스 */}
           <div className="cosmetic-box">

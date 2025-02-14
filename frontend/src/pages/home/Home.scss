@@ -95,24 +95,24 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 3rem;
+      gap: 4rem;
       margin: 1rem 1rem 0;
 
       // 분석 정확도
       .accuracy-level-box {
-        width: 35%;
+        width: 30%;
 
         .heart {
           width: 100%;
-          aspect-ratio: 1/1;
           margin: 0 auto;
-          border: 0.5px solid #b5b5b5;
         }
 
         .level {
           margin-top: 0.5rem;
-          font-size: 1.4rem;
+          font-size: 1.8rem;
           text-align: center;
+          color: #ffae82;
+          font-family: "Abril Fatface", serif;
         }
       }
 
@@ -133,7 +133,8 @@
           .count {
             margin-top: 0.5rem;
             font-size: 1.8rem;
-            color: #FFAE83;
+            color: #ffae82;
+            font-weight: 700;
           }
         }
 
@@ -144,10 +145,6 @@
           border: 0.5px solid #8E8E8E;
           border-radius: 1.2rem;
         }
-      }
-
-      @media (min-width: 460px) {
-        gap: 20%;
       }
     }
 
@@ -187,5 +184,25 @@
       gap: 1.5rem;
       margin: 1.5rem 4rem;
     }
+  }
+
+  @media (min-width: 500px) {
+    .analysis-accuracy {
+      margin: 4rem 4rem 0;
+
+      .analysis-accuracy-txt-box {
+        justify-content: center;
+      }
+      
+      .analysis-accuracy-info-box {
+        gap: 15%;
+        margin-top: 2rem;
+      
+        .accuracy-level-box {
+          width: 20%;
+        }
+      }
+    }
+    
   }
 }
