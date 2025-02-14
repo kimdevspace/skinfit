@@ -10,7 +10,6 @@ import com.ssafy12.moinsoop.skinfit.global.config.RefreshTokenService;
 import com.ssafy12.moinsoop.skinfit.global.security.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +22,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
+    private final com.ssafy12.moinsoop.skinfit.global.core.analysis.IngredientAnalysisCacheManager ingredientAnalysisCacheManager;
 
     @Transactional
     public SignInResponse signIn(LoginRequest request) {
@@ -40,10 +40,16 @@ public class AuthService {
 
         boolean isRegistered = user.isRegistered();
 
+        // 정보가 있는 사용자에 대해서만 분석
+        if (isRegistered) {
+            ingredientAnalysisCacheManager.initializeUserCache(user.getUserId());
+        }
+
         SignInResponse response = SignInResponse
                 .builder()
                 .accessToken(accessToken)
                 .isRegistered(isRegistered)
+                .roleType(user.getRoleType())
                 .build();
 
         return response;

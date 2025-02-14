@@ -1,7 +1,7 @@
 package com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity;
 
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic_ingredient.entity.CosmeticIngredient;
-import com.ssafy12.moinsoop.skinfit.domain.experience.entity.ProductExperience;
+import com.ssafy12.moinsoop.skinfit.domain.experience.entity.CosmeticExperience;
 import com.ssafy12.moinsoop.skinfit.domain.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -45,5 +45,5 @@ public class Cosmetic {
     private List<CosmeticIngredient> cosmeticIngredients = new ArrayList<>();
 
     @OneToMany(mappedBy = "cosmetic")
-    private List<ProductExperience> productExperiences = new ArrayList<>();
+    private List<CosmeticExperience> cosmeticExperiences = new ArrayList<>();
 }
