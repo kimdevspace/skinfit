@@ -2,10 +2,15 @@ import "./MyPage.scss";
 import ToggleButton from "../../components/common/ToggleButton";
 import {
   useMyPageInfo,
+  useMyPageStore,
   useTop3Data,
+  useTop3DataStore,
   useMyCosmetics,
+  useMyCosmeticsStore,
   useMyIngredients,
+  useMyIngredientsStore,
   useReviews,
+  useReviewsStore,
 } from "../../stores/Mypage";
 import { useState } from "react";
 import ReviewItem from "../../components/review/ReviewItem";
@@ -15,19 +20,53 @@ import { Link } from "react-router-dom";
 function MyPage() {
   //1. 스토어 데이터 불러오기
   // 마이페이지 유저 정보 불러오기
-  const { myinfos } = useMyPageInfo();
+  const { error1 } = useMyPageInfo();
+  const myInfos = useMyPageStore((state) => state.myInfos);
+
+  if (error1) {
+    console.log("마이페이지 유저 데이터 랜더링 오류", error1.message);
+  }
 
   // 성분 top3 데이터
-  const { top3Data } = useTop3Data();
+  const { error2 } = useTop3Data();
+  const top3Data = useTop3DataStore((state) => state.top3Data);
+  if (error2) {
+    console.log("성분 top3 데이터 랜더링 오류", error2.message);
+  }
 
   // 내가 등록한 화장품 데이터
-  const { myMatchedCosData, myUnMatchedCosData } = useMyCosmetics();
+  const { error3 } = useMyCosmetics();
+  const { myMatchedCosData, myUnMatchedCosData } = useMyCosmeticsStore(
+    (state) => ({
+      myMatchedCosData: state.myMatchedCosData,
+      myUnMatchedCosData: state.myUnMatchedCosData,
+    })
+  );
+  if (error3) {
+    console.log("내가 등록한 화장품 데이터 랜더링 오류", error3.message);
+  }
 
   // 성분 데이터
-  const { myIngredientsData } = useMyIngredients();
+  const { error4 } = useMyIngredients();
+  const { myMatchedIngreData, myUnMatchedIngreData } = useMyIngredientsStore(
+    (state) => ({
+      myMatchedIngreData: state.myMatchedIngreData,
+      myUnMatchedIngreData: state.myUnMatchedIngreData,
+    })
+  );
+  if (error4) {
+    console.log("내가 등록한 성분 데이터 랜더링 오류", error4.message);
+  }
 
   // 리뷰 데이터
-  const { myReviews, likedReviews } = useReviews();
+  const { error5 } = useReviews();
+  const { myReviews, likedReviews } = useReviewsStore((state) => ({
+    myReviews: state.myReviews,
+    likedReviews: state.likedReviews,
+  }));
+  if (error5) {
+    console.log("리뷰 데이터 랜더링 오류", error5.message);
+  }
 
   //2. 액션 감지
   // 내가 등록한 화장품 토글 버튼 감지
@@ -67,11 +106,11 @@ function MyPage() {
     <div className="wrapper">
       {/* 유저 닉네임, 피부타입 정보 */}
       <div className="edit-user-info">
-        <span className="user-name">{myinfos?.nickname}</span>
+        <span className="user-name">{myInfos?.nickname}</span>
         <span className="user-name2">님</span>
         <div className="user-skin-type">
-          {myinfos &&
-            myinfos.skinTypeId.map((skinType, index) => (
+          {myInfos &&
+            myInfos.skinTypeId.map((skinType, index) => (
               <span key={index}>#{skinType} </span>
             ))}
         </div>
@@ -102,8 +141,8 @@ function MyPage() {
             ))}
         </div>
         <div className="ingredient-detail-btn">
-          <Link to="/ingredients" className="detail-btn">
-            성분 자세히 보기
+          <Link to="/mypage/ingredient" className="detail-btn">
+            랭킹 더보기
           </Link>
         </div>
       </div>
@@ -136,7 +175,7 @@ function MyPage() {
       </div>
 
       {/* 내가 등록한 성분 정보 */}
-      {/* <div className="my-ingredient-box">
+      <div className="my-ingredient-box">
         <h2>내가 등록한 성분</h2>
         <div className="set-position">
           <ToggleButton
@@ -147,8 +186,8 @@ function MyPage() {
           <button className="edit-del-btn">수정</button>
         </div>
         {(isIngredientClicked === "맞는 성분"
-          ? myMatchedIngData
-          : myUnMatchedIngData
+          ? myMatchedIngreData
+          : myUnMatchedIngreData
         )?.map((ing) => (
           <div key={ing.id}>
             <div className="ingredient-list">
@@ -158,7 +197,7 @@ function MyPage() {
             <hr />
           </div>
         ))}
-      </div> */}
+      </div>
 
       {/* 리뷰 목록 */}
       <div className="review-wrapper">
@@ -173,17 +212,27 @@ function MyPage() {
         {/* 리뷰 데이터를 하나씩 전달 */}
         {isReviewClicked === "내가 좋아요한 리뷰"
           ? likedReviews?.map((review) => (
-              <ReviewItem key={review.reviewId} review={review} reviewType='likedReviews' />
+              <ReviewItem
+                key={review.reviewId}
+                review={review}
+                reviewType="likedReviews"
+              />
             ))
           : myReviews?.map((review) => (
-              <ReviewItem key={review.reviewId} review={review} reviewType='myReviews'/>
+              <ReviewItem
+                key={review.reviewId}
+                review={review}
+                reviewType="myReviews"
+              />
             ))}
       </div>
 
       {/* 회원탈퇴 */}
       <hr className="hr-line" />
       <div>
-        <p className="signout" onClick={handleWithdrawPopup}>회원탈퇴</p>
+        <p className="signout" onClick={handleWithdrawPopup}>
+          회원탈퇴
+        </p>
         {isWithdrawOpen && (
           <PwCheckPopUp onClose={handleWithdrawPopup} state="withdraw" />
         )}

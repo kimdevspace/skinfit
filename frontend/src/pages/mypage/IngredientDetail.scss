@@ -1,44 +1,66 @@
-.ingredient-detail-wrapper {
-  margin-left: 2rem;
-  margin-right: 2rem;
+// 성분 목록
+@mixin ingredient-list-common {
+  margin-top: 1rem;
+  margin-left: 2.5rem;
+  margin-right: 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  padding-right: 1.5rem;
+  padding-left: 1.5rem;
 
-  @mixin ingredient-list-common {
-    margin-top: 1rem;
-    margin-left: 2rem;
-    margin-right: 2rem;
-    display: flex;
-    justify-content: space-between;
-    padding-right: 1rem;
-    padding-left: 1rem;
+  .rank-name {
+    flex: 3;
 
-    .ewg-level {
-      font-size: 1.1rem;
+    .ingredient-rank {
       font-weight: bold;
-
-      &.green {
-        color: #a5cf96;
-      }
-
-      &.red {
-        color: #ff7d8a;
-      }
-      &.orange {
-        color: #ffb58c;
-      }
+      color: #565656;
+      font-size: 1.2rem;
     }
+
     .ingredient-name {
       font-size: 1.1rem;
       color: #8e8e8e;
     }
   }
 
-  h2 {
-    margin-top: 3rem;
-    margin-bottom: 1rem;
-    font-size: 1.4rem;
-    color: #565656;
-    text-align: center;
+  .ingredient-count {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #8e8e8e;
+    width: 7rem;
   }
+
+  .ewg-level-wrapper {
+    font-size: 1.2rem;
+
+    .ewg-level {
+      font-weight: bold;
+
+    
+    &.green {
+      color: #a5cf96;
+    }
+
+    &.red {
+      color: #ff7d8a;
+    }
+    &.orange {
+      color: #ffb58c;
+    }
+
+    &.blank-tag {
+      //발견횟수-등급(최소최대개념이 있어서) 간 간격유지(반응형)
+      color: #fff; 
+    } 
+  }
+
+  }
+}
+
+//최상위 박스스
+.ingredient-detail-wrapper {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 
   hr {
     margin: 1rem 2rem;
@@ -47,20 +69,53 @@
     height: 0.1rem;
   }
 
+  // 타이틀
   .bad-ingredient-box {
+    .title {
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 0.3rem;
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #565656;
+      justify-content: center;
+
+      .title-color {
+        color: #ff975f;
+      }
+    }
     .bad-ingredient-bar {
       border: solid #8e8e8e 0.1rem;
       border-radius: 1.5rem;
       background: #fff0e8;
       width: 100%;
       display: flex;
+      padding: 1.5rem 3.5rem;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #565656;
       justify-content: space-between;
-      padding: 1.5rem 3rem;
 
-      .bar-text {
-        font-size: 1.1rem;
-        font-weight: bold;
-        color: #565656;
+      .ingredient-text {
+        flex: 3; // 성분명이 차지할 공간
+      }
+
+      .count-text {
+        margin-right: 1.5rem;
+      }
+
+      .text-emoji {
+        display: flex;
+        gap: 0.3rem;
+
+        .status-text {
+        }
+
+        button {
+          align-self: center;
+          color: #a3a1a1;
+        }
       }
     }
 
