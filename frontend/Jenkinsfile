@@ -19,7 +19,7 @@ pipeline {
         stage('Docker Build') {
             steps {
                 dir('frontend') {
-                    sh "docker build -t $DOCKER_IMAGE:$VERSION ."
+                    sh "docker build --build-arg CACHEBUST=\$(date +%s) -t $DOCKER_IMAGE:$VERSION ."
                 }
             }
         }

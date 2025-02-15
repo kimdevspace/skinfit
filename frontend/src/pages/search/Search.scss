@@ -14,6 +14,13 @@
       border: 1px solid #DEDEDE;
       border-radius: 2rem;
       color: #8E8E8E;
+      cursor: pointer;
+
+      // '카테고리' 란 클릭시 검색결과 없다고 떠서 막아주기
+      // 이벤트 버블링 막아주기(카테고리 버튼에는 두 가지 클릭 이벤트 존재)
+      .cursor-off {
+        pointer-events : none
+      }
       
 
       &.active {
