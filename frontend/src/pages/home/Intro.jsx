@@ -33,7 +33,12 @@ export default function Intro() {
   };
 
   return (
-    <div className="intro">
+    <motion.div
+      className="intro"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }} // 페이드 인 시간을 로딩 페이지와 맞춤
+    >
       {/* 소개 페이지 번호 박스 */}
       <div className="page-number-box">
         <motion.div
@@ -88,6 +93,6 @@ export default function Intro() {
       >
         {pageNum === 3 ? "시작하기" : "다음"}
       </motion.button>
-    </div>
+    </motion.div>
   );
 }

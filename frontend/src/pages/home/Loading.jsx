@@ -20,7 +20,7 @@ export default function Loading() {
     <motion.div
       className="intro-wrapper"
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.8 }}
     >
       <div className="intro-box ">
         <div className="title">
