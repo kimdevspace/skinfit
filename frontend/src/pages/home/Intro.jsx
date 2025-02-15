@@ -36,13 +36,16 @@ export default function Intro() {
     <div className="intro">
       {/* 소개 페이지 번호 박스 */}
       <div className="page-number-box">
-        <motion.div className="circle" whileTap={{ scale: 0.95 }}>
+        <motion.div
+          className="circle"
+          whileTap={{ scale: 0.95 }} // 터치할 때 살짝 축소되는 효과
+        >
           <motion.p
             className="page-number"
-            key={pageNum}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
+            key={pageNum} // pageNum이 바뀔 때마다 새로운 애니메이션 실행
+            initial={{ opacity: 0, y: 20 }} // 처음 위치: 아래쪽 20px + 투명
+            animate={{ opacity: 1, y: 0 }} // 최종 위치: 원래 자리 + 불투명
+            transition={{ duration: 0.3 }} // 0.3초 동안 실행
           >
             0{pageNum}
           </motion.p>
@@ -51,14 +54,15 @@ export default function Intro() {
       </div>
 
       {/* 소개 박스 */}
+      {/* 이전 컨텐츠가 사라진 후 새 컨텐츠 등장 */}
       <AnimatePresence mode="wait">
         <motion.div
           className="intro-box"
-          key={pageNum}
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -50 }}
-          transition={{ duration: 0.4 }}
+          key={pageNum} // pageNum 변경시 새로운 애니메이션
+          initial={{ opacity: 0, x: 50 }} // 처음: 오른쪽 50px + 투명
+          animate={{ opacity: 1, x: 0 }} // 최종: 원래 자리 + 불투명
+          exit={{ opacity: 0, x: -50 }} // 퇴장: 왼쪽 50px + 투명
+          transition={{ duration: 0.4 }} // 0.4초 동안 실행
         >
           <motion.img
             className="intro-img"
@@ -67,9 +71,9 @@ export default function Intro() {
           />
           <motion.p
             className="intro-text"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            initial={{ opacity: 0, y: 20 }} // 처음: 아래쪽 20px + 투명
+            animate={{ opacity: 1, y: 0 }} // 최종: 원래 자리 + 불투명
+            transition={{ delay: 0.2 }} // 0.2초 후에 시작
           >
             {intro[pageNum - 1].text}
           </motion.p>
@@ -80,7 +84,7 @@ export default function Intro() {
       <motion.button
         className="intro-btn"
         onClick={handleIntroBtn}
-        whileTap={{ scale: 0.95 }}
+        whileTap={{ scale: 0.95 }} // 터치할 때 살짝 축소되는 효과
       >
         {pageNum === 3 ? "시작하기" : "다음"}
       </motion.button>
