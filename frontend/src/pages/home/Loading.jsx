@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Loading.scss";
+import { motion } from "framer-motion";
 
 export default function Loading() {
   const navigate = useNavigate();
@@ -16,7 +17,11 @@ export default function Loading() {
   }, [navigate]);
 
   return (
-    <div className="intro-wrapper">
+    <motion.div
+      className="intro-wrapper"
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="intro-box ">
         <div className="title">
           <h1 className="intro-logo focus-in-expand">skinfit</h1>
@@ -27,6 +32,6 @@ export default function Loading() {
           <div className="circle right-circle"></div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
