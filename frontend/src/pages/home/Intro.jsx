@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import introImg1 from "../../assets/images/intro1.png";
 import introImg2 from "../../assets/images/intro2.png";
 import introImg3 from "../../assets/images/intro3.png";
+import CompletionPopup from "../../components/common/CompletePopUp";
 
 export default function Intro() {
   const [pageNum, setPageNum] = useState(1); // 페이지 넘버 상태 관리
@@ -33,6 +34,7 @@ export default function Intro() {
   };
 
   return (
+
     <motion.div
       className="intro"
       initial={{ opacity: 0 }}

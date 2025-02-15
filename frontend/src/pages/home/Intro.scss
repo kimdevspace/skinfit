@@ -74,9 +74,11 @@
     }
 
     .intro-text {
+      font-family: "Noto Sans KR", sans-serif;
+      // font-family: "Roboto", sans-serif;
+      font-weight: 600;
       margin-top: 5rem;
       font-size: 1.8rem;
-      font-weight: bold;
       text-align: center;
       white-space: pre-line;
     }
