@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Intro.scss";
+import { motion, AnimatePresence } from "framer-motion";
 import introImg1 from "../../assets/images/intro1.png";
 import introImg2 from "../../assets/images/intro2.png";
 import introImg3 from "../../assets/images/intro3.png";
@@ -35,26 +36,54 @@ export default function Intro() {
     <div className="intro">
       {/* 소개 페이지 번호 박스 */}
       <div className="page-number-box">
-        <div className="circle">
-          <p className="page-number">0{pageNum}</p>
-        </div>
+        <motion.div className="circle" whileTap={{ scale: 0.95 }}>
+          <motion.p
+            className="page-number"
+            key={pageNum}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            0{pageNum}
+          </motion.p>
+        </motion.div>
         <div className="line"></div>
       </div>
 
       {/* 소개 박스 */}
-      <div className="intro-box">
-        <img
-          className="intro-img"
-          src={intro[pageNum - 1].img}
-          alt={`page${pageNum - 1}-img`}
-        />
-        <p className="intro-text">{intro[pageNum - 1].text}</p>
-      </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          className="intro-box"
+          key={pageNum}
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -50 }}
+          transition={{ duration: 0.4 }}
+        >
+          <motion.img
+            className="intro-img"
+            src={intro[pageNum - 1].img}
+            alt={`page${pageNum - 1}-img`}
+          />
+          <motion.p
+            className="intro-text"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            {intro[pageNum - 1].text}
+          </motion.p>
+        </motion.div>
+      </AnimatePresence>
 
       {/* 다음 또는 시작하기 버튼 */}
-      <button className="intro-btn" onClick={handleIntroBtn}>
+      <motion.button
+        className="intro-btn"
+        onClick={handleIntroBtn}
+        whileTap={{ scale: 0.95 }}
+      >
         {pageNum === 3 ? "시작하기" : "다음"}
-      </button>
+      </motion.button>
     </div>
   );
 }

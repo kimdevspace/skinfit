@@ -21,6 +21,10 @@
       box-shadow: inset 0px -7px 22px 1px rgba(255, 255, 255, 0.66),
         0px 2px 4px rgba(0, 0, 0, 0.1);
 
+      &:active {
+        transform: scale(0.95);
+      }
+
       .page-number {
         position: absolute;
         bottom: 0.2rem;
@@ -28,6 +32,7 @@
         color: #f69c94;
         font-size: 1.6rem;
         font-weight: bold;
+        transition: opacity 0.3s ease;
       }
     }
 
@@ -62,6 +67,7 @@
     border-radius: 2rem;
     background-color: rgba(255, 255, 255, 0.7);
     box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.25);
+    transition: opacity 0.3s ease;
 
     .intro-img {
       height: 11.5rem;
@@ -87,5 +93,11 @@
     font-weight: bold;
     border-radius: 2rem;
     background-color: #ffe5d8;
+    transition: transform 0.2s ease;
+
+    &:active {
+      opacity: 0.8;
+      transform: scale(0.98);
+    }
   }
 }
