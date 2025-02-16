@@ -25,7 +25,7 @@ function AnalysisPopup({ closePopup }) {
         <p className="popup-discription">
           내가 등록한 화장품 개수를 기준으로 Level을 부여해요
           <br />
-          레벨이 높을수록 정확도가 올라가요
+          레벨이 높을수록 <span>정확도</span>가 올라가요
         </p>
 
         {/* level 설명 박스 */}
