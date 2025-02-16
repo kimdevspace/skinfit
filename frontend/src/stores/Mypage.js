@@ -119,25 +119,24 @@ const fetchMyIngredients = async () => {
 
 // create : 스토어 생성
 export const useMyIngredientsStore = create((set) => ({
-  myMatchedingrsData: [],
-  myUnmatchedingrsData : [],
+  myMatchedIngreData: [],
+  myUnMatchedIngreData: [],
   //기존 객체 업데이트
-  setMyMatchedingrsData: (data) => set({ myMatchedingrsData: data }),
-  setMyUnMatchedingrsData: (data) => set({ myUnMatchedingrsData: data }),
-  setMyIngredientsData: (data) => set({ myIngredientsData: data }),
+  setMyMatchedIngreData: (data) => set({ myMatchedIngreData: data }),
+  setMyUnMatchedIngreData: (data) => set({ myUnMatchedIngreData: data }),
 }))
 
 export const useMyIngredients = () => {
-  const setMyMatchedingrsData = useMyIngredientsStore((state) => state.setMyMatchedingrsData)
-  const setMyUnMatchedingrsData = useMyIngredientsStore((state) => state.setMyUnMatchedingrsData)
+  const setMyMatchedIngreData = useMyIngredientsStore((state) => state.setMyMatchedIngreData)
+  const setMyUnMatchedIngreData = useMyIngredientsStore((state) => state.setMyUnMatchedIngreData)
 
   return useQuery({
     queryKey: ["myIngredients"],
     queryFn: fetchMyIngredients,
     onSuccess: (data) => {
       console.log("내가 등록한 성분 데이터 조회완료", data)
-      setMyMatchedingrsData(data.suitableIngredients) // 데이터 저장
-      setMyUnMatchedingrsData(data.unsuitableIngredients)
+      setMyMatchedIngreData(data.suitableIngredients) // 데이터 저장
+      setMyUnMatchedIngreData(data.unsuitableIngredients) // 데이터 저장
     },
     onError: (error) => {
       console.error("내가 등록한 성분분 데이터 조회 에러", error)
@@ -183,4 +182,35 @@ export const useReviews = () => {
 //#endregion 
 
 
+//#region 성분 자세히 보기 데이터(랭킹)
+export const fetchUnsuits = async () => {
+  const response = await axios.get("/user/mypage/detail-unsuit-ingredients")
+  return response.data
+}
 
+
+// Zustand store 생성
+export const useUnsuitStore = create((set) => ({
+  myUnsuits: [],
+  setMyUnsuits: (data) => set({ myUnsuits: data }),
+
+}))
+
+// 커스텀 훅: 리뷰 데이터 조회 및 상태 저장
+export const useUnsuit = () => {
+  const setMyUnsuits = useUnsuitStore((state) => state.setMyUnsuits)
+
+  return useQuery({
+    queryKey: ['unsuitData'], // 쿼리 키는 하나로 설정
+    queryFn: fetchUnsuits, // 동일한 API 호출 함수 사용
+    onSuccess: (data) => {
+      console.log('안맞는 성분 랭킹 데이터 조회 완료', data)
+      setMyUnsuits(data.myReviews) 
+
+    },
+    onError: (error) => {
+      console.error('안맞는 성분 랭킹 데이터 조회 에러', error)
+    },
+  })
+}
+//#endregion 

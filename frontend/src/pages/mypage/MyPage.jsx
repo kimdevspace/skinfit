@@ -2,10 +2,14 @@ import "./MyPage.scss";
 import ToggleButton from "../../components/common/ToggleButton";
 import {
   useMyPageInfo,
+  useMyPageStore,
   useTop3Data,
+  useTop3DataStore,
   useMyCosmeticsStore,
   useMyIngredients,
+  useMyIngredientsStore,
   useReviews,
+  useReviewsStore,
 } from "../../stores/Mypage";
 import { useState } from "react";
 import ReviewItem from "../../components/review/ReviewItem";
@@ -16,19 +20,46 @@ import SearchPopup from "../../components/search/SearchPopup";
 function MyPage() {
   //1. 스토어 데이터 불러오기
   // 마이페이지 유저 정보 불러오기
-  const { myinfos } = useMyPageInfo();
+  const { error1 } = useMyPageInfo();
+  const myInfos = useMyPageStore((state) => state.myInfos);
+
+  if (error1) {
+    console.log("마이페이지 유저 데이터 랜더링 오류", error1.message);
+  }
 
   // 성분 top3 데이터
-  const { top3Data } = useTop3Data();
+  const { error2 } = useTop3Data();
+  const top3Data = useTop3DataStore((state) => state.top3Data);
+  if (error2) {
+    console.log("성분 top3 데이터 랜더링 오류", error2.message);
+  }
 
   // 내가 등록한 화장품 데이터
-  const { myMatchedCosData, myUnMatchedCosData } = useMyCosmeticsStore();
+  const { error3 } = useMyCosmetics();
+  const myMatchedCosData = useMyCosmeticsStore(state => state.myMatchedCosData);
+  const myUnMatchedCosData = useMyCosmeticsStore(state => state.myUnMatchedCosData);
+  
+  if (error3) {
+    console.log("내가 등록한 화장품 데이터 랜더링 오류", error3.message);
+  }
 
   // 성분 데이터
-  const { myMatchedingrsData, myUnMatchedingrsData } = useMyIngredients();
+  const { error4 } = useMyIngredients();
+  const myMatchedIngreData = useMyIngredientsStore(state => state.myMatchedIngreData);
+  const myUnMatchedIngreData = useMyIngredientsStore(state => state.myUnMatchedIngreData);
+  
+  if (error4) {
+    console.log("내가 등록한 성분 데이터 랜더링 오류", error4.message);
+  }
 
   // 리뷰 데이터
-  const { myReviews, likedReviews } = useReviews();
+  const { error5 } = useReviews();
+  const myReviews = useReviewsStore(state => state.myReviews);
+  const likedReviews = useReviewsStore(state => state.likedReviews);
+
+  if (error5) {
+    console.log("리뷰 데이터 랜더링 오류", error5.message);
+  }
 
   //2. 액션 감지
   // SearchPopup 상태 관리
@@ -103,11 +134,11 @@ function MyPage() {
     <div className="wrapper">
       {/* 유저 닉네임, 피부타입 정보 */}
       <div className="edit-user-info">
-        <span className="user-name">{myinfos?.nickname}</span>
+        <span className="user-name">{myInfos?.nickname}</span>
         <span className="user-name2">님</span>
         <div className="user-skin-type">
-          {myinfos &&
-            myinfos.skinTypeId.map((skinType, index) => (
+          {myInfos &&
+            myInfos.skinTypeId.map((skinType, index) => (
               <span key={index}>#{skinType} </span>
             ))}
         </div>
@@ -138,8 +169,8 @@ function MyPage() {
             ))}
         </div>
         <div className="ingredient-detail-btn">
-          <Link to="/ingredients" className="detail-btn">
-            성분 자세히 보기
+          <Link to="/mypage/ingredient" className="detail-btn">
+            랭킹 더보기
           </Link>
         </div>
       </div>
@@ -187,8 +218,8 @@ function MyPage() {
           </button>
         </div>
         {(isIngredientClicked === "맞는 성분"
-          ? myMatchedingrsData
-          : myUnMatchedingrsData
+          ? myMatchedIngreData
+          : myUnMatchedIngreData
         )?.map((ing) => (
           <div key={ing.id}>
             <div className="ingredient-list">
