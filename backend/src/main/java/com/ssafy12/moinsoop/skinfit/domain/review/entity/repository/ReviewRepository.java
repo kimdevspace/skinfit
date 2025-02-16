@@ -11,6 +11,8 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
+import java.util.List;
+
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
 
     // 사용자가 작성한 리뷰 조회
