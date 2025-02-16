@@ -16,6 +16,7 @@ import { useState } from "react";
 import ReviewItem from "../../components/review/ReviewItem";
 import PwCheckPopUp from "../../components/auth/PwCheckPopUp";
 import { Link } from "react-router-dom";
+import SearchPopup from "../../components/search/SearchPopup";
 
 function MyPage() {
   //1. 스토어 데이터 불러오기
@@ -80,7 +81,7 @@ function MyPage() {
         : "unsuitableCosmetics";
 
     setEditPopupProps({
-      type: "cosmetic",
+      type: "cosmetics",
       suitability:
         isCosmeticClicked === "맞는 화장품" ? "suitable" : "unsuitable",
       category: category,
@@ -92,8 +93,23 @@ function MyPage() {
   // 내가 등록한 성분 토글 버튼 감지
   const [isIngredientClicked, setIsIngredientClicked] = useState("맞는 성분");
   const ingredientHandler = (text) => {
-    setIsIngredientClicked(isIngredientClicked);
+    setIsIngredientClicked(text);
     console.log("마이페이지 성분 데이터 조회", text);
+  };
+
+  // 성분 수정 버튼 클릭 핸들러
+  const handleIngredientEdit = () => {
+    const category = isIngredientClicked === "맞는 성분" 
+      ? "suitableIngredients" 
+      : "unsuitableIngredients";
+    
+    setEditPopupProps({
+      type: "ingredient",
+      suitability: isIngredientClicked === "맞는 성분" ? "suitable" : "unsuitable",
+      category: category,
+      onClose: () => setEditPopupProps(null),
+      isEdit: true
+    });
   };
 
   // 리뷰 토글 버튼 감지
@@ -169,7 +185,9 @@ function MyPage() {
             text2="맞지 않는 화장품"
             handler={cosmeticHandler}
           />
-          <button className="edit-del-btn">수정</button>
+          <button className="edit-del-btn" onClick={handleCosmeticEdit}>
+            수정
+          </button>
         </div>
 
         {/* 조건부 렌더링 및 map() */}
@@ -196,7 +214,9 @@ function MyPage() {
             text2="맞지 않는 성분"
             handler={ingredientHandler}
           />
-          <button className="edit-del-btn">수정</button>
+          <button className="edit-del-btn" onClick={handleIngredientEdit}>
+            수정
+          </button>
         </div>
         {(isIngredientClicked === "맞는 성분"
           ? myMatchedIngreData
@@ -211,6 +231,9 @@ function MyPage() {
           </div>
         ))}
       </div>
+
+      {/* 검색 팝업창 */}
+      {editPopupProps && <SearchPopup {...editPopupProps} />}
 
       {/* 리뷰 목록 */}
       <div className="review-wrapper">

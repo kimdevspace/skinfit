@@ -7,6 +7,7 @@ import SymptomPopup from "./SymptomPopup";
 // type : 화장품인지 성분인지
 // category : 잘 맞는/안 맞는, 화장품/성분 4가지 경우 중 1가지의 경우
 function SearchPopupItem({ item, type, category }) {
+  
   // 스토어에서 필요 데이터, 함수 가져오기
   const { items, addItem, removeItem, getIdKey } = useSearchPopupStore();
 
@@ -54,8 +55,8 @@ function SearchPopupItem({ item, type, category }) {
 
   return (
     <div className="search-popup-item">
-      {type === "cosmetic" ? (
-        // 화장품인 경우
+      {type === "cosmetics" ? (
+        // 화장품인 경우hh
         <>
           <img src="" alt="" />
           <div className="text-box">

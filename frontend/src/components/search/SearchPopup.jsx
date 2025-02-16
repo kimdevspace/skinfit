@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./SearchPopup.scss";
 import SearchBar from "./SearchBar";
 import SearchResult from "./SearchResult";
@@ -7,15 +7,47 @@ import Button from "../common/Button";
 import { useSearchPopupStore } from "../../stores/SearchPopup";
 import axios from "../../api/axiosInstance.js";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import {
+  useRelatedCosmeticsStore,
+  useSearchCompleteStore,
+} from "../../stores/Search.js";
 
 // type : 화장품(cosmetic)인지 성분(ingredient)인지
 // suitability : 잘 맞는(suitable) / 맞지 않는(unsuitable)
 // category : suitableCosmetics, suitableIngredients, unsuitableCosmetics, unsuitableIngredients
 function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
+  // 검색 완료 여부
+  const [isSubmit, setIsSubmit] = useState(false);
+
+  // **
+  // 스토어에서 검색 돋보기, 연관검색어 api 요청 구분 인자 가져오기 & 검색 쿼리 파라미터
+  const { setApiCategory2, setRelatedQuery } = useRelatedCosmeticsStore();
+  const { setApiCategory, setQuery } = useSearchCompleteStore();
+
+  //실시간 검색어 연동 여부, setSearchWord : searchWord 변수를 바꿔주는 애
+  const [searchWord, setSearchWord] = useState("");
+
+  // **
+  // 검색 완료시 api 요청
+  const handleSearchSubmit = () => {
+    setQuery(searchWord); // 검색어 쿼리 전달
+    setApiCategory(type); // 검색어 api 경로 쿼리 전달 
+    setIsSubmit(true);
+  };
+
+  // 화장품명/성분명 검색 완료 & 연관검색 api 요청
+  useEffect(() => {
+    setApiCategory2(type); // 연관검색어 api 경로 쿼리 전달
+    setRelatedQuery(searchWord); // ** 연관검색어 쿼리 전달 // 여기 위치가 맞나?
+  }, [type, searchWord, setApiCategory2,  setRelatedQuery]); // 무한루프 방지 // ** 
+
   // 스토어에서 데이터 가져오기
   const items = useSearchPopupStore((state) => state.items);
 
-  // search 스토어 : 화장품 검색 api 요청
+  // 팝업창 관련 변수
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   //#region 사용자 데이터 수정
   // API URL 매핑
@@ -73,10 +105,6 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
   //#endregion
 
   //#region 팝업창 닫기
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-
   // 오버레이 클릭 시 팝업 닫기
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
@@ -135,10 +163,23 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
         onClick={(e) => e.stopPropagation()}
       >
         <hr />
-        <SearchBar />
+        <SearchBar
+          searchWord={searchWord}
+          setSearchWord={setSearchWord}
+          category={category}
+          handleSearchSubmit={handleSearchSubmit}
+        />
 
         <div className="search-result-box">
-          <SearchResult location="popup" type={type} category={category} />
+          <SearchResult
+            location="popup"
+            type={type}
+            category={category}
+            searchWord={searchWord}
+            setSearchWord={setSearchWord}
+            isSubmit={isSubmit}
+            setIsSubmit ={setIsSubmit}
+          />
         </div>
 
         <div className="my-list-box">
