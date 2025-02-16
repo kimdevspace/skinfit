@@ -36,34 +36,27 @@ function MyPage() {
 
   // 내가 등록한 화장품 데이터
   const { error3 } = useMyCosmetics();
-  const { myMatchedCosData, myUnMatchedCosData } = useMyCosmeticsStore(
-    (state) => ({
-      myMatchedCosData: state.myMatchedCosData,
-      myUnMatchedCosData: state.myUnMatchedCosData,
-    })
-  );
+  const myMatchedCosData = useMyCosmeticsStore(state => state.myMatchedCosData);
+  const myUnMatchedCosData = useMyCosmeticsStore(state => state.myUnMatchedCosData);
+  
   if (error3) {
     console.log("내가 등록한 화장품 데이터 랜더링 오류", error3.message);
   }
 
   // 성분 데이터
   const { error4 } = useMyIngredients();
-  const { myMatchedIngreData, myUnMatchedIngreData } = useMyIngredientsStore(
-    (state) => ({
-      myMatchedIngreData: state.myMatchedIngreData,
-      myUnMatchedIngreData: state.myUnMatchedIngreData,
-    })
-  );
+  const myMatchedIngreData = useMyIngredientsStore(state => state.myMatchedIngreData);
+  const myUnMatchedIngreData = useMyIngredientsStore(state => state.myUnMatchedIngreData);
+  
   if (error4) {
     console.log("내가 등록한 성분 데이터 랜더링 오류", error4.message);
   }
 
   // 리뷰 데이터
   const { error5 } = useReviews();
-  const { myReviews, likedReviews } = useReviewsStore((state) => ({
-    myReviews: state.myReviews,
-    likedReviews: state.likedReviews,
-  }));
+  const myReviews = useReviewsStore(state => state.myReviews);
+  const likedReviews = useReviewsStore(state => state.likedReviews);
+
   if (error5) {
     console.log("리뷰 데이터 랜더링 오류", error5.message);
   }
