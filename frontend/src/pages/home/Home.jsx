@@ -9,9 +9,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 import NavBar from "../../components/common/NavBar";
-import level1Img from "../../assets/images/level1.png"
-import level2Img from "../../assets/images/level2.png"
-import level3Img from "../../assets/images/level3.png"
+import level1Img from "../../assets/images/level1.png";
+import level2Img from "../../assets/images/level2.png";
+import level3Img from "../../assets/images/level3.png";
+import AnalysisPopup from "../../components/home/AnalysisPopup.jsx";
 
 function Home() {
   // 메인 페이지(추천 상품, 화장품 정보) 필요한 정보 api 요청
@@ -40,17 +41,17 @@ function Home() {
 
   // 로딩, 에러 확인
   if (isLoading) {
-    return console.log("로딩중", isLoading)
+    return console.log("로딩중", isLoading);
   }
   if (isError) {
-    return console.log("에러", isLoading)
+    return console.log("에러", isLoading);
   }
 
   const levelImg = {
-    1 : level1Img,
-    2 : level2Img,
-    3 : level3Img,
-  }
+    1: level1Img,
+    2: level2Img,
+    3: level3Img,
+  };
 
   // #region 더미 데이터
   // api 요청 받을 수 없어서 오류남 -> 더미 데이터 생성
@@ -81,6 +82,21 @@ function Home() {
   ];
   // #endregion
 
+  // #region 내 피부분석 정확도 안내 팝업창 함수
+  // 내 피부분석 정확도 팝업창 제어
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  // 내 피부분석 정확도 팝업 열기
+  const openPopup = () => {
+    setIsPopupOpen(true);
+  };
+
+  // 내 피부분석 정확도 팝업 닫기
+  const closePopup = () => {
+    setIsPopupOpen(false);
+  };
+  // #endregion
+
   return (
     <div className="home">
       <header>
@@ -99,10 +115,12 @@ function Home() {
       <div className="analysis-accuracy">
         <div className="analysis-accuracy-txt-box">
           <p className="title">내 피부 분석 정확도</p>
-          <button>
+          <button onClick={openPopup}>
             <FontAwesomeIcon icon={faCircleQuestion} />
           </button>
         </div>
+        {/* 내 피부분석 정확도 안내 팝업 */}
+        {isPopupOpen && <AnalysisPopup closePopup={closePopup} />}
 
         <div className="analysis-accuracy-info-box">
           {/* 분석 정확도 */}
@@ -155,7 +173,7 @@ function Home() {
       {/* 네브바 */}
       <NavBar />
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;
