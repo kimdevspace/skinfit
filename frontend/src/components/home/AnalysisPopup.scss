@@ -1,0 +1,83 @@
+.analysis-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+
+  .analysis-popup {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    min-width: 30rem;
+    max-width: 50rem;
+    padding: 2rem 0;
+    border-radius: 1.6rem;
+    background-color: #fff;
+
+    // 닫기 버튼
+    .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+
+      svg {
+        padding: 0.3rem 0.4rem;
+        border-radius: 50%;
+        color: #fff;
+        background-color: #d9d9d9;
+      }
+    }
+
+    // 피부 분석 정확도 안내 문구
+    .popup-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .popup-discription {
+      margin-top: 0.5rem;
+      text-align: center;
+      color: #8e8e8e;
+    }
+
+    // 레벨 설명 박스
+    .level-guide-box {
+      margin-top: 1.5rem;
+
+      .level-guide {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 0.5rem;
+
+        .level-text {
+          font-family: "Abril Fatface", serif;
+          color: #ff975f;
+          font-size: 1.1rem;
+        }
+
+        .level-img {
+          width: 3.5rem;
+          aspect-ratio: 1/1;
+        }
+
+        .count {
+          color: #8e8e8e;
+
+          span {
+            font-weight: 700;
+          }
+        }
+      }
+    }
+  }
+}
