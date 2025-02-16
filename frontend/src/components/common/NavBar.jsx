@@ -1,6 +1,6 @@
 import React from "react";
 import './NavBar.scss'
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate,useLocation } from "react-router-dom";
 import { House, Search, User, LogOut  } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "../../api/axiosInstance.js"
@@ -18,6 +18,8 @@ const handleLogout = async () => {
 
 function NavBar() {
   const navigate = useNavigate()
+  const location = useLocation();
+
 
   const { mutate } = useMutation({
     mutationFn: handleLogout,
@@ -34,22 +36,23 @@ function NavBar() {
 
   return (
     <nav className="navbar">
-      <Link to={'/'}>
+            <Link to={'/'} className={location.pathname === '/' ? 'active' : ''}>
+
         <House />
         <p>홈</p>
       </Link>
 
-      <Link to={'/search'}>
+      <Link to={'/search'}  className={location.pathname === '/search' ? 'active' : ''} >
         <Search />
         <p>검색</p>
       </Link>
 
-      <Link to={'/mypage'}>
+      <Link to={'/mypage'} className={location.pathname === '/mypage' ? 'active' : ''}>
         <User />
         <p>마이</p>
       </Link>
 
-      <button onClick={() => mutate()}>
+      <button onClick={() => mutate()} >
         <LogOut />
         <p>로그아웃</p>
       </button>
