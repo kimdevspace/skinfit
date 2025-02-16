@@ -32,7 +32,7 @@ function ReviewRegister(cosmeticId) {
   // 리뷰 데이터 POST 요청
   const uploadReview = async (review) => {
     const formData = new FormData();
-    formData.append("reviewCount", review.reviewContent);
+    formData.append("reviewContent", review.reviewContent);
     formData.append("rating", review.rating);
     review.images.forEach((file) => formData.append("images", file));
     console.log("upload 한다");
@@ -137,7 +137,7 @@ function ReviewRegister(cosmeticId) {
           images={reviewData.images}
           setImages={setReviewData}
           maxImages={3}
-          dataType='review'
+          dataType="review"
         />
 
         <Button text="등록하기" color="pink" type="submit" />
