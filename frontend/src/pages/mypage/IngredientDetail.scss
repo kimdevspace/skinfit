@@ -1,18 +1,39 @@
-.ingredient-detail-wrapper {
-  margin-left: 2rem;
-  margin-right: 2rem;
+// 성분 목록
+@mixin ingredient-list-common {
+  margin-top: 1rem;
+  margin-left: 2.5rem;
+  margin-right: 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  padding-right: 1.5rem;
+  padding-left: 1.5rem;
 
-  @mixin ingredient-list-common {
-    margin-top: 1rem;
-    margin-left: 2rem;
-    margin-right: 2rem;
-    display: flex;
-    justify-content: space-between;
-    padding-right: 1rem;
-    padding-left: 1rem;
+  .rank-name {
+    flex: 3;
+
+    .ingredient-rank {
+      font-weight: bold;
+      color: #565656;
+      font-size: 1.2rem;
+    }
+
+    .ingredient-name {
+      font-size: 1.1rem;
+      color: #8e8e8e;
+    }
+  }
+
+  .ingredient-count {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #8e8e8e;
+    width: 7rem;
+  }
+
+  .ewg-level-wrapper {
+    font-size: 1.2rem;
 
     .ewg-level {
-      font-size: 1.1rem;
       font-weight: bold;
 
       &.green {
@@ -25,20 +46,54 @@
       &.orange {
         color: #ffb58c;
       }
-    }
-    .ingredient-name {
-      font-size: 1.1rem;
-      color: #8e8e8e;
-    }
-  }
 
-  h2 {
-    margin-top: 3rem;
-    margin-bottom: 1rem;
-    font-size: 1.4rem;
-    color: #565656;
-    text-align: center;
+      &.blank-tag {
+        //발견횟수-등급(최소최대개념이 있어서) 간 간격유지(반응형)
+        color: #fff;
+      }
+    }
   }
+}
+
+
+
+
+//페이지 전체 폰트 설정
+.font-name {
+  font-family: 'Noto Sans KR';
+
+
+// 페이지 제목
+.title {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 0.3rem;
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #565656;
+  justify-content: center;
+
+  .title-color {
+    color: #ff975f;
+  }
+}
+
+// .title-hr {
+//   max-width: 30rem; // carousel의 max-width(47rem)에서 padding(2.5rem * 2) 제외
+//   margin: 1rem auto; // 중앙 정렬을 위해 margin auto 사용
+//   background-color: #dedede;
+//   border: 0;
+//   height: 0.1rem;
+  
+// }
+
+
+
+//성분랭킹표 최상위 박스
+.ingredient-detail-wrapper {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 
   hr {
     margin: 1rem 2rem;
@@ -47,20 +102,40 @@
     height: 0.1rem;
   }
 
+  // 타이틀
   .bad-ingredient-box {
     .bad-ingredient-bar {
-      border: solid #8e8e8e 0.1rem;
+      margin-top: 4rem;
+      border: solid #8e8a8a 0.1rem;
       border-radius: 1.5rem;
       background: #fff0e8;
       width: 100%;
       display: flex;
+      padding: 1.5rem 3.5rem;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #565656;
       justify-content: space-between;
-      padding: 1.5rem 3rem;
 
-      .bar-text {
-        font-size: 1.1rem;
-        font-weight: bold;
-        color: #565656;
+      .ingredient-text {
+        flex: 3; // 성분명이 차지할 공간
+      }
+
+      .count-text {
+        margin-right: 1.5rem;
+      }
+
+      .text-emoji {
+        display: flex;
+        gap: 0.3rem;
+
+        .status-text {
+        }
+
+        button {
+          align-self: center;
+          color: #a3a1a1;
+        }
       }
     }
 
@@ -68,4 +143,127 @@
       @include ingredient-list-common();
     }
   }
+}
+
+//캐러셀 효과과
+.carousel {
+  &-container {
+    position: relative;
+    width: 100%;
+    max-width: 47rem;
+    margin: 0 auto;
+    padding: 0 2.5rem;
+    overflow: hidden;
+    padding-bottom: 2rem;  // 하단에 여유 공간 추가
+
+  }
+
+  &-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0.7);
+    transition: all 300ms ease;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .carousel-bttn{
+      width: 1rem;
+      height: 2rem;
+    }
+
+    &.prev {
+      left: 0;
+
+    }
+
+    &.next {
+      right: 0;
+
+    }
+  }
+
+  &-content {
+    overflow: hidden;
+  }
+
+  &-track {
+    display: flex;
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); // 부드러운 이징
+
+  }
+
+  &-slide {
+    flex: none;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+
+    .carousel-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-align: center;
+      color: #565656;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .carousel-image-wrapper {
+      width: 100%;
+      transition: opacity 0.5s ease;
+      
+      &.animating {
+        opacity: 0.7;
+      }
+    }
+  }
+
+  &-image {
+    width: 100%;
+    height: 20rem;
+    padding: 1rem 0;
+    object-fit: contain;
+  }
+
+  &-indicators {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+
+    .indicator {
+      height: 0.5rem;
+      border-radius: 9999px;
+      transition: all 300ms ease;
+      background-color: #FFF0E8;
+
+      &.active {
+        width: 1rem;
+        background-color: #FFD3DA;
+      }
+
+      &:not(.active) {
+        width: 0.5rem;
+      }
+    }
+  }
+}
 }
