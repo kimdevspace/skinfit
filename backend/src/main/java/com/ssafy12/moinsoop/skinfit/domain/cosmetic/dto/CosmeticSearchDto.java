@@ -13,25 +13,24 @@ public class CosmeticSearchDto {
     public CosmeticSearchDto(List<Cosmetic> cosmetics) {
         this.cosmetics = cosmetics.stream()
                 .limit(10) // 최대 10개만 반환
-                .map(CosmeticSummaryDto::new)
+                .map(cosmetic -> new CosmeticSummaryDto(cosmetic, true))
                 .collect(Collectors.toList());
     }
-}
 
-/**
- * 화장품 검색 결과를 요약하여 제공하는 DTO
- */
-@Getter
-class CosmeticSummaryDto {
-    private final Integer cosmeticId;
-    private final String cosmeticName;
-    private final String cosmeticBrand;
-    private final String imageUrl;
+    @Getter
+    public static class CosmeticSummaryDto {
+        private final Integer cosmeticId;
+        private final String cosmeticName;
+        private final String cosmeticBrand;
+        private final String imageUrl;
+        private final boolean safetyStatus;
 
-    public CosmeticSummaryDto(Cosmetic cosmetic) {
-        this.cosmeticId = cosmetic.getCosmeticId();
-        this.cosmeticName = cosmetic.getCosmeticName();
-        this.cosmeticBrand = cosmetic.getCosmeticBrand();
-        this.imageUrl = cosmetic.getImageUrl();
+        public CosmeticSummaryDto(Cosmetic cosmetic, boolean safetyStatus) {
+            this.cosmeticId = cosmetic.getCosmeticId();
+            this.cosmeticName = cosmetic.getCosmeticName();
+            this.cosmeticBrand = cosmetic.getCosmeticBrand();
+            this.imageUrl = cosmetic.getImageUrl();
+            this.safetyStatus = safetyStatus;
+        }
     }
 }

@@ -5,6 +5,7 @@ import com.ssafy12.moinsoop.skinfit.domain.cosmetic.dto.CosmeticSearchDto;
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.service.CosmeticService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,9 +25,10 @@ public class CosmeticController {
     // 🔍 화장품 돋보기 검색 API
     @GetMapping("/search")
     public ResponseEntity<CosmeticSearchDto> searchCosmetics(
+            @AuthenticationPrincipal Integer userId,
             @RequestParam String query,
             @RequestParam(required = false) String category) {
-        return ResponseEntity.ok(cosmeticService.searchCosmetics(query, category));
+        return ResponseEntity.ok(cosmeticService.searchCosmetics(query, category, userId));
     }
 
 }
