@@ -4,6 +4,8 @@ import Button from "../../components/common/Button";
 import { useRef, useState } from "react";
 import axios from "../../api/axiosInstance";
 import { useMutation } from "@tanstack/react-query";
+import Header from '../../components/common/Header.jsx'
+
 
 export default function OcrScanner() {
   // ocr 사진 데이터
@@ -98,7 +100,7 @@ export default function OcrScanner() {
       }
     });
 
-    if (ocrData.images.length === 0) {
+    if (ocrData.images?.length === 0) {
       setImageError(true);
       hasError = true;
     } else {
@@ -111,6 +113,8 @@ export default function OcrScanner() {
   };
 
   return (
+    <>
+  <Header title='성분 스캐너'/>
     <div className="ocr-register-form">
       <div className="input-wrapper">
         <p className="input-title">상품명</p>
@@ -173,5 +177,6 @@ export default function OcrScanner() {
         onSubmit={handleSubmit}
       />
     </div>
+    </>
   );
 }

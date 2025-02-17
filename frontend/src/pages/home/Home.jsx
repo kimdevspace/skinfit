@@ -34,8 +34,7 @@ function Home() {
   });
 
   // api에서 받아온 정보 데이터
-  const { level, goodCosmeticsCount, badCosmeticsCount, recomCosmetic } =
-    mainInfo.data;
+  const { level, goodCosmeticsCount, badCosmeticsCount, recommendedCosmetics } = mainInfo.data
 
   // 로딩, 에러 확인
   if (isLoading) {
@@ -131,7 +130,7 @@ function Home() {
           <span className="nickname">먀먀</span>님의 추천 화장품
         </p>
         <div className="recommend-list">
-          {recomCosmetic.map((cosmetic) => (
+          {recommendedCosmetics.map((cosmetic) => (
             <RecommendItem key={cosmetic.cosmeticId} cosmetic={cosmetic} />
           ))}
         </div>

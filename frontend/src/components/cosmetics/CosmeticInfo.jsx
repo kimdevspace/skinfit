@@ -39,7 +39,7 @@ function CosmeticInfo({ cosmeticData }) {
         <div className="skin-analysis-box">
           <img src={skinAnalysisIcon} alt="skin-analysis-icon" />
           <p className="title">내 피부 분석</p>
-          {cosmeticData.ingredients.length ? (
+          {cosmeticData.ingredients?.length ? (
             // 민감 성분 있을 때
             <div className="sensitive-ingredients">
               <p className="info-msg">
