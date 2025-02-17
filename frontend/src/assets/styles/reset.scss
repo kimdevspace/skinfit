@@ -5,11 +5,12 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   font-size: 62.5%; /* 1rem = 10px 설정 */
   // line-height: 1.5;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   color: #565656;
 }
 
@@ -18,7 +19,8 @@ a {
   color: inherit;
 }
 
-ul, ol {
+ul,
+ol {
   list-style: none;
 }
 

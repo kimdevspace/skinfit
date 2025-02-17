@@ -5,11 +5,13 @@ import AuthBox from "../../components/auth/AuthBox.jsx";
 import Button from "../../components/common/Button.jsx";
 import Logo from "../../components/common/Logo.jsx";
 import "./FindPW.scss";
+import useAuthStore from "../../stores/Auth.js";
 
 function FindPW() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [tempPassword, setTempPassword] = useState("");
+  const setAuth = useAuthStore(state => state.setAuth); // 토큰 저장 필요 변수수
 
   const sendEmailCode = async (email) => {
     try
@@ -57,6 +59,7 @@ function FindPW() {
       });
   
       const { accessToken, registered  } = response.data;
+      setAuth(accessToken); // 토큰 저장
       console.log("registered 값:", registered, " | 타입:", typeof registered);
       console.log("로그인 성공:", response.data);
       

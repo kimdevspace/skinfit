@@ -1,7 +1,7 @@
 import SearchBar from "../../components/search/SearchBar.jsx"
 import SearchResult from "../../components/search/SearchResult.jsx"
 import { useState } from "react"
-import { useSearchCompleteStore, useSearchComplete} from "../../stores/Search.js" // 검색 store (pinia)
+import { useSearchCompleteStore, useSearchComplete} from "../../stores/Search" // 검색 store (pinia)
 import "./Search.scss"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons"
@@ -21,13 +21,11 @@ const categoryOptions = [
 
 function Search() {
   // 스토어 상태 데이터 & 상태관리 함수 불러오기
-  const { setQuery, setFilterByUserPreference, setCategory } = useSearchCompleteStore()
-
+  const { setQuery, setFilterByUserPreference, setCategory, setApiCategory } = useSearchCompleteStore()
 
   // useQuery 훅으로 반환하는 객체(데이터) 불러오기
   // data == 유저 검색어로 검색된 결과 데이터
   const { data, isLoading, error } = useSearchComplete();
-
 
   console.log(isLoading, "검색 결과 로딩중")
   console.log(error, "검색 결과 랜더링 에러")
@@ -53,6 +51,7 @@ function Search() {
     } 
     setQuery(searchWord) // 사용자 검색어
     console.log(`검색을 시도했습니다 :${searchWord}`)
+    setApiCategory('cosmetics') // 성분명/화장품명 구분 api 요청 인자자
     setIsSubmit(true)
   }
 
@@ -97,7 +96,7 @@ function Search() {
   return (
     <div>
       <form onSubmit={submitEvent}>
-        <SearchBar searchWord={searchWord} setSearchWord={setSearchWord} />
+        <SearchBar searchWord={searchWord} setSearchWord={setSearchWord}/>
 
         {/* 카테고리, 잘 맞는 화장품 검색 */}
         <div className="filter">
@@ -123,7 +122,7 @@ function Search() {
       </form>
 
       {/* 화장품 검색결과/혹은 검색결과 없을 때의 화면 / 혹은 실시간 검색어 검색바에 입력시 실시간으로 연관검색어 목록 뜨게 하기기 */}
-      <SearchResult datas={data} searchWord={searchWord} setSearchWord={setSearchWord} isSubmit={isSubmit} setIsSubmit={setIsSubmit} />
+      <SearchResult datas={data} searchWord={searchWord} setSearchWord={setSearchWord} isSubmit={isSubmit} setIsSubmit={setIsSubmit} category='cosmetics' />
     </div>
   )
 }

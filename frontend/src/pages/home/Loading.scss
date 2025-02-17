@@ -1,0 +1,85 @@
+.intro-wrapper {
+  background: linear-gradient(180deg, #f8cccc -16.77%, #fdfff3 99.99%);
+  min-height: 780px; // 최소 높이 보장
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  .intro-box {
+    margin-top: 40%;
+    z-index: 0;
+
+    .title {
+      text-align: center;
+      color: #565656;
+      position: relative;
+
+      .circle {
+        position: absolute;
+        border-radius: 50%;
+        background: linear-gradient(168deg, #fdc4a5 30.89%, #fff 105.39%);
+        box-shadow: inset 0px -7px 22px 1px rgba(255, 255, 255, 0.66),
+          0px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .left-circle {
+        width: 4rem;
+        height: 4rem;
+        top: 12.2rem;
+        left: 3.3rem;
+
+        &::before {
+          content: "";
+          position: absolute;
+          top: -0.5rem;
+          right: -0.9rem;
+          width: 3.3rem;
+          height: 3.3rem;
+          border: 1px solid #c9c9c9;
+          border-radius: 50%;
+          z-index: -1;
+        }
+      }
+
+      .right-circle {
+        width: 16.5rem;
+        height: 16.5rem;
+        top: -13rem;
+        right: -7.2rem;
+        // overflow: hidden;
+      }
+      .intro-logo {
+        font-family: "Abril Fatface", serif;
+        font-size: 6.4rem;
+        font-weight: normal;
+        animation: focus-in-expand 1.3s ease-out both; // 애니메이션 적용
+        // animation: focus-in-expand 1.3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+      }
+
+      .intro-slogan {
+        margin-top: -0.5rem;
+        font-size: 2rem;
+        font-weight: 700;
+        animation: focus-in-expand 1.3s ease-out both; // 애니메이션 적용
+        // animation: focus-in-expand 1.3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+      }
+    }
+  }
+}
+
+// 애니메이션 시나리오 정의
+@keyframes focus-in-expand {
+  0% {
+    // 시작상태태
+    letter-spacing: -0.5em;
+    filter: blur(1.2rem); //흐릿해짐
+    opacity: 0;
+  }
+  100% {
+    // 끝날 때때
+    filter: blur(0); //선명해짐짐
+    //   opacity: 1;
+    letter-spacing: 0.01em;
+  }
+}

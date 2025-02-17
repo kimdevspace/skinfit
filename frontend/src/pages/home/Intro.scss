@@ -1,0 +1,103 @@
+.intro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+  background: linear-gradient(180deg, #f8cccc -16.77%, #fdfff3 99.99%);
+
+  // 소개 페이지 번호 박스
+  .page-number-box {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-right: 5.9rem;
+
+    .circle {
+      position: relative;
+      width: 3.9rem;
+      height: 3.9rem;
+      border-radius: 50%;
+      background: linear-gradient(168deg, #fdc4a5 30.89%, #fff 105.39%);
+      box-shadow: inset 0px -7px 22px 1px rgba(255, 255, 255, 0.66),
+        0px 2px 4px rgba(0, 0, 0, 0.1);
+
+      &:active {
+        transform: scale(0.95);
+      }
+
+      .page-number {
+        position: absolute;
+        bottom: 0.2rem;
+        right: -0.4rem;
+        color: #f69c94;
+        font-size: 1.6rem;
+        font-weight: bold;
+        transition: opacity 0.3s ease;
+      }
+    }
+
+    .line {
+      position: relative;
+      width: 50%;
+      height: 2px;
+      margin-left: 1.9rem;
+      background-color: #fbb5af;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: -0.5rem;
+        right: 0;
+        width: 1.2rem;
+        height: 1.2rem;
+        border-radius: 50%;
+        background-color: #fbb5af;
+      }
+    }
+  }
+
+  // 소개 박스
+  .intro-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 1.8rem 3.9rem 6.5rem;
+    padding: 13.1rem 0 11.5rem;
+    border-radius: 2rem;
+    background-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.25);
+    transition: opacity 0.3s ease;
+
+    .intro-img {
+      height: 11.5rem;
+    }
+
+    .intro-text {
+      font-weight: 600;
+      margin-top: 5rem;
+      font-size: 1.8rem;
+      text-align: center;
+      white-space: pre-line;
+    }
+  }
+
+  // 다음 또는 시작하기 버튼
+  .intro-btn {
+    width: calc(100% - 3.9rem * 2);
+    margin: 0 3.9rem;
+    padding: 1.7rem 0;
+    text-align: center;
+    color: #8e8e8e;
+    font-size: 1.6rem;
+    font-weight: bold;
+    border-radius: 2rem;
+    background-color: #ffe5d8;
+    transition: transform 0.2s ease;
+
+    &:active {
+      opacity: 0.8;
+      transform: scale(0.98);
+    }
+  }
+}

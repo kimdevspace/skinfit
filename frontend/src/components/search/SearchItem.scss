@@ -24,41 +24,33 @@
   }
 
   .cosmetic-image {
-    width: 1.7rem;
-    height: 3.8rem;
+    width: 4rem;
+    aspect-ratio: 1/1;
   }
+    
+  }
+
+
+ 
+// 안전 / 유의 뱃지지
+%common {
+    font-size: 1.3rem;
 }
 
-// 안전,유의 뱃지거나 추가 버튼 변경경
-// // 반복 문법
-// %common {
-//     font-size: 1.3rem;
-// }
+.badge {
+    @extend %common;
+    padding: 0.8rem 0.6rem;
+    border-radius: 50%;
 
-// // 뱃지가 아닌 추가 버튼일 때
-// .add-btn {
-//     @extend %common;
-//     border-color: #DEDEDE;
-//     border-style: solid;
-//     border-radius: 2rem;
-//     padding-left: 1.2rem;
-//     padding-right: 1.2rem;
-//     margin-top: 0.5rem;
-//     right: 0.3rem;
-//     color:#8e8e8e;
-//     border-width: 0.1rem;
-// }
+    &.isSafe {
+        background-color: #69B293;
+        color: #fff
+    }
 
-// .badge {
-//     @extend %common;
-//     padding: 0.8rem 0.6rem;
-//     border-radius: 50%;
+    &.isWarned {
+      background-color: #69B293;
+      color: #F38B71;
 
-//     &.isSafe {
-//         background-color: #69B293;
-//         color: #fff
-//     }
+    }
 
-//     // # 조건문 <유의>
-
-// }
+}
