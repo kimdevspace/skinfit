@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import "./CompletePopup.scss";
+import "./CompletePopUp.scss";
 import { useCompletePopupStore } from "../../stores/CompletePopup";
 
 const CompletePopUp = () => {
