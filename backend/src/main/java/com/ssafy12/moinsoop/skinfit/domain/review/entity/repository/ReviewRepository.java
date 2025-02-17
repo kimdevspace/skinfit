@@ -44,5 +44,8 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     Page<Review> findCustomReviewsOrderByLikesDesc(@Param("cosmeticId") Integer cosmeticId,
                                                    @Param("userSkinTypeIds") List<Integer> userSkinTypeIds,
                                                    Pageable pageable);
+
+    // 신고 횟수가 5회 이상인 리뷰 목록 조회
+    List<Review> findByReportCountGreaterThanEqual(int reportCount);
 }
 

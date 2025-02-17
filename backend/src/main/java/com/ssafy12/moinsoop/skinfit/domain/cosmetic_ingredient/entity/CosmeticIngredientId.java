@@ -7,6 +7,15 @@ public class CosmeticIngredientId implements Serializable {
     private Integer cosmeticId;
     private Integer ingredientId;
 
+    // 기본 생성자
+    public CosmeticIngredientId() {}
+
+    // 인자 2개를 받는 생성자 추가
+    public CosmeticIngredientId(Integer cosmeticId, Integer ingredientId) {
+        this.cosmeticId = cosmeticId;
+        this.ingredientId = ingredientId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

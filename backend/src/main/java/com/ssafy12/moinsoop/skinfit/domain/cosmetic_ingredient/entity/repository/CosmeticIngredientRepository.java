@@ -1,5 +1,6 @@
 package com.ssafy12.moinsoop.skinfit.domain.cosmetic_ingredient.entity.repository;
 
+import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic_ingredient.entity.CosmeticIngredient;
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic_ingredient.entity.CosmeticIngredientId;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,5 +18,5 @@ public interface CosmeticIngredientRepository extends JpaRepository<CosmeticIngr
     @Query("SELECT ci FROM CosmeticIngredient ci WHERE ci.cosmetic.cosmeticId = :cosmeticId " +
             "AND ci.ingredient.status = true ORDER BY ci.sequence ASC")
     List<CosmeticIngredient> findByCosmeticId(@Param("cosmeticId") Integer cosmeticId);
-
+    void deleteByCosmetic(Cosmetic cosmetic);
 }
