@@ -90,7 +90,7 @@ function CosmeticDetail() {
 
       {/* 전성분 보기 버튼 */}
       <Button text="전성분 보기" color="white" onClick={openPopup} />
-      {isPopupOpen && <AllIngrePopup closePopup={closePopup} />}
+      {isPopupOpen && <AllIngrePopup closePopup={closePopup} cosmeticId={cosmeticId} />}
 
       {/* 리뷰 */}
       <div className="reviews">

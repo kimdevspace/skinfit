@@ -1,23 +1,20 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import axios from "../../api/axiosInstance.js";
+import axios from "@/api/axiosInstance.js";
 import "./Home.scss";
-import Logo from "../../components/common/Logo";
-import RecommendItem from "../../components/home/RecommendItem";
+import Logo from "@/components/common/Logo";
+import RecommendItem from "@/components/home/RecommendItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
-import NavBar from "../../components/common/NavBar";
-import level1Img from "../../assets/images/level1.png";
-import level2Img from "../../assets/images/level2.png";
-import level3Img from "../../assets/images/level3.png";
-import AnalysisPopup from "../../components/home/AnalysisPopup.jsx";
+import NavBar from "@/components/common/NavBar";
+import level1Img from "@/assets/images/level1.png";
+import level2Img from "@/assets/images/level2.png";
+import level3Img from "@/assets/images/level3.png";
+import AnalysisPopup from "@/components/home/AnalysisPopup.jsx";
 
 function Home() {
-  // 내 피부분석 정확도 팝업창 제어
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-
   // 내 피부분석 정확도 팝업창 제어
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
