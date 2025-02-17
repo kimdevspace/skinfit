@@ -2,7 +2,7 @@ import "./EditUserInfo.scss";
 import Category from "../../components/common/Category";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../../api/axiosInstance.js";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Button from "../../components/common/Button.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,7 +15,7 @@ export default function EditUserInfo() {
 
   //#region 기존 데이터 불러오기
   const fetchUserData = async () => {
-    const response = await axios.get("/user/mypage/info");
+    const response = await axios.get("user/mypage/info");
     return response.data;
   };
 
@@ -93,7 +93,7 @@ export default function EditUserInfo() {
   //닉네임 중복확인 POST 요청
   const nicknameMutation = useMutation({
     mutationFn: async (payload) => {
-      return axios.post("/api/v1/user/nickname-duplicate", payload);
+      return axios.post("user/nickname-duplicate", payload);
     },
     onSuccess: (response) => {
       // response.data에 응답 메시지가 있다고 가정합니다.

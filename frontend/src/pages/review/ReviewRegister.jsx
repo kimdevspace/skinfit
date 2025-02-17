@@ -37,12 +37,7 @@ function ReviewRegister(cosmeticId) {
     review.images.forEach((file) => formData.append("images", file));
     console.log("upload 한다");
 
-    return axios.post(`products/${cosmeticId}/reviews`, formData, {
-      headers: {
-        // Authorization: `Bearer ${jwtToken}`,
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    return axios.post(`cosmetics/${cosmeticId}/reviews`, formData);
   };
 
   const mutation = useMutation({

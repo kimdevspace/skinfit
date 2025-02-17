@@ -1,0 +1,239 @@
+@use "sass:color";
+
+$primary-color: #2ca8a4; // 상단 바 & 포인트 (Teal 느낌)
+$sidebar-bg: #f8f9fa;
+$sidebar-text: #495057;
+$card-border: #dee2e6;
+$text-color: #343a40;
+$heading-color: #212529;
+
+/* 전체 레이아웃 */
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #ffffff; // 기본 배경
+  color: $text-color;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* 왼쪽 사이드바 */
+.sidebar {
+  width: 220px;
+  background-color: $sidebar-bg;
+  border-right: 1px solid $card-border;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+
+  &__logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: $primary-color;
+    margin-bottom: 2rem;
+  }
+
+  &__nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &__item {
+    color: $sidebar-text;
+    font-size: 1.4rem;
+    padding: 0.8rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: color.adjust($sidebar-bg, $lightness: -10%);
+    }
+
+    &--active {
+      background-color: color.adjust($sidebar-bg, $lightness: -8%);
+      color: $primary-color;
+      font-weight: 600;
+    }
+  }
+}
+
+/* 상단 헤더 */
+.topbar {
+  position: sticky;
+  top: 0;
+  height: 60px;
+  width: calc(100% - 220px);
+  background-color: $primary-color;
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  color: #fff;
+
+  &__title {
+    font-size: 1.8rem;
+    font-weight: 500;
+  }
+
+  &__search {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    input[type="text"] {
+      border: none;
+      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      font-size: 1.4rem;
+      outline: none;
+    }
+
+    button {
+      background-color: #fff;
+      color: $primary-color;
+      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      font-size: 1.4rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: color.adjust(#fff, $lightness: -10%);
+      }
+    }
+  }
+}
+
+/* 메인 컨텐츠 영역 */
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  background-color: #ffffff;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+
+    h1 {
+      font-size: 2rem;
+      color: $heading-color;
+    }
+
+    button {
+      background-color: $primary-color;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 0.8rem 1.5rem;
+      font-size: 1.4rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: color.adjust($primary-color, $lightness: -10%);
+      }
+    }
+  }
+}
+
+/* 카드 형태 컨테이너 (폼 포함) */
+.card {
+  background-color: #fff;
+  border: 1px solid $card-border;
+  border-radius: 6px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+
+  &__title {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    color: $heading-color;
+  }
+
+  &__subtitle {
+    font-size: 1.4rem;
+    margin-bottom: 2rem;
+    color: #868e96;
+  }
+
+  /* 1열 레이아웃으로 변경 */
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      label {
+        font-weight: 500;
+        color: $text-color;
+        font-size: 1.4rem;
+      }
+
+      input[type="text"],
+      select,
+      textarea {
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        padding: 0.8rem;
+        font-size: 1.4rem;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+        &:focus {
+          outline: none;
+          border-color: $primary-color;
+          box-shadow: 0 0 0 3px rgba(44, 168, 164, 0.2);
+        }
+      }
+
+      textarea {
+        width: 500px;
+        height: 225px;
+      }
+
+      input[type="file"] {
+        padding: 0.4rem;
+      }
+    }
+  }
+
+  &__actions {
+    margin-top: 2rem;
+    text-align: right;
+
+    button {
+      background-color: #FF975F;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 0.8rem 1.5rem;
+      font-size: 1.4rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: color.adjust(#FF975F, $lightness: -10%);
+      }
+
+      &.btn-cancel {
+        background-color: #6c757d;
+        margin-right: 1rem;
+
+        &:hover {
+          background-color: color.adjust(#6c757d, $lightness: -10%);
+        }
+      }
+    }
+  }
+}
