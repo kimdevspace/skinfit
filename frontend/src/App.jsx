@@ -1,40 +1,81 @@
 import { Routes, Route } from "react-router-dom";
 import AuthRoutes from "./routes/AuthRoutes";
 import MyPageRoute from "./routes/MyPageRoute";
-import HomeRoute from "./routes/HomeRoute";
+import Home from "./pages/home/Home";
+import Intro from "./pages/home/Intro";
+import Loading from "./pages/home/Loading";
 import CosmeticsRoute from "./routes/CosmeticsRoute";
 import Search from "./pages/search/Search";
 import OcrScanner from "./pages/ocr/OcrScanner";
 import AdminRoutes from "./routes/AdminRoutes";
 import CompletePopUp from "./components/common/CompletePopUp";
+import { ProtectedRoute } from "./routes/ProtectedRoutes";
 
 function App() {
   return (
     <>
       <Routes>
         {/* 홈 관련 라우트 */}
-        <Route path="/*" element={<HomeRoute />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/intro" element={<Intro />} />
+        <Route path="/loading" element={<Loading />} />
 
         {/* 인증 관련 라우트 */}
         <Route path="/auth/*" element={<AuthRoutes />} />
 
-        {/* 마이페이지 라우트 */}
-        <Route path="/mypage/*" element={<MyPageRoute />} />
+        {/* 보호된 라우트들 */}
+        <Route
+          path="/mypage/*"
+          element={
+            <ProtectedRoute>
+              <MyPageRoute />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/cosmetics/*"
+          element={
+            // <ProtectedRoute>
+            <CosmeticsRoute />
+            // </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/search"
+          element={
+            <ProtectedRoute>
+              <Search />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ocr"
+          element={
+            <ProtectedRoute>
+              <OcrScanner />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* 제품 관련 페이지 라우트 */}
-        <Route path="/cosmetics/*" element={<CosmeticsRoute />} />
-
-        {/* 검색 페이지 */}
-        <Route path="/search" element={<Search />} />
-
-        {/* OCR 스캐너 페이지 */}
-        <Route path="/ocr" element={<OcrScanner />} />
-        
         {/* 어드민 관련 라우트 */}
-        <Route path="/admin/*" element={<AdminRoutes />} />
+        <Route
+          path="/admin/*"
+          element={
+            <ProtectedRoute>
+              <AdminRoutes />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
 
-      {/* 완료 팝업창 (전역적으로 사용하기 위해 라우트 밖에 배치) */}
+      {/* 완료 팝업창 */}
       <CompletePopUp />
     </>
   );
