@@ -1,6 +1,7 @@
 package com.ssafy12.moinsoop.skinfit.domain.cosmetic.controller;
 
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.dto.CosmeticAutoCompleteDto;
+import com.ssafy12.moinsoop.skinfit.domain.cosmetic.dto.CosmeticDetailDto;
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.dto.CosmeticSearchDto;
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.service.CosmeticService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,16 @@ public class CosmeticController {
             @RequestParam String query,
             @RequestParam(required = false) String category) {
         return ResponseEntity.ok(cosmeticService.searchCosmetics(query, category, userId));
+    }
+
+    // 화장품 상세
+    @GetMapping("/{cosmeticId}")
+    public ResponseEntity<CosmeticDetailDto> getCosmeticDetail(
+            @PathVariable Integer cosmeticId,
+            @AuthenticationPrincipal Integer userId
+    ) {
+        CosmeticDetailDto detailDto = cosmeticService.getCosmeticDetail(cosmeticId, userId);
+        return ResponseEntity.ok(detailDto);
     }
 
 }

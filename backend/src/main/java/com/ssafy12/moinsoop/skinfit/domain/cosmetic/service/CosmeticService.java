@@ -1,19 +1,19 @@
 package com.ssafy12.moinsoop.skinfit.domain.cosmetic.service;
 
+import com.ssafy12.moinsoop.skinfit.domain.cosmetic.dto.CosmeticDetailDto;
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.dto.CosmeticSearchDto;
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.dto.CosmeticAutoCompleteDto;
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.repository.CosmeticRepository;
+import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.Ingredient;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,5 +72,33 @@ public class CosmeticService {
                 return checkedCosmetics;
             }
         };
+    }
+
+    // 화장품 상세보기
+    public CosmeticDetailDto getCosmeticDetail(Integer cosmeticId, Integer userId) {
+        // 1. 화장품 정보 조회
+        Cosmetic cosmetic = cosmeticRepository.findById(cosmeticId)
+                .orElseThrow(() -> new EntityNotFoundException("화장품을 찾을 수 없습니다"));
+
+        // 2. 레디스에서 사용자의 성분 분석 데이터 조회
+        final Map<String, Integer> ingredientAnalysisMap = Optional.ofNullable(
+                (Map<String, Integer>) redisTemplate.opsForValue().get("ingredient:analysis:" + userId)
+        ).orElse(new HashMap<>());
+
+// 3. 화장품의 각 성분별 검출 횟수 확인 및 DTO 생성
+        List<CosmeticDetailDto.IngredientAnalysisDto> ingredientAnalyses = cosmetic.getCosmeticIngredients().stream()
+                .map(ci -> {
+                    Ingredient ingredient = ci.getIngredient();
+                    int detectionCount = ingredientAnalysisMap
+                            .getOrDefault(String.valueOf(ingredient.getIngredientId()), 0);
+                    return new CosmeticDetailDto.IngredientAnalysisDto(ingredient, detectionCount);
+                })
+                .collect(Collectors.toList());
+
+        // 4. 안전 여부 판단 (하나라도 검출된 성분이 있으면 유의 상품)
+        boolean isSafe = ingredientAnalyses.stream()
+                .noneMatch(analysis -> analysis.getDetectionCount() > 0);
+
+        return new CosmeticDetailDto(cosmetic, isSafe, ingredientAnalyses);
     }
 }
