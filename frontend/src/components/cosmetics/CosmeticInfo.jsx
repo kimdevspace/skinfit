@@ -25,7 +25,9 @@ function CosmeticInfo({ cosmeticData }) {
             src={cosmeticData.imageUrl}
             alt={`${cosmeticData.cosmeticName}-img`}
           />
-          <p className="badge caution">{cosmeticData.safetyStatus}</p>
+          <p className={`badge ${cosmeticData.safe ? "safe" : "caution"}`}>
+            {cosmeticData.safe ? "안전" : "유의"}
+          </p>
         </div>
 
         {/* 화장품 주요 정보 */}
@@ -54,10 +56,10 @@ function CosmeticInfo({ cosmeticData }) {
                   </p>
                   <p className="ewg-score">
                     안전 등급
-                      <FontAwesomeIcon
-                        icon={faCircleInfo}
-                        onClick={handlePopup}
-                      />
+                    <FontAwesomeIcon
+                      icon={faCircleInfo}
+                      onClick={handlePopup}
+                    />
                   </p>
                 </div>
                 {cosmeticData.ingredients.map((ingredient, idx) => (
@@ -79,8 +81,8 @@ function CosmeticInfo({ cosmeticData }) {
                           : "high"
                       }`}
                     >
-                      {ingredient.ewgScoreMin && `${ingredient.ewgScoreMin}-`}
-                      {ingredient.ewgScoreMax !== null
+                      {ingredient.ewgScoreMin !== 0 && `${ingredient.ewgScoreMin}-`}
+                      {ingredient.ewgScoreMax !== 0
                         ? `${ingredient.ewgScoreMax}`
                         : "-"}
                     </p>
