@@ -1,18 +1,18 @@
-import React from "react";
-import "./CosmeticInfo.scss";
-import skinAnalysisIcon from "../../assets/images/skin_analysis_icon.png";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
-import EwgPopUp from "./EwgPopup";
+import React from "react"
+import "./CosmeticInfo.scss"
+import skinAnalysisIcon from "../../assets/images/skin_analysis_icon.png"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons"
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons"
+import { useState } from "react"
+import EwgPopUp from "./EwgPopup"
 
 function CosmeticInfo({ cosmeticData }) {
   // ewg 모달창
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
   const handlePopup = () => {
-    setIsOpen(!isOpen);
-  };
+    setIsOpen(!isOpen)
+  }
 
   return (
     <>
@@ -21,32 +21,25 @@ function CosmeticInfo({ cosmeticData }) {
       <div className="cosmetic-info">
         {/* 화장품 이미지 */}
         <div className="cosmetic-img-box">
-          <img
-            src={cosmeticData.imageUrl}
-            alt={`${cosmeticData.cosmeticName}-img`}
-          />
-          <p className={`badge ${cosmeticData.safe ? "safe" : "caution"}`}>
-            {cosmeticData.safe ? "안전" : "유의"}
-          </p>
+          <img src={cosmeticData?.imageUrl} alt={`${cosmeticData?.cosmeticName}-img`} />
+          <p className={`badge ${cosmeticData?.safe ? "safe" : "caution"}`}>{cosmeticData?.safe ? "안전" : "유의"}</p>
         </div>
 
         {/* 화장품 주요 정보 */}
         <div className="cosmetic-info-text">
-          <div className="category">{cosmeticData.category}</div>
-          <div className="brand-name">{cosmeticData.cosmeticBrand}</div>
-          <div className="cosmetic-name">{cosmeticData.cosmeticName}</div>
+          <div className="category">{cosmeticData?.category}</div>
+          <div className="brand-name">{cosmeticData?.cosmeticBrand}</div>
+          <div className="cosmetic-name">{cosmeticData?.cosmeticName}</div>
         </div>
 
         {/* 내 피부 분석 박스 */}
         <div className="skin-analysis-box">
           <img src={skinAnalysisIcon} alt="skin-analysis-icon" />
           <p className="title">내 피부 분석</p>
-          {cosmeticData.ingredients?.length ? (
+          {cosmeticData?.ingredients?.length ? (
             // 민감 성분 있을 때
             <div className="sensitive-ingredients">
-              <p className="info-msg">
-                내가 써본 화장품에서 민감성분이 발견된 횟수예요
-              </p>
+              <p className="info-msg">내가 써본 화장품에서 민감성분이 발견된 횟수예요</p>
               {/* 민감성분 분석 */}
               <div className="skin-analysis">
                 <div className="analysis analysis-title">
@@ -56,35 +49,16 @@ function CosmeticInfo({ cosmeticData }) {
                   </p>
                   <p className="ewg-score">
                     안전 등급
-                    <FontAwesomeIcon
-                      icon={faCircleInfo}
-                      onClick={handlePopup}
-                    />
+                    <FontAwesomeIcon icon={faCircleInfo} onClick={handlePopup} />
                   </p>
                 </div>
-                {cosmeticData.ingredients.map((ingredient, idx) => (
+                {cosmeticData?.ingredients.map((ingredient, idx) => (
                   <div key={idx} className="analysis analysis-result">
-                    <p className="ingredient-name">
-                      {ingredient.ingredientName}
-                    </p>
-                    <p className="found-count">
-                      {ingredient.foundCount
-                        ? `${ingredient.foundCount}회`
-                        : "-"}
-                    </p>
-                    <p
-                      className={`ewg-score ${
-                        ingredient.ewgScoreMax <= 2
-                          ? "low"
-                          : ingredient.ewgScoreMax <= 6
-                          ? "moderate"
-                          : "high"
-                      }`}
-                    >
+                    <p className="ingredient-name">{ingredient.ingredientName}</p>
+                    <p className="found-count">{ingredient.foundCount ? `${ingredient.foundCount}회` : "-"}</p>
+                    <p className={`ewg-score ${ingredient.ewgScoreMax <= 2 ? "low" : ingredient.ewgScoreMax <= 6 ? "moderate" : "high"}`}>
                       {ingredient.ewgScoreMin !== 0 && `${ingredient.ewgScoreMin}-`}
-                      {ingredient.ewgScoreMax !== 0
-                        ? `${ingredient.ewgScoreMax}`
-                        : "-"}
+                      {ingredient.ewgScoreMax !== 0 ? `${ingredient.ewgScoreMax}` : "-"}
                     </p>
                   </div>
                 ))}
@@ -103,7 +77,7 @@ function CosmeticInfo({ cosmeticData }) {
         </div>
       </div>
     </>
-  );
+  )
 }
 
-export default CosmeticInfo;
+export default CosmeticInfo

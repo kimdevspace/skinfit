@@ -9,6 +9,9 @@ import Button from "../../components/common/Button";
 import CosmeticInfo from "../../components/cosmetics/CosmeticInfo";
 import NavBar from "../../components/common/NavBar";
 import ReviewItem from "../../components/review/ReviewItem";
+import { useNavigateStore } from "../../stores/Navigation.js";
+import { useNavigate } from "react-router-dom"
+
 
 function CosmeticDetail() {
   // 먼저 파라미터 가져오기
@@ -28,6 +31,22 @@ function CosmeticDetail() {
   const [sortOrder, setSortOrder] = useState("likes");
   const [page, setPage] = useState(1);
 
+  //header 설정을 위한 검색이력 스토어 데이터
+  const { searchHistory } = useNavigateStore();
+  
+  const navigate = useNavigate()
+
+  // 헤더 뒤로가기 : 검색이력이 있음 검색이력으로, 없으면 이전 페이지
+  const handleBack = () => {
+    if (searchHistory.length > 0 ) {
+      navigate('/search', { state : {prevSearch: searchHistory[searchHistory.length -1]}});
+      } else {
+        navigate('/search');
+      }
+    };
+
+
+  // 정렬
   const handleSort = (order) => {
     setSortOrder(order);
   };
@@ -84,7 +103,7 @@ function CosmeticDetail() {
 
   return (
     <div className="cosmetic-detail">
-      <Header title="상세 정보" />
+      <Header title="상세 정보" onBack={handleBack} />
 
       {/* 화장품 정보 */}
       <CosmeticInfo cosmeticData={cosmeticData} />
