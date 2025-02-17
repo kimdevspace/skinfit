@@ -5,11 +5,13 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { useState, useRef } from "react";
-import axios from "axios";
+import axios from "../../api/axiosInstance";
 import { useMutation } from "@tanstack/react-query";
+import useAuthStore from "../../stores/Auth";
 
 export default function PwCheckPopUp({ onClose, state }) {
   const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
+  const clearAuth = useAuthStore(state => state.clearAuth);
 
   //비밀번호 맞지않아요 에러
   const pwErrorRef = useRef(null);
@@ -17,14 +19,11 @@ export default function PwCheckPopUp({ onClose, state }) {
   // 회원탈퇴 Mutation
   const deleteAccountMutation = useMutation({
     mutationFn: (password) =>
-      axios.delete("/api/v1/auth/withdraw", {
-        data: { password },
-        headers: {
-          "Content-Type": "application/json",
-        },
+      axios.delete("auth/withdraw", {
+        data: { password }
       }),
     onSuccess: () => {
-      localStorage.removeItem("accessToken"); // 로컬 스토리지에서 JWT 제거
+      clearAuth(); // JWT 제거
       navigate("/mainpage");
     },
     onError: (error) => {
@@ -43,10 +42,9 @@ export default function PwCheckPopUp({ onClose, state }) {
 
   // 비밀번호 검증 요청
   const pwReview = async (userPassword) => {
-    const formData = new FormData();
-    formData.append("pw", userPassword);
-
-    return axios.post(`/api/v1/user/password-verify`, formData);
+    return axios.post(`user/password-verify`, {
+      userPassword
+    });
   };
 
   //react query
@@ -75,7 +73,7 @@ export default function PwCheckPopUp({ onClose, state }) {
     }
 
     if (state === "myinfo") {
-      mutation.mutate({ userPassword: pwInput });
+      mutation.mutate(pwInput);
     } else {
       onDeleteAccount();
     }
@@ -104,7 +102,7 @@ export default function PwCheckPopUp({ onClose, state }) {
             <input
               name="pw"
               id="pw"
-              type={showPassword ? "password" : "text"}
+              type={showPassword ? "text" : "password"}
               placeholder="현재 비밀번호를 입력해주세요"
               value={pwInput}
               onChange={(e) => setPwInput(e.target.value)}

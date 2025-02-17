@@ -20,7 +20,7 @@ function Home() {
 
   // 메인 페이지(추천 상품, 화장품 정보) 필요한 정보 api 요청
   const fetchMainPageInfo = async () => {
-    const response = await axios.get("/mainpage");
+    const response = await axios.get("mainpage");
     return response.data;
   };
 

@@ -2,7 +2,7 @@ import "./OcrScanner.scss"
 import ImageUpload from "../../components/common/ImageUpload"
 import Button from "../../components/common/Button"
 import { useRef, useState } from "react"
-import axios from "axios"
+import axios from "../../api/axiosInstance"
 import { useMutation } from "@tanstack/react-query"
 
 export default function OcrScanner() {
@@ -36,12 +36,7 @@ export default function OcrScanner() {
     ocr.images.forEach((file) => formData.append("images", file))
     console.log("ocr 사진 upload 한다")
 
-    return axios.post(`products/ocr`, formData, {
-      headers: {
-        // Authorization: `Bearer ${jwtToken}`,
-        "Content-Type": "multipart/form-data",
-      },
-    })
+    return axios.post(`products/ocr`, formData)
   }
 
   const mutation = useMutation({
