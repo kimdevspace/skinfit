@@ -42,13 +42,13 @@ function CosmeticDetail() {
         MyReview: isMyReview ? "true" : "false",
       },
     });
-    return response.data;
+    return response.data.reviews;
   };
 
   // 화장품 정보 요청 함수
   const fetchCosmeticDetails = async (cosmeticId) => {
     const response = await axios.get(`cosmetic/${cosmeticId}`);
-    return response.data.cosmetic;
+    return response.data;
   };
 
   // 리뷰 요청
