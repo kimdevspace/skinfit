@@ -11,6 +11,9 @@ import NavBar from "../../components/common/NavBar";
 import ReviewItem from "../../components/review/ReviewItem";
 
 function CosmeticDetail() {
+  // 먼저 파라미터 가져오기
+  const { cosmeticId } = useParams();
+
   // 전성분 팝업창 제어
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
@@ -23,23 +26,11 @@ function CosmeticDetail() {
 
   // 리뷰 정렬
   const [sortOrder, setSortOrder] = useState("likes");
+  const [page, setPage] = useState(1);
+
   const handleSort = (order) => {
     setSortOrder(order);
   };
-
-  // 리뷰 요청
-  const [page, setPage] = useState(1);
-  const { data: reviews } = useQuery({
-    queryKey: ["reviews", cosmeticId, sortOrder, page, isOn],
-    queryFn: () =>
-      fetchReviews({
-        cosmeticId,
-        sort: sortOrder,
-        page,
-        limit: 10,
-        isMyReview: isOn,
-      }),
-  });
 
   // 리뷰 요청 함수
   const fetchReviews = async ({ cosmeticId, sort, page, isMyReview }) => {
@@ -54,13 +45,24 @@ function CosmeticDetail() {
     return response.data;
   };
 
-  const { cosmeticId } = useParams(); // 화장품 id 파라미터
-
   // 화장품 정보 요청 함수
   const fetchCosmeticDetails = async (cosmeticId) => {
     const response = await axios.get(`cosmetic/${cosmeticId}`);
     return response.data.cosmetic;
   };
+
+  // 리뷰 요청
+  const { data: reviews } = useQuery({
+    queryKey: ["reviews", cosmeticId, sortOrder, page, isOn],
+    queryFn: () =>
+      fetchReviews({
+        cosmeticId,
+        sort: sortOrder,
+        page,
+        limit: 10,
+        isMyReview: isOn,
+      }),
+  });
 
   // 화장품 정보 요청
   const { data: cosmeticData } = useQuery({
@@ -69,7 +71,6 @@ function CosmeticDetail() {
   });
 
   // #region 전성분 보기 팝업창 함수
-
   // 전성분 팝업 열기
   const openPopup = () => {
     setIsPopupOpen(true);
