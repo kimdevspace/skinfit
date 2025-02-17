@@ -48,4 +48,31 @@ public class Cosmetic {
 
     @OneToMany(mappedBy = "cosmetic")
     private List<CosmeticExperience> cosmeticExperiences = new ArrayList<>();
+
+    public void setCosmeticName(String cosmeticName) {
+        this.cosmeticName = cosmeticName;
+    }
+
+    public void setCosmeticBrand(String cosmeticBrand) {
+        this.cosmeticBrand = cosmeticBrand;
+    }
+
+    public void setCosmeticVolume(String cosmeticVolume) {
+        this.cosmeticVolume = cosmeticVolume;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    @Builder
+    public Cosmetic(Category category, String cosmeticName, String cosmeticBrand,
+                    String cosmeticVolume, String imageUrl, boolean status) {
+        this.category = category;
+        this.cosmeticName = cosmeticName;
+        this.cosmeticBrand = cosmeticBrand;
+        this.cosmeticVolume = cosmeticVolume;
+        this.imageUrl = imageUrl;
+        this.status = status;
+    }
 }
