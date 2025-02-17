@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "../../api/axiosInstance.js";
-import "./reviewmanagement.scss";
+import "./ReviewManagement.scss";
 
 // 테스트용 하드코딩된 토큰 (실제 배포 시엔 적절한 저장소에서 불러오세요)
 const token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInJvbGVUeXBlIjoiQURNSU4iLCJpYXQiOjE3Mzk3Njc1NDcsImV4cCI6MTczOTc2OTM0N30.jgn_yQlQrwRWN2RWW24SsUtgzBj2IAT44TlP1Nm8qKo";
