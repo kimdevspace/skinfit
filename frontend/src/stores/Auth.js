@@ -1,15 +1,18 @@
 import { create } from 'zustand';
 
 const useAuthStore = create((set) => ({
-  accessToken: null,
   isAuthenticated: false,
-  setAuth: (token) => set({ 
+  accessToken: null,
+  roleType: null,
+  setAuth: (token, role) => set({ 
     isAuthenticated: true, 
-    accessToken: token 
+    accessToken: token,
+    roleType: role,
   }),
   clearAuth: () => set({ 
     isAuthenticated: false, 
-    accessToken: null 
+    accessToken: null,
+    roleType: null,
   })
 }));
   
