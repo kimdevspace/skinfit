@@ -12,26 +12,17 @@ import NavBar from "../../components/common/NavBar";
 
 // 화장품 정보 요청 함수
 const fetchCosmeticDetails = async (cosmeticId) => {
-  const response = await axios.get(`cosmetics/${cosmeticId}`, {
-    headers: {
-      // 'Authorization': `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
+  const response = await axios.get(`cosmetics/${cosmeticId}`);
   return response.data.cosmetic;
 };
 
 // 리뷰 요청 함수
-const fetchReviews = async ({ cosmeticId, sort, page, limit, isMyReview }) => {
+const fetchReviews = async ({ cosmeticId, sort, page, isMyReview }) => {
   const response = await axios.get(`cosmetics/${cosmeticId}/reviews`, {
-    headers: {
-      // 'Authorization': `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
     params: {
       sort,
       page,
-      limit,
+      limit: 10,
       MyReview: isMyReview ? "true" : "false",
     },
   });
@@ -42,41 +33,10 @@ function CosmeticDetail() {
   const { cosmeticId } = useParams(); // 화장품 id 파라미터
 
   // 화장품 정보 요청
-  // const { data: cosmeticData, isLoading } = useQuery({
-  //   queryKey: ["cosmetic", cosmeticId],
-  //   queryFn: () => fetchCosmeticDetails(cosmeticId),
-  // });
-
-  // #region 화장품 정보 더미 데이터
-  const cosmeticData = {
-    cosmeticId: 123,
-    cosmeticName: "스킨 토너",
-    cosmeticBrand: "브랜드 A",
-    category: "스킨케어",
-    imageUrl: "https://example.com/images/product123.jpg",
-    safetyStatus: "유의",
-    ingredients: [
-      {
-        ingredientName: "히알루론산",
-        ewgScoreMax: 2,
-        ewgScoreMin: null,
-        foundCount: 2, // 내가 써본 화장품에서 발견된 횟수
-      },
-      {
-        ingredientName: "카세늠듐",
-        ewgScoreMax: 3,
-        ewgScoreMin: 1,
-        foundCount: 1, // 내가 써본 화장품에서 발견된 횟수
-      },
-      {
-        ingredientName: "히알루론산",
-        ewgScoreMax: 7,
-        ewgScoreMin: null,
-        foundCount: 0, // 내가 써본 화장품에서 발견된 횟수
-      },
-    ],
-  };
-  //#endregion
+  const { data: cosmeticData } = useQuery({
+    queryKey: ["cosmetic", cosmeticId],
+    queryFn: () => fetchCosmeticDetails(cosmeticId),
+  });
 
   // #region 전성분 보기 팝업창 함수
   // 전성분 팝업창 제어
@@ -110,8 +70,6 @@ function CosmeticDetail() {
   const [page, setPage] = useState(1);
   const {
     data: reviews,
-    isLoading,
-    error,
   } = useQuery({
     queryKey: ["reviews", cosmeticId, sortOrder, page, isOn],
     queryFn: () =>
@@ -119,7 +77,7 @@ function CosmeticDetail() {
         cosmeticId,
         sort: sortOrder,
         page,
-        limit,
+        limit: 10,
         isMyReview: isOn,
       }),
   });
