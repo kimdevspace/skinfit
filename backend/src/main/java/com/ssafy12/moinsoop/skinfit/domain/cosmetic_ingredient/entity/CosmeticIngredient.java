@@ -4,6 +4,7 @@ import com.ssafy12.moinsoop.skinfit.domain.cosmetic.entity.Cosmetic;
 import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.Ingredient;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,7 +17,7 @@ public class CosmeticIngredient {
     private CosmeticIngredientId id;
 
     @MapsId("cosmeticId")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "cosmetic_id")
     private Cosmetic cosmetic;
 
@@ -27,4 +28,12 @@ public class CosmeticIngredient {
 
     @Column(nullable = false)
     private int sequence;
+
+    @Builder
+    public CosmeticIngredient(CosmeticIngredientId id, Cosmetic cosmetic, Ingredient ingredient, int sequence) {
+        this.id = id;
+        this.cosmetic = cosmetic;
+        this.ingredient = ingredient;
+        this.sequence = sequence;
+    }
 }

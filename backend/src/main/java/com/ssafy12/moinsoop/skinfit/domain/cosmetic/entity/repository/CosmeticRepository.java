@@ -32,4 +32,6 @@ public interface CosmeticRepository extends JpaRepository<Cosmetic, Integer> {
             "c.cosmeticBrand ASC, " +
             "c.cosmeticName ASC")
     List<Cosmetic> searchCosmetics(@Param("query") String query, @Param("category") String category, Pageable pageable);
+
+    boolean existsByCosmeticNameAndCosmeticBrand(String cosmeticName, String cosmeticBrand);
 }

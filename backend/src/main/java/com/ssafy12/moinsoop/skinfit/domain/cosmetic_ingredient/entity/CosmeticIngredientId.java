@@ -1,8 +1,17 @@
 package com.ssafy12.moinsoop.skinfit.domain.cosmetic_ingredient.entity;
 
+import jakarta.persistence.Embeddable;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@Embeddable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class CosmeticIngredientId implements Serializable {
     private Integer cosmeticId;
     private Integer ingredientId;
