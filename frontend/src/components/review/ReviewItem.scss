@@ -2,17 +2,39 @@
   margin-top: 1rem;
   border-radius: 1rem;
   border: 1px solid #e1e1e1;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding: 1.5rem;
 
-  .name-brand {
+  .name-brand-box {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+
+    .name-brand {
+      display: flex;
+      gap: 0.3rem;
+      font-weight: bold;
+    }
+
+    .user-answer {
+      font-size: 1rem;
+      font-weight: bold;
+
+      &.good {
+        color: #a5cf96;
+      }
+
+      &.bad {
+        color: #ff7d8a;
+      }
+
+      &.unknown {
+        color: #ff975f;
+      }
+    }
   }
 
   .cosmetic-name {
-    margin-top: 1.5rem;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
     font-size: 1rem;
     color: #565656;
   }
@@ -72,22 +94,24 @@
       width: 9rem;
       height: 6rem;
       margin-top: 1rem;
+      object-fit: contain; // 이미지 잘리지 않게 수정
     }
 
     .btn-set {
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
 
       .liked-btn {
         color: #565656;
         font-size: 1rem;
         border-radius: 2rem;
         border: 0.5px solid #dedede;
-        margin-top: 3rem;
-        margin-bottom: 1.5rem;
-        padding: 0.3rem 1.5rem;
+        padding: 0.5rem 1.5rem;
         gap: 0.5rem;
         display: flex;
+        align-items: center;
 
         .emoji {
           width: 1.5rem;
@@ -102,8 +126,6 @@
       .report-btn {
         color: #8e8e8e;
         font-size: 1rem;
-        margin-top: 3rem;
-        margin-bottom: 1.5rem;
       }
     }
   }

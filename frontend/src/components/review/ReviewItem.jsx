@@ -1,19 +1,51 @@
 import "./ReviewItem.scss";
 import thumbsUpEmoji from "../../assets/images/thumsUp.png";
 import ReviewComplaintPopup from "./ReviewComplaintPopup";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import dayjs from "dayjs";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import axios from "../../api/axiosInstance.js";
-import  useAuthStore  from "../../stores/Auth";
+import useAuthStore from "../../stores/Auth";
 
 // reviewItem :
 // cosmeticId,. reviewId 필요
 // 상세페이지면 isLiked 필드로 처리
 // 마이페이지면 그냥 db에서 삭제 => 보이는 거에서 제외
 
+//리뷰 점수(잘맞아요 등)
+const scoreMap = {
+  0: { text: "GOOD", class: "good" },
+  1: { text: "UNKNOWN", class: "unknown" },
+  2: { text: "BAD", class: "bad" },
+};
+
+// 리뷰 좋아요 api 요청
+const fetchReviewsLike = async ({ cosmeticId, reviewId }) => {
+  const response = await axios.post(
+    `cosmetics/${cosmeticId}/reviews/${reviewId}/add-like`
+  );
+  return response.data;
+};
+
+// 리뷰 좋아요 취소 api 요청
+const fetchReviewsUnLike = async ({ cosmeticId, reviewId }) => {
+  const response = await axios.delete(
+    `cosmetics/${cosmeticId}/reviews/${reviewId}/delete-like`
+  );
+  return response.data;
+};
+
+// 리뷰 삭제 api 요청
+const fetchReviewsDelete = async ({ cosmeticId, reviewId }) => {
+  const response = await axios.delete(
+    `cosmetics/${cosmeticId}/reviews/${reviewId}`
+  );
+  return response.data;
+};
+
 export default function ReviewItem({ review, reviewType }) {
+  const queryClient = useQueryClient(); //
   //  인증 토큰
   const { isAuthenticated, accessToken } = useAuthStore();
 
@@ -23,31 +55,23 @@ export default function ReviewItem({ review, reviewType }) {
   const { cosmeticId, reviewId } = useParams(); // 화장품, 리뷰 id 파라미터
 
   // JWT 토큰 디코딩하여 userId 얻기
-  const getUserId = () => {
+  const getUserId = useCallback(() => {
     if (!accessToken) return null;
-    const payload = JSON.parse(atob(accessToken.split(".")[1]));
-    return payload.userId; // JWT 페이로드에서 userId 추출
-  };
+    try {
+      const payload = JSON.parse(atob(accessToken.split(".")[1]));
+      return payload.userId; // JWT 페이로드에서 userId 추출
+    } catch (error) {
+      console.error("토큰 디코딩 실패:", error);
+      // 토큰 관련 에러 처리 (예: 로그아웃 처리나 토큰 갱신)
+      return null;
+    }
+  }, [accessToken]); // 엑세스 토큰이 변경될 때만 함수 재생성
 
   // 리뷰 작성자 파악
   const currentUserId = getUserId();
   const isOwnReview = review?.userId === currentUserId; // undefined === false 처리
 
   // 리뷰 좋아요
-  const fetchReviewsLike = async ({ cosmeticId, reviewId }) => {
-    const response = await axios.post(
-      `cosmetics/${cosmeticId}/reviews/${reviewId}/add-like`,
-      {
-        params: {
-          cosmeticId,
-          reviewId,
-        },
-      }
-    );
-    return response.data;
-  };
-
-  // 리뷰 좋아요 요청
   const likeMutation = useMutation({
     mutationFn: () =>
       fetchReviewsLike({
@@ -56,22 +80,10 @@ export default function ReviewItem({ review, reviewType }) {
       }),
     onSuccess: () => {
       console.log("좋아요 추가완료");
+      // 리뷰 데이터 캐시를 무효화하여 최신 데이터로 갱신
+      queryClient.invalidateQueries(["reviews", cosmeticId]);
     },
   });
-
-  // 리뷰 좋아요 취소 함수수
-  const fetchReviewsUnLike = async ({ cosmeticId, reviewId }) => {
-    const response = await axios.delete(
-      `cosmetics/${cosmeticId}/reviews/${reviewId}/delete-like`,
-      {
-        params: {
-          cosmeticId,
-          reviewId,
-        },
-      }
-    );
-    return response.data;
-  };
 
   // 리뷰 좋아요 취소
   const deleteMutation = useMutation({
@@ -82,6 +94,7 @@ export default function ReviewItem({ review, reviewType }) {
       }),
     onSuccess: () => {
       console.log("리뷰 좋아요 취소되었습니다");
+      queryClient.invalidateQueries(["reviews", cosmeticId]); // 캐시 무효화
     },
   });
 
@@ -112,21 +125,7 @@ export default function ReviewItem({ review, reviewType }) {
     }
   };
 
-  // 리뷰 좋아요 취소 함수수
-  const fetchReviewsDelete = async ({ cosmeticId, reviewId }) => {
-    const response = await axios.delete(
-      `cosmetics/${cosmeticId}/reviews/${reviewId}`,
-      {
-        params: {
-          cosmeticId,
-          reviewId,
-        },
-      }
-    );
-    return response.data;
-  };
-
-  // 리뷰 좋아요 취소
+  // 리뷰 삭제
   const deleteReviewMutation = useMutation({
     mutationFn: () =>
       fetchReviewsDelete({
@@ -146,47 +145,44 @@ export default function ReviewItem({ review, reviewType }) {
     });
   };
 
-  //리뷰 점수(잘맞아요 등)
-  const scoreMap = {
-    0: { text: "GOOD", class: "good" },
-    1: { text: "UNKNOWN", class: "unknown" },
-    2: { text: "BAD", class: "bad" },
-  };
-
   // 신고 팝업창창
   const handlePopup = () => {
     setIsPopupOpen(!isPopupOpen);
   };
 
   return (
-    <>
-      <div key={review.reviewId} className="review-box">
-        {reviewType !== "generalReviews" ? (
-          <div className="name-brand">
-            <span className="cosmetic-brand"> {review.cosmetic.brand} </span>
-            <span className="cosmetic-name">{review.cosmetic.name} </span>
-          </div>
-        ) : null}
+    <div className="review-box">
+      {reviewType !== "generalReviews" ? (
+        <div className="name-brand-box">
+          <span className="name-brand">
+            {review.cosmetic.brand} {review.cosmetic.name}
+          </span>
+          {reviewType === "myReviews" ? (
+            <span className={`user-answer ${scoreMap[review.score].class}`}>
+              {scoreMap[review.score].text}
+            </span>
+          ) : null}
+        </div>
+      ) : null}
 
-        {reviewType !== "myReviews" ? (
-          <div className="user-info-section">
-            <span className="user-name">{review.userNickname}님</span>
-            <div className="age-skintype">
-              <span className="user-age">{review.userAgeGroup}대 |</span>
-              {review?.userSkinTypes?.map((skintype, index) => (
-                <span key={index} className="user-skintype">
-                  {" "}
-                  {skintype}{" "}
-                </span>
-              ))}
-            </div>
+      {reviewType !== "myReviews" ? (
+        <div className="user-info-section">
+          <span className="user-name">{review.userNickname}님</span>
+          <div className="age-skintype">
+            <span className="user-age">{review.userAgeGroup} |</span>
+            {review?.userSkinTypes?.map((skintype, index) => (
+              <span key={index} className="user-skintype">
+                {" "}
+                {skintype}{" "}
+              </span>
+            ))}
           </div>
-        ) : null}
+          <span className={`user-answer ${scoreMap[review.score].class}`}>
+            {scoreMap[review.score].text}
+          </span>
+        </div>
+      ) : null}
 
-        <span className={`user-answer ${scoreMap[review.score].class}`}>
-          {scoreMap[review.score].text}
-        </span>
-      </div>
       <hr />
 
       {/* review는 객체이므로 map을 사용할 수 없습니다. 수정이 필요합니다 */}
@@ -196,7 +192,7 @@ export default function ReviewItem({ review, reviewType }) {
           <img
             key={imgIndex}
             className="review-photo"
-            src=""
+            src={img}
             alt="user-review-photo"
           />
         ))}
@@ -214,17 +210,17 @@ export default function ReviewItem({ review, reviewType }) {
           {reviewType !== "myReviews" ? (
             <>
               <button className="report-btn" onClick={handlePopup}>
-                신고| {dayjs(review.createdAt).format("YYYY-MM-DD")}
+                신고 | {dayjs(review.createdAt).format("YYYY-MM-DD")}
               </button>
               {isPopupOpen && <ReviewComplaintPopup onClose={handlePopup} />}
             </>
           ) : (
             <button className="report-btn" onClick={handleDeleteReview}>
-              삭제| {dayjs(review.createdAt).format("YYYY-MM-DD")}
+              삭제 | {dayjs(review.createdAt).format("YYYY-MM-DD")}
             </button>
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
