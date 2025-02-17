@@ -9,9 +9,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 import NavBar from "@/components/common/NavBar";
-import level1Img from "@/assets/images/level1.png";
-import level2Img from "@/assets/images/level2.png";
-import level3Img from "@/assets/images/level3.png";
+import level1Img from "@/assets/images/Level1.png";
+import level2Img from "@/assets/images/Level2.png";
+import level3Img from "@/assets/images/Level3.png";
 import AnalysisPopup from "@/components/home/AnalysisPopup.jsx";
 
 function Home() {
