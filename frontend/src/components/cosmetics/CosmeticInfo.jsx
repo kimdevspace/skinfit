@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
-import EwgPopUp from "./EwgPopUp";
+import EwgPopUp from "./EwgPopup";
 
 function CosmeticInfo({ cosmeticData }) {
   // ewg 모달창
