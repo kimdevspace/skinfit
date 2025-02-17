@@ -5,7 +5,8 @@ import axios from "../../api/axiosInstance.js";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import "./CosmeticForm.scss";
 
-const token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInJvbGVUeXBlIjoiQURNSU4iLCJpYXQiOjE3Mzk3Njc1NDcsImV4cCI6MTczOTc2OTM0N30.jgn_yQlQrwRWN2RWW24SsUtgzBj2IAT44TlP1Nm8qKo";
+const token =
+  "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInJvbGVUeXBlIjoiQURNSU4iLCJpYXQiOjE3Mzk3NzQ2ODksImV4cCI6MTczOTc3NjQ4OX0.S6GmGhBJ2-V_a9OXWqNzpEv1gYSHPPoVEgoWS8Gn4qc";
 
 function CosmeticForm() {
   const { cosmeticId } = useParams();
@@ -17,13 +18,13 @@ function CosmeticForm() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["cosmeticDetail", cosmeticId],
     queryFn: () =>
-      axios.get(`admin/cosmetics/${cosmeticId}`,
-        {
+      axios
+        .get(`admin/cosmetics/${cosmeticId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
-          }
-        }
-      ).then((res) => res.data),
+          },
+        })
+        .then((res) => res.data),
   });
 
   // 폼 상태: 화장품 이름, 브랜드, 용량, 그리고 성분 ID 배열
@@ -41,7 +42,7 @@ function CosmeticForm() {
         cosmeticBrand: data.cosmeticBrand,
         cosmeticVolume: data.cosmeticVolume,
         // data.ingredients가 IngredientDetailDto 배열로 가정 (각 객체에 ingredientId 존재)
-        ingredientIds: data.ingredients.map((ing) => ing.ingredientId),
+        ingredientIds: data.ingredients.map((ing) => ing.ingredientName),
       });
     }
   }, [data]);
@@ -55,7 +56,9 @@ function CosmeticForm() {
         },
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cosmeticDetail", cosmeticId] });
+      queryClient.invalidateQueries({
+        queryKey: ["cosmeticDetail", cosmeticId],
+      });
       navigate("/admin/cosmetics");
     },
   });
@@ -114,11 +117,8 @@ function CosmeticForm() {
                 value={formData.ingredientIds.join(",")}
                 onChange={(e) => {
                   const value = e.target.value;
-                  const ids = value
-                    .split(",")
-                    .map((s) => parseInt(s.trim()))
-                    .filter((id) => !isNaN(id));
-                  setFormData({ ...formData, ingredientIds: ids });
+                  const ingredients = value.split(",").map((s) => s.trim());
+                  setFormData({ ...formData, ingredientIds: ingredients });
                 }}
               />
             </div>
