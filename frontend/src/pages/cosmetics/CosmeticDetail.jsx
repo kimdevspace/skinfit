@@ -12,7 +12,7 @@ import NavBar from "../../components/common/NavBar";
 
 // 화장품 정보 요청 함수
 const fetchCosmeticDetails = async (cosmeticId) => {
-  const response = await axios.get(`cosmetics/${cosmeticId}`);
+  const response = await axios.get(`cosmetic/${cosmeticId}`);
   return response.data.cosmetic;
 };
 

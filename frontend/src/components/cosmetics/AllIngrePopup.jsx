@@ -8,12 +8,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 // 전성분 정보 가져오는 api 요청
 const fetchAllIngredient = async (cosmeticId) => {
-  const response = await axios.get(`${cosmeticId}/all-ingredients`, {
-    headers: {
-      // 'Authorization': `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
+  const response = await axios.get(`cosmetic/${cosmeticId}/all-ingredients`);
   return response.data;
 };
 
@@ -21,7 +16,6 @@ function AllIngrePopup({ cosmeticId, closePopup }) {
   // 전성분 정보 가져오기
   const {
     data: allIngredient,
-    error,
     isLoading,
     isError,
   } = useQuery({
@@ -39,34 +33,7 @@ function AllIngrePopup({ cosmeticId, closePopup }) {
   }
 
   // api에서 받아온 전성분 데이터
-  // const { low, moderate, high, others } = allIngredient.data
-
-  //#region 전성분 더미 데이터
-  const { low, moderate, high, others } = {
-    low: [
-      {
-        ingredientName: "히알루론산",
-        ewgScoreMin: 1,
-        ewgScoreMax: 2,
-      },
-    ],
-    moderate: [
-      {
-        ingredientName: "나이아신아마이드",
-        ewgScoreMin: 3,
-        ewgScoreMax: 6,
-      },
-    ],
-    high: [
-      {
-        ingredientName: "페녹시에탄올",
-        ewgScoreMin: 7,
-        ewgScoreMax: 9,
-      },
-    ],
-    others: [],
-  };
-  //#endregion
+  const { low, moderate, high, others } = allIngredient.data
 
 
   // 등급별 데이터 매핑
