@@ -11,13 +11,17 @@ import bttn2 from "../../assets/images/carousel_bttn2.png";
 import EwgPopUp from "../../components/cosmetics/EwgPopup.jsx";
 import NavBar from "../../components/common/NavBar";
 
-
 export default function IngredientDetail() {
   // ewg 모달창
   const [isOpen, setIsOpen] = useState(false);
   const handlePopup = () => {
     setIsOpen(!isOpen);
   };
+
+  // 현재 보여지는 이미지의 인덱스를 관리하는 상태
+  const [currentIndex, setCurrentIndex] = useState(0);
+  // 애니메이션 진행 중임을 나타내는 상태
+  const [isAnimating, setIsAnimating] = useState(false);
 
   // 커스텀 훅 사용
   const { isLoading, error } = useUnsuit();
@@ -32,11 +36,6 @@ export default function IngredientDetail() {
   if (error) {
     console.log("성분 데이터 페이지 랜더링 오류", error.message);
   }
-
-  // 현재 보여지는 이미지의 인덱스를 관리하는 상태
-  const [currentIndex, setCurrentIndex] = useState(0);
-  // 애니메이션 진행 중임을 나타내는 상태
-  const [isAnimating, setIsAnimating] = useState(false);
 
   const slides = [
     {
@@ -157,7 +156,7 @@ export default function IngredientDetail() {
                 </button>
               </div>
             </div>
-            
+
             {myUnsuits &&
               myUnsuits.map((unsuit, index) => (
                 <div key={index}>
@@ -213,7 +212,7 @@ export default function IngredientDetail() {
           </div>
         </div>
       </div>
-      <NavBar/>
+      <NavBar />
     </>
   );
 }

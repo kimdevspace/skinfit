@@ -1,103 +1,114 @@
-import "./OcrScanner.scss"
-import ImageUpload from "../../components/common/ImageUpload"
-import Button from "../../components/common/Button"
-import { useRef, useState } from "react"
-import axios from "../../api/axiosInstance"
-import { useMutation } from "@tanstack/react-query"
+import "./OcrScanner.scss";
+import ImageUpload from "../../components/common/ImageUpload";
+import Button from "../../components/common/Button";
+import { useRef, useState } from "react";
+import axios from "../../api/axiosInstance";
+import { useMutation } from "@tanstack/react-query";
 
 export default function OcrScanner() {
   // ocr 사진 데이터
   const [ocrData, setOcrData] = useState({
-    brandName: "",
+    cosmeticBrand: "",
     cosmeticName: "",
-    categories: "",
-    images: [],
-    capacity: "",
-  })
+    categoryId: "",
+    ingredientImage: [],
+    cosmeticVolume: "",
+  });
+
+  // ocr 이미지 필수제출 관리
+  const [imageError, setImageError] = useState(false);
 
   //카테고리 타입
-  const allTypes = ["로션", "스킨", "에센스", "크림", "클렌징", "바디", "선케어"]
+  const allTypes = [
+    "로션",
+    "스킨",
+    "에센스",
+    "크림",
+    "클렌징",
+    "바디",
+    "선케어",
+  ];
 
   // 카테고리 관리
   const handleType = (type) => {
     setOcrData((prevData) => ({
-      ...prevData,
-      categories: prevData.categories === type ? "" : type,
-    }))
-  }
+      categoryId: prevData.categoryId === type ? "" : type,
+    }));
+  };
 
   // 데이터 POST 요청
   const uploadOcr = async (ocr) => {
-    const formData = new FormData()
-    formData.append("brandName", ocr.brandName)
-    formData.append("cosmeticName", ocr.cosmeticName)
-    formData.append("capacity", ocr.capacity)
-    formData.append("categories", ocr.categories)
-    ocr.images.forEach((file) => formData.append("images", file))
-    console.log("ocr 사진 upload 한다")
+    const formData = new FormData();
+    formData.append("cosmeticBrand", ocr.cosmeticBrand);
+    formData.append("cosmeticName", ocr.cosmeticName);
+    formData.append("cosmeticVolume", ocr.cosmeticVolume);
+    formData.append("categoryId", ocr.categoryId);
+    ocr.ingredientImage.forEach((file) =>
+      formData.append("ingredientImage", file)
+    );
+    console.log("ocr 사진 upload 한다");
 
-    return axios.post(`products/ocr`, formData)
-  }
+    return axios.post(`/ocr`, formData);
+  };
 
   const mutation = useMutation({
     mutationFn: uploadOcr,
     onSuccess: () => {
-      alert("사진이 등록되었어요.")
-      setOcrData({ brandName: "",
+      alert("사진이 등록되었어요.");
+      setOcrData({
+        cosmeticBrand: "",
         cosmeticName: "",
-        categories: "",
-        images: [],
-        capacity: "",}) //?
+        categoryId: "",
+        ingredientImage: [],
+        cosmeticVolume: "",
+      }); //초기화
     },
     onError: () => {
-      alert("사진 등록에 실패했어요.")
+      alert("사진 등록에 실패했어요.");
     },
-  })
+  });
 
   //미입력 에러메시지 관리리
-  const brandNameErrorRef = useRef(null)
-  const cosmeticNameErrorRef = useRef(null)
-  const capacityErrorRef = useRef(null)
-  const categoriesErrorRef = useRef(null)
+  const brandNameErrorRef = useRef(null);
+  const cosmeticNameErrorRef = useRef(null);
+  const capacityErrorRef = useRef(null);
+  const categoriesErrorRef = useRef(null);
   // const imagesErrorRef = useRef(null)
-
-  // ocr 이미지 필수제출 관리
-  const [imageError, setImageError] = useState(false)
 
   // 폼 제출출
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    let hasError = false
+    let hasError = false;
     const fields = [
-      { name: "brandName", ref: brandNameErrorRef },
+      { name: "cosmeticBrand", ref: brandNameErrorRef },
       { name: "cosmeticName", ref: cosmeticNameErrorRef },
-      { name: "capacity", ref: capacityErrorRef },
-      { name: "categories", ref: categoriesErrorRef },
+      { name: "cosmeticVolume", ref: capacityErrorRef },
+      { name: "categoryId", ref: categoriesErrorRef },
       // { name: "images", ref: imagesErrorRef },
-    ]
+    ];
 
     fields.forEach((field) => {
-      const value = ocrData[field.name]
+      const value = ocrData[field.name];
       if (!value) {
-        field.ref.current.classList.add("error")
-        hasError = true
+        field.ref.current.classList.add("error");
+        hasError = true;
       } else {
-        field.ref.current.classList.remove("error")
+        field.ref.current.classList.remove("error");
       }
-    })
+    });
 
     if (ocrData.images.length === 0) {
-      setImageError(true)
-      hasError = true
+      setImageError(true);
+      hasError = true;
     } else {
-      setImageError(false)
+      setImageError(false);
     }
 
     if (!hasError) {
-      mutation.mutate(ocrData)
+      mutation.mutate(ocrData);
     }
-  }
+  };
 
   return (
     <div className="ocr-register-form">
@@ -120,7 +131,14 @@ export default function OcrScanner() {
         <label>카테고리</label>
         <div className="skintype-options">
           {allTypes.map((type) => (
-            <button key={type} type="button" className={`skin-btn ${ocrData.categories === type ? "selected" : ""}`} onClick={() => handleType(type)}>
+            <button
+              key={type}
+              type="button"
+              className={`skin-btn ${
+                ocrData.categories === type ? "selected" : ""
+              }`}
+              onClick={() => handleType(type)}
+            >
               {type}
             </button>
           ))}
@@ -139,9 +157,21 @@ export default function OcrScanner() {
       </div>
 
       {/* 리뷰 사진 등록 */}
-      <ImageUpload images={ocrData.images} setImages={setOcrData} maxImages={3} dataType="ocr" onError={setImageError} error={imageError} />
+      <ImageUpload
+        images={ocrData.images}
+        setImages={setOcrData}
+        maxImages={3}
+        dataType="ocr"
+        onError={setImageError}
+        error={imageError}
+      />
 
-      <Button text="등록하기" color="pink" type="submit" onSubmit={handleSubmit} />
+      <Button
+        text="등록하기"
+        color="pink"
+        type="submit"
+        onSubmit={handleSubmit}
+      />
     </div>
-  )
+  );
 }
