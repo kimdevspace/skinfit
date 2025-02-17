@@ -9,6 +9,8 @@ import img3 from "../../assets/images/ingredient_example_3.png";
 import bttn1 from "../../assets/images/carousel_bttn1.png";
 import bttn2 from "../../assets/images/carousel_bttn2.png";
 import EwgPopUp from "../../components/cosmetics/EwgPopup.jsx";
+import NavBar from "../../components/common/NavBar";
+
 
 export default function IngredientDetail() {
   // ewg 모달창
@@ -211,6 +213,7 @@ export default function IngredientDetail() {
           </div>
         </div>
       </div>
+      <NavBar/>
     </>
   );
 }

@@ -7,6 +7,8 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import Button from "../../components/common/Button.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
+import NavBar from "../../components/common/NavBar";
+
 
 export default function EditUserInfo() {
   const navigate = useNavigate();
@@ -169,6 +171,7 @@ export default function EditUserInfo() {
   //#endregion
 
   return (
+    <>
     <div className="user-info-edit">
       {/* 닉네임 + 중복확인 */}
       <div className="form-group nickname-group">
@@ -226,5 +229,7 @@ export default function EditUserInfo() {
       {/* "완료" 버튼 */}
       <Button text="완료" color="white" onSubmit={handleUserInfoSubmit} type='submit' />
     </div>
+    <NavBar/>
+    </>
   );
 }

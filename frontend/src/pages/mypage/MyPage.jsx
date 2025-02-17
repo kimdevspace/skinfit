@@ -17,6 +17,8 @@ import ReviewItem from "../../components/review/ReviewItem";
 import PwCheckPopUp from "../../components/auth/PwCheckPopUp";
 import { Link } from "react-router-dom";
 import SearchPopup from "../../components/search/SearchPopup";
+import NavBar from "../../components/common/NavBar";
+
 
 function MyPage() {
   //1. 스토어 데이터 불러오기
@@ -132,6 +134,7 @@ function MyPage() {
   };
 
   return (
+    <>
     <div className="wrapper">
       {/* 유저 닉네임, 피부타입 정보 */}
       <div className="edit-user-info">
@@ -274,6 +277,8 @@ function MyPage() {
         )}
       </div>
     </div>
+    <NavBar/>
+    </>
   );
 }
 

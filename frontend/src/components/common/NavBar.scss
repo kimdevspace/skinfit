@@ -5,47 +5,58 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  max-width: min(90vw, 600px);
-  min-width: 360px;
+  max-width: min(90vw, 600px); // 뷰포트 너비의 90% 또는 600px 중 작은 값
+  min-width: 36rem; // 최소 너비 설정
   padding: 1rem 3rem;
   text-align: center;
-  color: #8E8E8E;
-  border-top: 1px solid #FF975F;
+  color: #8E8E8E; // 기본 텍스트 색상
+  border-top: 1px solid #FF975F; // 상단 테두리
   background-color: #fff;
-  z-index: 100;
+  z-index: 100; // 다른 요소들 위에 표시
+ 
+  // 링크와 버튼 공통 스타일
   a, button {
     display: flex;
     flex-direction: column;
     align-items: center;
     color: #8E8E8E;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); // 부드러운 전환 효과
+    font: inherit; // 폰트 상속
 
+ 
+    // SVG 아이콘 애니메이션
     svg {
       transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
+ 
+    // 텍스트 스타일
     p {
-      opacity: 0.7;
+      opacity: 0.7; // 기본 상태에서 약간 투명하게
       transform: translateY(0);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
+ 
+    // 호버 효과
     &:hover {
-      color: #FF975F;
-
+      color: #FF975F; // 주황색으로 변경
+ 
+      // 아이콘 위로 올라가는 효과 - 현재 -5px
+      // 숫자를 줄이면 덜 올라감 (예: -2px)
       svg {
-        transform: translateY(-5px) scale(1.1);
+        transform: translateY(-0.01rem) scale(1.1);
       }
-
+ 
+      // 텍스트 아래로 내려가는 효과 - 현재 2px
+      // 숫자를 조절하면 텍스트 이동 거리 변경
       p {
-        opacity: 1;
-        transform: translateY(2px);
+        opacity: 1; // 완전 불투명하게
+        transform: translateY(0.1rem);
       }
     }
+ 
+    // 활성화 상태
     &.active {
-      color: #FF975F;
-
-
+      color: #FF975F; // 활성화된 항목 색상
     }
   }
-}
+ }
