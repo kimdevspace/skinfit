@@ -8,7 +8,7 @@ import Header from "../../components/common/Header";
 import Button from "../../components/common/Button";
 import CosmeticInfo from "../../components/cosmetics/CosmeticInfo";
 import NavBar from "../../components/common/NavBar";
-// import ReviewItem from "../../components/review/ReviewItem";
+import ReviewItem from "../../components/review/ReviewItem";
 
 // 화장품 정보 요청 함수
 const fetchCosmeticDetails = async (cosmeticId) => {
@@ -173,9 +173,9 @@ function CosmeticDetail() {
 
         {/* 리뷰 리스트 */}
         <div className="review-list">
-          {/* {reviews.map((review, idx) => (
-            <ReviewItem key={idx} review={review} />
-          ))} */}
+          {reviews?.map((review, idx) => (
+            <ReviewItem key={idx} review={review} reviewType='generalReviews' />
+          ))}
         </div>
       </div>
 
