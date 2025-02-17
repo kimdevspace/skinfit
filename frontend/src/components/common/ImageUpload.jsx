@@ -77,7 +77,7 @@ function ImageUpload({ images, setImages, maxImages, dataType, onError, error })
           ))}
         </div>
         <div className="custom-file-input-btn" onClick={handleFileButtonClick}>
-          {images.length === 0 ? <p>등록할 사진을 선택해주세요</p> : null}
+          {images?.length === 0 ? <p>등록할 사진을 선택해주세요</p> : null}
           <FontAwesomeIcon icon={faPlus} className="plus-icon" />
         </div>
       </div>

@@ -5,7 +5,7 @@ import { useSearchCompleteStore, useSearchComplete} from "../../stores/Search" /
 import "./Search.scss"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons"
-
+import Header from '../../components/common/Header.jsx'
 
 // 카테고리 옵션
 const categoryOptions = [
@@ -95,6 +95,7 @@ function Search() {
 
   return (
     <div>
+      <Header title='화장품 검색'/>
       <form onSubmit={submitEvent}>
         <SearchBar searchWord={searchWord} setSearchWord={setSearchWord}/>
 
