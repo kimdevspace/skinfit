@@ -11,6 +11,8 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
+import java.util.List;
+
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
 
     // 사용자가 작성한 리뷰 조회
@@ -42,5 +44,8 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     Page<Review> findCustomReviewsOrderByLikesDesc(@Param("cosmeticId") Integer cosmeticId,
                                                    @Param("userSkinTypeIds") List<Integer> userSkinTypeIds,
                                                    Pageable pageable);
+
+    // 신고 횟수가 5회 이상인 리뷰 목록 조회
+    List<Review> findByReportCountGreaterThanEqual(int reportCount);
 }
 
