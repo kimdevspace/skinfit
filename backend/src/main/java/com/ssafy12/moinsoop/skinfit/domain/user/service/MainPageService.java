@@ -90,7 +90,7 @@ public class MainPageService {
 
             // FastAPI 호출
             restTemplate.postForObject(
-                    "http://localhost:8000/recommend_cosmetics",  // URL
+                    "http://localhost:8000/recommend/recommend_cosmetics",  // URL
                     requestBody,                        // 요청 본문
                     Void.class                         // 응답 타입 (응답은 무시)
             );

@@ -32,4 +32,6 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Integer>
             "AND ci.ingredient.status = true " +
             "ORDER BY ci.sequence ASC")
     List<CosmeticIngredient> findIngredientsByCosmeticId(@Param("cosmeticId") Integer cosmeticId);
+
+    List<Ingredient> findByIngredientNameIn(List<String> names);
 }

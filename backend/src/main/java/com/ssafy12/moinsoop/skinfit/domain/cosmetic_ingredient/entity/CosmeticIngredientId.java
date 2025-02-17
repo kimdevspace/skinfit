@@ -1,20 +1,20 @@
 package com.ssafy12.moinsoop.skinfit.domain.cosmetic_ingredient.entity;
 
+import jakarta.persistence.Embeddable;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@Embeddable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class CosmeticIngredientId implements Serializable {
     private Integer cosmeticId;
     private Integer ingredientId;
-
-    // 기본 생성자
-    public CosmeticIngredientId() {}
-
-    // 인자 2개를 받는 생성자 추가
-    public CosmeticIngredientId(Integer cosmeticId, Integer ingredientId) {
-        this.cosmeticId = cosmeticId;
-        this.ingredientId = ingredientId;
-    }
 
     @Override
     public boolean equals(Object o) {

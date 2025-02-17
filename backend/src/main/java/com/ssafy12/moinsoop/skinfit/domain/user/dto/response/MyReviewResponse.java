@@ -25,7 +25,7 @@ public class MyReviewResponse {
         private int score;
         private CosmeticInfo cosmetic;
         private List<ImageDto> images;
-        private int likeCount;
+        private int likes;
 
         public static ReviewDto from(Review review) {
             return ReviewDto.builder()
@@ -38,7 +38,7 @@ public class MyReviewResponse {
                             .map(ImageDto::new)
                             .sorted(Comparator.comparing(ImageDto::getSequence))
                             .toList())
-                    .likeCount(review.getReviewLikes().size())
+                    .likes(review.getReviewLikes().size())
                     .build();
         }
     }
