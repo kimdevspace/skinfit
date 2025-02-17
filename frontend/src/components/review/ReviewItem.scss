@@ -7,7 +7,6 @@
 
   .name-brand {
     display: flex;
-
   }
 
   .cosmetic-name {
@@ -52,7 +51,7 @@
       }
 
       &.unknown {
-        color: #FF975F;
+        color: #ff975f;
       }
     }
   }
@@ -70,45 +69,42 @@
     color: #565656;
 
     .review-photo {
-        width:9rem;
-        height:6rem;
-        margin-top: 1rem;
+      width: 9rem;
+      height: 6rem;
+      margin-top: 1rem;
     }
 
-  }
-
-  .btn-set {
-    display: flex;
-    justify-content: space-between;
-
-    .liked-btn {
-      color: #565656;
-      font-size: 1rem;
-      border-radius: 2rem;
-      border: 0.5px solid #dedede;
-      margin-top: 3rem;
-      margin-bottom: 1.5rem;
-      padding: 0.3rem 1.5rem;
-      gap: 0.5rem;
+    .btn-set {
       display: flex;
+      justify-content: space-between;
 
-      .emoji {
-        width: 1.5rem;
-        height: 1.7rem;
+      .liked-btn {
+        color: #565656;
+        font-size: 1rem;
+        border-radius: 2rem;
+        border: 0.5px solid #dedede;
+        margin-top: 3rem;
+        margin-bottom: 1.5rem;
+        padding: 0.3rem 1.5rem;
+        gap: 0.5rem;
+        display: flex;
 
-        &.active {
-            background-color: #FFF0E8;
+        .emoji {
+          width: 1.5rem;
+          height: 1.7rem;
+
+          &.active {
+            background-color: #fff0e8;
+          }
         }
       }
 
-      
-    }
-
-    .report-btn {
-      color: #8e8e8e;
-      font-size: 1rem;
-      margin-top: 3rem;
-      margin-bottom: 1.5rem;
+      .report-btn {
+        color: #8e8e8e;
+        font-size: 1rem;
+        margin-top: 3rem;
+        margin-bottom: 1.5rem;
+      }
     }
   }
 }

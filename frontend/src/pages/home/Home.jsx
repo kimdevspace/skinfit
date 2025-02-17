@@ -18,9 +18,12 @@ function Home() {
   // 내 피부분석 정확도 팝업창 제어
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
+  // 내 피부분석 정확도 팝업창 제어
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
   // 메인 페이지(추천 상품, 화장품 정보) 필요한 정보 api 요청
   const fetchMainPageInfo = async () => {
-    const response = await axios.get("/mainpage");
+    const response = await axios.get("mainpage");
     return response.data;
   };
 
@@ -34,7 +37,8 @@ function Home() {
   });
 
   // api에서 받아온 정보 데이터
-  const { level, goodCosmeticsCount, badCosmeticsCount, recomCosmetic } = mainInfo.data
+  const { level, goodCosmeticsCount, badCosmeticsCount, recomCosmetic } =
+    mainInfo.data;
 
   // 로딩, 에러 확인
   if (isLoading) {
@@ -51,6 +55,7 @@ function Home() {
   };
 
   // #region 내 피부분석 정확도 안내 팝업창 함수
+
   // 내 피부분석 정확도 팝업 열기
   const openPopup = () => {
     setIsPopupOpen(true);

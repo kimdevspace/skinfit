@@ -8,50 +8,11 @@ import Header from "../../components/common/Header";
 import Button from "../../components/common/Button";
 import CosmeticInfo from "../../components/cosmetics/CosmeticInfo";
 import NavBar from "../../components/common/NavBar";
-// import ReviewItem from "../../components/review/ReviewItem";
-
-// 화장품 정보 요청 함수
-const fetchCosmeticDetails = async (cosmeticId) => {
-  const response = await axios.get(`cosmetics/${cosmeticId}`);
-  return response.data.cosmetic;
-};
-
-// 리뷰 요청 함수
-const fetchReviews = async ({ cosmeticId, sort, page, isMyReview }) => {
-  const response = await axios.get(`cosmetics/${cosmeticId}/reviews`, {
-    params: {
-      sort,
-      page,
-      limit: 10,
-      MyReview: isMyReview ? "true" : "false",
-    },
-  });
-  return response.data;
-};
+import ReviewItem from "../../components/review/ReviewItem";
 
 function CosmeticDetail() {
-  const { cosmeticId } = useParams(); // 화장품 id 파라미터
-
-  // 화장품 정보 요청
-  const { data: cosmeticData } = useQuery({
-    queryKey: ["cosmetic", cosmeticId],
-    queryFn: () => fetchCosmeticDetails(cosmeticId),
-  });
-
-  // #region 전성분 보기 팝업창 함수
   // 전성분 팝업창 제어
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-
-  // 전성분 팝업 열기
-  const openPopup = () => {
-    setIsPopupOpen(true);
-  };
-
-  // 전성분 팝업 닫기
-  const closePopup = () => {
-    setIsPopupOpen(false);
-  };
-  // #endregion
 
   // 내 피부 맞춤 리뷰 토글
   const [isOn, setIsOn] = useState(true);
@@ -68,9 +29,7 @@ function CosmeticDetail() {
 
   // 리뷰 요청
   const [page, setPage] = useState(1);
-  const {
-    data: reviews,
-  } = useQuery({
+  const { data: reviews } = useQuery({
     queryKey: ["reviews", cosmeticId, sortOrder, page, isOn],
     queryFn: () =>
       fetchReviews({
@@ -81,6 +40,46 @@ function CosmeticDetail() {
         isMyReview: isOn,
       }),
   });
+
+  // 리뷰 요청 함수
+  const fetchReviews = async ({ cosmeticId, sort, page, isMyReview }) => {
+    const response = await axios.get(`cosmetics/${cosmeticId}/reviews`, {
+      params: {
+        sort,
+        page,
+        limit: 10,
+        MyReview: isMyReview ? "true" : "false",
+      },
+    });
+    return response.data;
+  };
+
+  const { cosmeticId } = useParams(); // 화장품 id 파라미터
+
+  // 화장품 정보 요청 함수
+  const fetchCosmeticDetails = async (cosmeticId) => {
+    const response = await axios.get(`cosmetic/${cosmeticId}`);
+    return response.data.cosmetic;
+  };
+
+  // 화장품 정보 요청
+  const { data: cosmeticData } = useQuery({
+    queryKey: ["cosmetic", cosmeticId],
+    queryFn: () => fetchCosmeticDetails(cosmeticId),
+  });
+
+  // #region 전성분 보기 팝업창 함수
+
+  // 전성분 팝업 열기
+  const openPopup = () => {
+    setIsPopupOpen(true);
+  };
+
+  // 전성분 팝업 닫기
+  const closePopup = () => {
+    setIsPopupOpen(false);
+  };
+  // #endregion
 
   return (
     <div className="cosmetic-detail">
@@ -124,16 +123,16 @@ function CosmeticDetail() {
               최신순
             </button>
           </div>
-          <Link to={'review'} className="write-btn">
+          <Link to={"review"} className="write-btn">
             작성하기
           </Link>
         </div>
 
         {/* 리뷰 리스트 */}
         <div className="review-list">
-          {/* {reviews.map((review, idx) => (
-            <ReviewItem key={idx} review={review} />
-          ))} */}
+          {reviews?.map((review, idx) => (
+            <ReviewItem key={idx} review={review} reviewType="generalReviews" />
+          ))}
         </div>
       </div>
 
