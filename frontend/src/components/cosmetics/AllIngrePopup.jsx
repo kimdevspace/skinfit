@@ -6,66 +6,37 @@ import IngredientList from "./IngredientList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
-// 전성분 정보 가져오는 api 요청
+// 전성분 정보 가져오는 API 요청
 const fetchAllIngredient = async (cosmeticId) => {
   const response = await axios.get(`${cosmeticId}/details`);
   return response.data;
 };
 
 function AllIngrePopup({ cosmeticId, closePopup }) {
-  // 전성분 정보 가져오기
-  const {
-    data: allIngredient,
-    isLoading,
-    isError,
-  } = useQuery({
+  // 모든 Hook은 항상 호출되어야 합니다.
+  const queryResult = useQuery({
     queryKey: ["allIngredient", cosmeticId],
     queryFn: () => fetchAllIngredient(cosmeticId),
-    enabled: !!cosmeticId, // cosmeticId가 있을 때만 실행
+    enabled: !!cosmeticId,
   });
-
-  // 로딩, 에러 확인
-  if (isLoading) {
-    return console.log("로딩중", isLoading);
-  }
-  if (isError) {
-    return console.log("에러", isLoading);
-  }
-
-  // api에서 받아온 전성분 데이터
-  const { low, moderate, high, others } = allIngredient
-
-
-  // 등급별 데이터 매핑
-  const grades = {
-    low: { title: "안전 등급", ingredients: low, className: "low" },
-    moderate: {
-      title: "보통 등급",
-      ingredients: moderate,
-      className: "moderate",
-    },
-    high: { title: "위험 등급", ingredients: high, className: "high" },
-    others: {
-      title: "미분류 등급",
-      ingredients: others,
-      className: "unclassified",
-    },
-  };
-
-  // 등급 클릭 시 토글
+  
+  // useState는 항상 호출
   const [openGrades, setOpenGrades] = useState({
-    low: true, // 처음에는 안전 등급만 열려 있도록 설정
+    low: true,      // 처음에는 안전 등급만 열려 있도록 설정
     moderate: false,
     high: false,
     others: false,
   });
-
+  
   const toggleGrade = (grade) => {
     setOpenGrades((prev) => ({
       ...prev,
-      [grade]: !prev[grade], // 클릭한 등급만 상태 변경
+      [grade]: !prev[grade],
     }));
   };
+
+  // queryResult에서 값들을 추출 (항상 호출된 Hook 결과)
+  const { data: allIngredient, isLoading, isError } = queryResult;
 
   return (
     <div className="overlay">
@@ -73,26 +44,40 @@ function AllIngrePopup({ cosmeticId, closePopup }) {
         <button className="close-btn" onClick={closePopup}>
           <FontAwesomeIcon icon={faXmark} />
         </button>
-
         <p className="popup-title">전성분 보기</p>
 
-        {/* 등급  */}
-        <div className="all-ingredient">
-          {Object.keys(grades).map((key) => (
-            <div key={key} className={`grade-box ${grades[key].className}`}>
-              <p className="grade-title" onClick={() => toggleGrade(key)}>
-                {grades[key].title}
-              </p>
-              {/* 상태에 따라 성분 리스트 표시 */}
-              {openGrades[key] && (
-                <IngredientList
-                  className={grades[key].className}
-                  ingredients={grades[key].ingredients}
-                />
-              )}
-            </div>
-          ))}
-        </div>
+        {isLoading ? (
+          <div>Loading...</div>
+        ) : isError ? (
+          <div>Error occurred while loading ingredients.</div>
+        ) : (
+          // allIngredient 데이터가 있을 때
+          <div className="all-ingredient">
+            {(() => {
+              // 데이터가 존재할 때만 구조 분해
+              const { low, moderate, high, others } = allIngredient;
+              const grades = {
+                low: { title: "안전 등급", ingredients: low, className: "low" },
+                moderate: { title: "보통 등급", ingredients: moderate, className: "moderate" },
+                high: { title: "위험 등급", ingredients: high, className: "high" },
+                others: { title: "미분류 등급", ingredients: others, className: "unclassified" },
+              };
+              return Object.keys(grades).map((key) => (
+                <div key={key} className={`grade-box ${grades[key].className}`}>
+                  <p className="grade-title" onClick={() => toggleGrade(key)}>
+                    {grades[key].title}
+                  </p>
+                  {openGrades[key] && (
+                    <IngredientList
+                      className={grades[key].className}
+                      ingredients={grades[key].ingredients}
+                    />
+                  )}
+                </div>
+              ));
+            })()}
+          </div>
+        )}
       </div>
     </div>
   );
