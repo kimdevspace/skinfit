@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useCallback, useEffect, useRef } from "react"
 import Header from "../../components/common/Header.jsx"
 import UserInfo1 from "../../components/auth/UserInfo1.jsx"
 import Category from "../../components/common/Category.jsx"
@@ -9,148 +9,252 @@ import axios from "../../api/axiosInstance.js"
 import { useNavigate } from "react-router-dom"
 import { useSearchPopupStore } from "../../stores/SearchPopup.js"
 import SearchPopup from "../../components/search/SearchPopup.jsx"
+import useAuthStore from "../../stores/Auth.js"
 
 function UserForm() {
-  // ===== 1단계: 기본 회원정보 =====
-  const [gender, setGender] = useState("")
-  const [birthYear, setBirthYear] = useState("") // 문자열로 입력됨 (최종 payload에서는 숫자로 변환)
-  const [nickname, setNickname] = useState("")
-  const [skinTypes, setSkinTypes] = useState([])
-  const [nicknameChecked, setNicknameChecked] = useState(false)
-
-  // 데이터 변경 감지를 위한 초기 상태 저장(header 설정을 위함함)
-  const [initialState, setInitialState] = useState({
+  // 통합된 유저 폼 상태
+  const [formData, setFormData] = useState({
     gender: "",
     birthYear: "",
     nickname: "",
     skinTypes: [],
-    suitableCosmetics: [],
-    unsuitableCosmetics: [],
-    suitableIngredients: [],
-    unsuitableIngredients: [],
+    nicknameChecked: false
   })
-
-  // 멀티 스텝 관리(경로는 같지만 여러 페이지인척척 다루기)
+  
+  // 추출을 위한 구조 분해 할당
+  const { gender, birthYear, nickname, skinTypes, nicknameChecked } = formData
+  
+  const [validationErrors, setValidationErrors] = useState({})
   const [step, setStep] = useState(1)
-
-  // SearchPopup 상태 관리
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  
+  // 현재 유효성 검사 상태를 추적하는 ref
+  const validationStateRef = useRef({
+    isValid: false,
+    errors: {}
+  })
+  
+  // SearchPopup 상태
   const [isSearchPopupOpen, setIsSearchPopupOpen] = useState(false)
   const [searchPopupProps, setSearchPopupProps] = useState(null)
 
   const navigate = useNavigate()
+  const { items, getApiPayload, resetItems } = useSearchPopupStore()
+  const setAuth = useAuthStore(state => state.setAuth)
+  const currentYear = new Date().getFullYear()
+  
+  // 중복 클릭을 방지하기 위한 타이머 참조
+  const clickTimerRef = useRef(null)
 
-
+  // 뮤테이션 정의
   const nicknameMutation = useMutation({
-    mutationFn: async (payload) => {
-      return axios.post("user/nickname-duplicate", payload)
-    },
+    mutationFn: (payload) => axios.post("user/nickname-duplicate", payload),
     onSuccess: (response) => {
-      // response.data에 응답 메시지가 있다고 가정합니다.
-      alert(response.data)
-      setNicknameChecked(true)
+      setFormData(prev => ({ ...prev, nicknameChecked: true }))
+      setValidationErrors(prev => {
+        const newErrors = {...prev, nickname: ""};
+        validationStateRef.current.errors = newErrors;
+        return newErrors;
+      })
+      alert(response.data || "사용 가능한 닉네임입니다.")
     },
-    onError: () => {
-      alert("닉네임 중복 확인 중 오류가 발생했습니다.")
-      setNicknameChecked(false)
+    onError: (error) => {
+      const errorMessage = error.response?.data?.message || "닉네임 중복 확인 중 오류가 발생했습니다."
+      setValidationErrors(prev => {
+        const newErrors = {...prev, nickname: errorMessage};
+        validationStateRef.current.errors = newErrors;
+        return newErrors;
+      })
+      alert(errorMessage)
     },
   })
 
-  const handleNicknameChange = (value) => {
-    setNickname(value)
-    setNicknameChecked(false)
-  }
+  const userInitMutation = useMutation({
+    mutationFn: (payload) => axios.post("user/init", payload),
+    onSuccess: (response) => {
+      if (response.data?.token) {
+        setAuth(response.data.token, response.data.roleType || 'USER', true)
+      }
+      resetItems()
+      alert("회원 정보 등록에 성공했습니다.")
+      navigate("/")
+    },
+    onError: (error) => {
+      const errorMessage = error.response?.data?.message || "회원 정보 등록 중 오류가 발생했습니다."
+      alert(errorMessage)
+    },
+    onSettled: () => setIsSubmitting(false)
+  })
+
+  // 입력 핸들러 - 모든 필드 변경을 처리하는 통합 함수
+  const handleInputChange = useCallback((field, value) => {
+    let error = ""
+    
+    // 필드별 유효성 검사
+    if (field === 'gender' && !value) {
+      error = "성별을 선택해주세요."
+    } else if (field === 'birthYear') {
+      const yearValue = parseInt(value, 10)
+      if (!value) {
+        error = "출생연도를 입력해주세요."
+      } else if (isNaN(yearValue) || yearValue < 1900 || yearValue > currentYear) {
+        error = `출생연도는 1900~${currentYear} 사이여야 합니다.`
+      }
+    } else if (field === 'nickname') {
+      if (!value.trim()) {
+        error = "닉네임을 입력해주세요."
+      } else if (value.length < 2 || value.length > 10) {
+        error = "닉네임은 2~10자 사이로 입력해주세요."
+      }
+      // 닉네임이 변경되면 중복확인 상태 초기화
+      setFormData(prev => ({ ...prev, [field]: value, nicknameChecked: false }))
+      setValidationErrors(prev => {
+        const newErrors = { ...prev, [field]: error };
+        validationStateRef.current.errors = newErrors;
+        return newErrors;
+      })
+      return; // 닉네임은 위에서 이미 처리했으므로 여기서 종료
+    }
+    
+    // 상태 업데이트
+    setFormData(prev => ({ ...prev, [field]: value }))
+    setValidationErrors(prev => {
+      const newErrors = { ...prev, [field]: error };
+      validationStateRef.current.errors = newErrors;
+      return newErrors;
+    })
+  }, [currentYear])
+
+  // 피부타입 토글 함수
+  const toggleSkinType = useCallback((typeId) => {
+    setFormData(prev => {
+      const updatedTypes = prev.skinTypes.includes(typeId)
+        ? prev.skinTypes.filter(id => id !== typeId)
+        : [...prev.skinTypes, typeId]
+      
+      const error = updatedTypes.length === 0 ? "최소 1개 이상의 피부타입을 선택해주세요." : ""
+      
+      setValidationErrors(prev => {
+        const newErrors = { ...prev, skinTypes: error };
+        validationStateRef.current.errors = newErrors;
+        return newErrors;
+      })
+      
+      return { ...prev, skinTypes: updatedTypes }
+    })
+  }, [])
 
   // 닉네임 중복확인
-  const handleNicknameCheck = () => {
-    nicknameMutation.mutate({ nickname })
-  }
-
-  // 피부타입 토글
-  const toggleSkinType = (typeId) => {
-    if (skinTypes.includes(typeId)) {
-      setSkinTypes(skinTypes.filter((id) => id !== typeId))
-    } else {
-      setSkinTypes([...skinTypes, typeId])
+  const handleNicknameCheck = useCallback(() => {
+    if (!nickname.trim()) {
+      setValidationErrors(prev => {
+        const newErrors = {...prev, nickname: "닉네임을 입력해주세요."};
+        validationStateRef.current.errors = newErrors;
+        return newErrors;
+      })
+      alert("닉네임을 입력해주세요.")
+      return
     }
-  }
+    
+    if (nickname.length < 2 || nickname.length > 10) {
+      setValidationErrors(prev => {
+        const newErrors = {...prev, nickname: "닉네임은 2~10자 사이로 입력해주세요."};
+        validationStateRef.current.errors = newErrors;
+        return newErrors;
+      })
+      alert("닉네임은 2~10자 사이로 입력해주세요.")
+      return
+    }
+    
+    nicknameMutation.mutate({ nickname })
+  }, [nickname, nicknameMutation])
 
-  // 스토어에서 getApiPayload 함수와 items 가져오기
-  const { getApiPayload, items } = useSearchPopupStore()
-
-  // 검색 팝업 열기
-  const handleSearch = (category) => {
-    const props = {
+  // 검색 팝업 관련 함수
+  const handleSearch = useCallback((category) => {
+    setSearchPopupProps({
       type: category.includes("Cosmetics") ? "cosmetic" : "ingredient",
       suitability: category.includes("unsuitable") ? "unsuitable" : "suitable",
       category: category,
+    })
+    setIsSearchPopupOpen(true)
+  }, [])
+
+  // Step 1 유효성 검사 - 동기식으로 실행되고 결과를 즉시 반환
+  const validateStep1 = useCallback(() => {
+    const errors = {}
+    
+    if (!gender) errors.gender = "성별을 선택해주세요."
+    
+    if (!birthYear) {
+      errors.birthYear = "출생연도를 입력해주세요."
+    } else {
+      const yearValue = parseInt(birthYear, 10)
+      if (isNaN(yearValue) || yearValue < 1900 || yearValue > currentYear) {
+        errors.birthYear = `출생연도는 1900~${currentYear} 사이여야 합니다.`
+      }
     }
-    setSearchPopupProps(props)
-    setIsSearchPopupOpen(true) // 팝업 열기
-  }
-
-  // 검색 팝업 닫기
-  const handleClosePopup = () => {
-    setIsSearchPopupOpen(false) // 팝업 닫기
-    // props는 유지 (다음에 같은 카테고리 검색할 때 사용)
-  }
-
-  const uploadUserInit = async (payload) => {
-    return axios.post("user/init", payload)
-  }
-
-  const mutation = useMutation({
-    mutationFn: uploadUserInit,
-    onSuccess: () => {
-      alert("회원 정보 등록에 성공했습니다.")
-      useSearchPopupStore.getState().resetItems() // 스토어 초기화
-      navigate("/")
-    },
-    onError: () => {
-      alert("회원 정보 등록 중 오류가 발생했습니다.")
-    },
-  })
-
-  // 현재 상태와 초기 상태를 비교하는 함수(header 설정을 위함함)
-  const hasUnsavedChanges = () => {
-    const currentState = {
-      gender,
-      birthYear,
-      nickname,
-      skinTypes,
-      suitableCosmetics: items.suitableCosmetics,
-      unsuitableCosmetics: items.unsuitableCosmetics,
-      suitableIngredients: items.suitableIngredients,
-      unsuitableIngredients: items.unsuitableIngredients,
+    
+    if (!nickname.trim()) {
+      errors.nickname = "닉네임을 입력해주세요."
+    } else if (nickname.length < 2 || nickname.length > 10) {
+      errors.nickname = "닉네임은 2~10자 사이로 입력해주세요."
+    } else if (!nicknameChecked) {
+      errors.nickname = "닉네임 중복확인을 해주세요."
     }
+    
+    if (skinTypes.length === 0) {
+      errors.skinTypes = "최소 1개 이상의 피부타입을 선택해주세요."
+    }
+    
+    // 유효성 검사 상태를 ref와 state 모두에 저장
+    validationStateRef.current = {
+      isValid: Object.keys(errors).length === 0,
+      errors
+    };
+    
+    setValidationErrors(errors)
+    return Object.keys(errors).length === 0
+  }, [gender, birthYear, nickname, nicknameChecked, skinTypes, currentYear])
 
-    return JSON.stringify(currentState) !== JSON.stringify(initialState)
-  }
-
-  // 다음 버튼(1단계) / 완료 버튼(2단계)
-  const handleNextOrSubmit = () => {
+  // 다음/제출 버튼 핸들러 - 중복 클릭 방지 로직 추가
+  const handleNextOrSubmit = useCallback(() => {
+    // 이미 처리 중이거나 최근에 클릭했으면 무시
+    if (isSubmitting || clickTimerRef.current) return
+    
+    // 중복 클릭 방지를 위한 타이머 설정 (300ms)
+    clickTimerRef.current = setTimeout(() => {
+      clickTimerRef.current = null
+    }, 300)
+    
     if (step === 1) {
-      // 1단계 데이터 확인 후 2단계로 이동
-      if (!nicknameChecked) {
-        alert("닉네임 중복확인을 해주세요!")
+      // 동기식으로 유효성 검사 실행
+      const isValid = validateStep1()
+      
+      if (!isValid) {
+        const errorMessages = Object.values(validationStateRef.current.errors)
+          .filter(msg => msg).join('\n')
+        
+        if (errorMessages) {
+          alert(`다음 항목을 확인해주세요:\n${errorMessages}`)
+        }
         return
       }
-
-      // 2단계로 넘어갈 때 현재 상태를 초기 상태로 저장
-      setInitialState({
-        gender,
-        birthYear,
-        nickname,
-        skinTypes,
-        suitableCosmetics: items.suitableCosmetics,
-        unsuitableCosmetics: items.unsuitableCosmetics,
-        suitableIngredients: items.suitableIngredients,
-        unsuitableIngredients: items.unsuitableIngredients,
-      })
-      console.log("step1data", initialState)
+      
+      // 스텝 1에서 2로 넘어갈 때 저장된 정보 확인 로그
+      console.log("=== 스텝 1 저장 정보 ===");
+      console.log("성별:", gender);
+      console.log("출생연도:", birthYear);
+      console.log("닉네임:", nickname);
+      console.log("닉네임 중복확인 완료:", nicknameChecked);
+      console.log("선택된 피부타입:", skinTypes);
+      
+      // 다음 단계로 즉시 이동
       setStep(2)
     } else if (step === 2) {
-      // 필수 항목 체크
+      setIsSubmitting(true)
+      
       if (!items.suitableCosmetics.length || !items.unsuitableCosmetics.length) {
+        setIsSubmitting(false)
         alert("잘 맞는 화장품과 맞지 않는 화장품은 필수로 등록해야 합니다.")
         return
       }
@@ -160,52 +264,109 @@ function UserForm() {
         year: Number(birthYear),
         nickname: nickname,
         skinTypeIds: skinTypes,
-        ...getApiPayload(), // 스토에의 변환 함수 사용
+        ...getApiPayload()
       }
-      console.log("최종 payload: ", payload)
-      mutation.mutate(payload)
+      
+      // 즉시 API 호출
+      userInitMutation.mutate(payload)
     }
-  }
+  }, [
+    step, validateStep1, isSubmitting,
+    gender, birthYear, nickname, nicknameChecked, skinTypes, 
+    items, getApiPayload, userInitMutation
+  ])
+
+  // 컴포넌트 언마운트 시 타이머 정리
+  useEffect(() => {
+    return () => {
+      if (clickTimerRef.current) {
+        clearTimeout(clickTimerRef.current)
+      }
+    }
+  }, [])
 
   return (
     <div className="user-form-container">
-      {/* 두번째 페이지에서만 뒤로가기 버튼이 필요요 */}
-      <Header title="회원정보 입력" onBack={() => setStep(1)} showBackButton={step === 2} confirmBack={hasUnsavedChanges()} />
+      <Header 
+        title="회원정보 입력" 
+        onBack={() => setStep(1)} 
+        showBackButton={step === 2} 
+      />
 
       {step === 1 && (
         <>
           <div className="form-section">
-            {/* 성별, 출생연도, 닉네임 */}
             <UserInfo1
               gender={gender}
-              setGender={setGender}
+              setGender={(value) => handleInputChange('gender', value)}
               birthYear={birthYear}
-              setBirthYear={setBirthYear}
+              setBirthYear={(value) => handleInputChange('birthYear', value)}
               nickname={nickname}
-              setNickname={handleNicknameChange}
+              setNickname={(value) => handleInputChange('nickname', value)}
               onNicknameCheck={handleNicknameCheck}
+              errors={validationErrors}
             />
 
-            {/* 피부타입 (중복선택) */}
-            <Category skinTypes={skinTypes} onToggleType={toggleSkinType} />
+            <Category 
+              skinTypes={skinTypes} 
+              onToggleType={toggleSkinType} 
+              error={validationErrors.skinTypes}
+            />
           </div>
 
-          {/* "다음" 버튼 */}
-          <Button text="다음" color="white" onClick={handleNextOrSubmit} />
+          <Button 
+            text="다음" 
+            color="white" 
+            onClick={handleNextOrSubmit}
+            disabled={isSubmitting} 
+          />
         </>
       )}
 
       {step === 2 && (
         <>
-          <UserInfo2 label="나에게 잘 맞는 화장품 등록(필수)" placeholder="나에게 잘 맞는 화장품을 등록해주세요" onSearchClick={handleSearch} category="suitableCosmetics" />
-          <UserInfo2 label="나에게 잘 맞는 성분 등록(선택)" placeholder="나에게 잘 맞는 성분을 등록해주세요" onSearchClick={handleSearch} category="suitableIngredients" />
-          <UserInfo2 label="나에게 맞지 않는 화장품 등록(필수)" placeholder="나에게 맞지 않는 화장품을 등록해주세요" onSearchClick={handleSearch} category="unsuitableCosmetics" />
-          <UserInfo2 label="나에게 맞지 않는 성분 등록(선택)" placeholder="나에게 맞지 않는 성분을 등록해주세요" onSearchClick={handleSearch} category="unsuitableIngredients" />
+          <UserInfo2 
+            label="나에게 잘 맞는 화장품 등록(필수)" 
+            placeholder="나에게 잘 맞는 화장품을 등록해주세요" 
+            onSearchClick={() => handleSearch("suitableCosmetics")} 
+            category="suitableCosmetics" 
+            items={items.suitableCosmetics}
+          />
+          <UserInfo2 
+            label="나에게 잘 맞는 성분 등록(선택)" 
+            placeholder="나에게 잘 맞는 성분을 등록해주세요" 
+            onSearchClick={() => handleSearch("suitableIngredients")} 
+            category="suitableIngredients"
+            items={items.suitableIngredients} 
+          />
+          <UserInfo2 
+            label="나에게 맞지 않는 화장품 등록(필수)" 
+            placeholder="나에게 맞지 않는 화장품을 등록해주세요" 
+            onSearchClick={() => handleSearch("unsuitableCosmetics")} 
+            category="unsuitableCosmetics"
+            items={items.unsuitableCosmetics} 
+          />
+          <UserInfo2 
+            label="나에게 맞지 않는 성분 등록(선택)" 
+            placeholder="나에게 맞지 않는 성분을 등록해주세요" 
+            onSearchClick={() => handleSearch("unsuitableIngredients")} 
+            category="unsuitableIngredients"
+            items={items.unsuitableIngredients} 
+          />
 
-          <Button text="완료" color="white" onClick={handleNextOrSubmit} />
+          <Button 
+            text={isSubmitting ? "제출 중..." : "완료"} 
+            color="white" 
+            onClick={handleNextOrSubmit}
+            disabled={isSubmitting}
+          />
 
-          {/* 검색 팝업 */}
-          {isSearchPopupOpen && searchPopupProps && <SearchPopup {...searchPopupProps} onClose={handleClosePopup} />}
+          {isSearchPopupOpen && searchPopupProps && (
+            <SearchPopup 
+              {...searchPopupProps} 
+              onClose={() => setIsSearchPopupOpen(false)} 
+            />
+          )}
         </>
       )}
     </div>
