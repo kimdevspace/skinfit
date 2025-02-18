@@ -10,20 +10,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/search")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class IngredientController {
 
     private final IngredientService ingredientService;
 
     // ✅ 성분 자동완성 검색 API (10개 제한, 가나다 > 알파벳 순)
-    @GetMapping("/ingredients")
+    @GetMapping("/search/ingredients/autocomplete")
     public ResponseEntity<List<IngredientAutoCompleteDto>> autoCompleteIngredient(
             @RequestParam String query) {
         return ResponseEntity.ok(ingredientService.autoCompleteIngredient(query));
     }
 
-    @GetMapping("/ingredients/details")
+    @GetMapping("/search/ingredients/result")
     public ResponseEntity<List<IngredientAutoCompleteDto>> autoCompleteIngredientDetail(
             @RequestParam String query) {
         return ResponseEntity.ok(ingredientService.autoCompleteIngredient(query));
