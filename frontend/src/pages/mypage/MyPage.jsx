@@ -251,8 +251,6 @@ function MyPage() {
 
       {/* 검색 팝업창 */}
       {editPopupProps && <SearchPopup {...editPopupProps} />}
-=========
->>>>>>>>> Temporary merge branch 2
 
         {/* 리뷰 목록 */}
         <div className="review-wrapper">
@@ -274,7 +272,6 @@ function MyPage() {
           </p>
           {isWithdrawOpen && <PwCheckPopUp onClose={handleWithdrawPopup} state="withdraw" />}
         </div>
-      </div>
       <NavBar />
     </>
   )
