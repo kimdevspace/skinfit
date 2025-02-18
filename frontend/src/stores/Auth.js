@@ -29,5 +29,3 @@ const useAuthStore = create(
 );
   
 export default useAuthStore;
-  
-export default useAuthStore;
