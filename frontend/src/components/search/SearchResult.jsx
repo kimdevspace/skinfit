@@ -8,6 +8,8 @@ import {
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSearchComplete } from "../../stores/Search.js";
+import Category from "../common/Category.jsx";
+import { useState } from "react";
 
 // 서치 아이템 컴포넌트
 // data : 검색 결과 배열
@@ -15,7 +17,7 @@ import { useSearchComplete } from "../../stores/Search.js";
 // type : 화장품(cosmetic)인지 성분(ingredient)인지
 // category : suitableCosmetics, suitableIngredients, unsuitableCosmetics, unsuitableIngredients
 //searchWord,setSearchWord : 검색된/되고있는 단어
-// isSubmit,setIsSubmit: 검색폼 제출 여부부
+// isSubmit,setIsSubmit: 검색폼 제출 여부
 
 // 제품명 임의로 15글자 이상일 때 .. 처리
 const truncateText = (text, maxLength) => {
@@ -33,90 +35,61 @@ function SearchResult({
   searchWord,
   setSearchWord,
   isSubmit,
+  setIsSubmit
 }) {
+  // 제출된 검색어를 저장할 상태 추가(연관검색어관리)
+  const [submittedWord, setSubmittedWord] = useState("");
+
   // 연관검색어 목록 스토어 사용
-  const { setRelatedQuery } = useRelatedCosmeticsStore();
-  const { data: relatedData, isLoading, error } = useRelatedCosmetics();
+  const { setRelatedQuery, setApiCategory2 } = useRelatedCosmeticsStore();
+  const { data: relatedData } = useRelatedCosmetics();
 
   //**
   // 검색돋보기 검색목록 스토어 사용
   const { data: searchedData } = useSearchComplete();
 
-  // searchWord가 변경될 때마다 연관검색어 쿼리 업데이트
+  // 실시간 검색어 감지(연관검색어 api 요청) 
   useEffect(() => {
     if (searchWord && searchWord.length > 0) {
-      setRelatedQuery(searchWord); // 연관검색어 쿼리 설정 -> api 요청 수행
+      setApiCategory2(category);
+      setRelatedQuery(searchWord); // 연관검색어 쿼리 업데이트트 설정 -> api 요청 수행
+      console.log("연관검색어 쿼리요청 검색어 :", searchWord);
     }
-  }, [searchWord, setRelatedQuery]); // 변경사항 있을 때 해당 훅 재실행
+
+    if (isSubmit) {
+      // 제출되었을 때 지금 검색어 != 이전 검색어 구분 (연관검색어 관리리)
+      setSubmittedWord(searchWord);
+      // 제출 시 연관검색어 쿼리 초기화
+      setRelatedQuery("");
+      setIsSubmit(false); // 제출 상태 초기화 
+
+    }
+  }, [isSubmit, setIsSubmit, searchWord, setRelatedQuery, setApiCategory2, category]);
+
+  // 현재 검색어가 수정 중인지 확인(연관검색어관리)
+  const isSearchWordModified = searchWord !== submittedWord;
 
   //ocr 페이지로 보내기
   const navigate = useNavigate();
 
   return (
-
-    // ** ---------------------
     <>
-      {/* 1. location에 따른 검색 결과 표시 */}
-      {location === "page"
-        ? // 페이지에서 표시
-          datas?.map((item) => (
-            // 일반 검색 페이지
-            <SearchItem
-              key={item.cosmeticId || item.ingredientId}
-              data={item}
-            />
-          ))
-        : // 마이페이지 내 팝업에서 표시
-          searchedData?.map((item) => (
-            <SearchPopupItem
-              key={item.cosmeticId || item.ingredientId}
-              data={item}
-              type={type}
-              category={category}
-            />
-          ))}
-
-      {/* 2. 검색어는 있지만 결과가 없는 경우 */}
-      {isSubmit && searchWord && (!datas || !searchedData) && (
-        <div className="wrong-search">
-          <h2>검색 결과가 없어요</h2>
-          <p>철자를 확인하거나 다른 키워드로 검색해주세요</p>
-          {location === "page" && !datas && (
-            <>
-              <p className="ptag-2">등록되지 않은 화장품이라면?</p>
-              <button
-                className="register-btn"
-                onClick={() => {
-                  navigate("/ocr");
-                }}
-              >
-                사진 찍어 화장품 등록하기
-              </button>
-            </>
-          )}
-        </div>
-      )}
-{/* -------------------------- */}
-
-      {/* 연관검색어 목록 표시 */}
-      {!isSubmit && searchWord && searchWord.length > 0 && (
+      {/* 1. 검색어 수정 중일 때 (연관검색어 표시) */}
+      {isSearchWordModified && searchWord && (
         <div className="margin-setting">
-          {relatedData?.length > 0 ? (
+          {relatedData && relatedData.length > 0 ? (
             relatedData.map((item, idx) => (
               <div
                 key={idx}
-                //setSearchWord 안을 type === 'cosmetics ' 일 때 cosmetic.cosmeticWithBrand
-                //setSearchWord 안을 type === 'ingredient ' 일 때 ingredient.name
                 onClick={() => {
-                  // type에 따라 다른 속성값 사용
                   const searchValue =
-                    type === "cosmetics" ? item.cosmeticWithBrand : item.name;
+                    type === "cosmetic" ? item.cosmeticWithBrand : item.name;
                   setSearchWord(searchValue);
                 }}
               >
                 <p>
                   {truncateText(
-                    type === "cosmetics" ? item.cosmeticWithBrand : item.name,
+                    type === "cosmetic" ? item.cosmeticWithBrand : item.name,
                     15
                   )}
                 </p>
@@ -130,6 +103,52 @@ function SearchResult({
           )}
         </div>
       )}
+
+      {/* 2. 검색이 제출되었고 결과가 있을 때 */}
+      {!isSearchWordModified && 
+        searchWord &&
+        (location === "page"
+          ? datas?.length > 0
+          : searchedData?.length > 0) && (
+          <>
+            {location === "page"
+              ? datas?.map((item) => (
+                  <SearchItem
+                    key={item.cosmeticId || item.ingredientId}
+                    data={item}
+                  />
+                ))
+              : searchedData?.map((item) => (
+                  <SearchPopupItem
+                    key={item.cosmeticId || item.ingredientId}
+                    data={item}
+                    type={type}
+                    category={category}
+                  />
+                ))}
+          </>
+        )}
+
+      {/* 3. 검색이 제출되었고 결과가 없을 때 */}
+      {!isSearchWordModified && 
+        searchWord &&
+        (location === "page" ? !datas?.length : !searchedData?.length) && (
+          <div className="wrong-search">
+            <h2>검색 결과가 없어요</h2>
+            <p>철자를 확인하거나 다른 키워드로 검색해주세요</p>
+            {location === "page" && (
+              <>
+                <p className="ptag-2">등록되지 않은 화장품이라면?</p>
+                <button
+                  className="register-btn"
+                  onClick={() => navigate("/ocr")}
+                >
+                  사진 찍어 화장품 등록하기
+                </button>
+              </>
+            )}
+          </div>
+        )}
     </>
   );
 }
