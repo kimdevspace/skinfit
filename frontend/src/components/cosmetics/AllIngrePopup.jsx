@@ -8,7 +8,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 // 전성분 정보 가져오는 api 요청
 const fetchAllIngredient = async (cosmeticId) => {
-  const response = await axios.get(`search/${cosmeticId}/details`);
+  const response = await axios.get(`${cosmeticId}/details`);
   return response.data;
 };
 
@@ -33,7 +33,7 @@ function AllIngrePopup({ cosmeticId, closePopup }) {
   }
 
   // api에서 받아온 전성분 데이터
-  const { low, moderate, high, others } = allIngredient.data
+  const { low, moderate, high, others } = allIngredient
 
 
   // 등급별 데이터 매핑
