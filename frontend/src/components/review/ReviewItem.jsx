@@ -45,14 +45,23 @@ const fetchReviewsDelete = async ({ cosmeticId, reviewId }) => {
 };
 
 export default function ReviewItem({ review, reviewType }) {
-  const queryClient = useQueryClient(); //
+  const queryClient = useQueryClient();
+  const params = useParams(); //
+
   //  인증 토큰
   const { isAuthenticated, accessToken } = useAuthStore();
 
   //신고팝업창 관리
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  //파라미터
-  const { cosmeticId, reviewId } = useParams(); // 화장품, 리뷰 id 파라미터
+
+  // 화장품, 리뷰 Id 가져오기
+  let cosmeticId;
+  if (reviewType === 'generalReviews') {
+    cosmeticId = params.cosmeticId; // 파라미터에서 가져옴
+  } else {
+    cosmeticId = review.cosmetic.cosmeticId; // review 객체에서 가져옴
+  }
+  const reviewId = review.reviewId;
 
   // JWT 토큰 디코딩하여 userId 얻기
   const getUserId = useCallback(() => {
