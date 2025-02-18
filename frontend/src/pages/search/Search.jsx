@@ -75,7 +75,7 @@ function Search() {
 
     // 2. 검색 관련 상태 설정
     setQuery(searchInput) // 사용자 검색어
-    setApiCategory("cosmetics")
+    setApiCategory("cosmetic")
     setIsSubmit(true)
     setSearchWord(searchInput) //검색바에 보여질 단어 업데이트
 
@@ -179,7 +179,7 @@ function Search() {
       </form>
 
       {/* 화장품 검색결과/혹은 검색결과 없을 때의 화면 / 혹은 실시간 검색어 검색바에 입력시 실시간으로 연관검색어 목록 뜨게 하기기 */}
-      <SearchResult datas={data} searchWord={searchWord} setSearchWord={setSearchWord} isSubmit={isSubmit} setIsSubmit={setIsSubmit} category="cosmetics" />
+      <SearchResult datas={data} searchWord={searchWord} setSearchWord={setSearchWord} isSubmit={isSubmit} setIsSubmit={setIsSubmit} category="cosmetic" />
     </div>
   )
 }
