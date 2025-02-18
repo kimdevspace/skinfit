@@ -10,6 +10,11 @@ import lombok.Getter;
 @Builder
 public class SignInResponse {
     private String accessToken;
+    private String refreshToken;
     private boolean isRegistered;
     private RoleType roleType;
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }

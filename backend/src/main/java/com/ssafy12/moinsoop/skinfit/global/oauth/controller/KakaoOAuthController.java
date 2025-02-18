@@ -8,6 +8,7 @@ import com.ssafy12.moinsoop.skinfit.global.oauth.dto.KakaoTokenResponse;
 import com.ssafy12.moinsoop.skinfit.global.oauth.dto.KakaoUserInfo;
 import com.ssafy12.moinsoop.skinfit.global.oauth.service.KaKaoOAuthService;
 import com.ssafy12.moinsoop.skinfit.global.security.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.antlr.v4.runtime.Token;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.time.Duration;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -56,7 +58,8 @@ public class KakaoOAuthController {
     }
 
     @GetMapping("/login/oauth2/code/kakao")
-    public ResponseEntity<?> kakaoCallback(@RequestParam String code) {
+    public ResponseEntity<?> kakaoCallback(@RequestParam String code,
+                                           HttpServletResponse response) {
         log.info("인가 코드: {}", code);
 
         // 토큰 요청을 위한 헤더 설정
@@ -106,13 +109,26 @@ public class KakaoOAuthController {
 
                     refreshTokenService.saveRefreshToken(user.getUserId(), jwtRefreshToken);
 
-                    SignInResponse response = SignInResponse.builder()
+                    // HTTP Only 쿠키에 리프레시 토큰 설정
+                    ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", jwtRefreshToken)
+                            .httpOnly(true)
+                            .secure(true)
+                            .sameSite("Strict")
+                            .path("/")
+                            .maxAge(Duration.ofSeconds(604800))
+                            .build();
+
+                    response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+
+                    // 응답에는 리프레시 토큰 제외
+                    SignInResponse signInResponse = SignInResponse.builder()
                             .accessToken(jwtAccessToken)
                             .isRegistered(isRegistered)
                             .roleType(user.getRoleType())
                             .build();
 
-                    return ResponseEntity.ok(response);
+                    return ResponseEntity.ok(signInResponse);
+
                 }
             }
 
