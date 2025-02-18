@@ -6,14 +6,15 @@ import useAuthStore from '../stores/Auth';
 // 서버 주소가 "http://localhost:8080/api/v1/"로 시작하는 경우:
 const axiosInstance = axios.create({
   baseURL: '/api/v1/', // 서버 기본 URL 설정
-  withCredentials: true // 쿠키를 주고받기 위해 필수
+  withCredentials: true, // 쿠키를 주고받기 위해 필수
+  timeout: 10000, // 10초 후 요청 타임아웃
 });
 
 // 요청 인터셉터
 axiosInstance.interceptors.request.use((config) => {
-  const accessToken = useAuthStore.getState().accessToken;
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
+  const token = localStorage.getItem('accessToken');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
   // FormData나 JSON에 따라 자동으로 Content-Type 설정
   return config;
@@ -36,15 +37,25 @@ axiosInstance.interceptors.response.use(
       try {
         // 리프레시 토큰은 쿠키에 있으므로 body 없이 요청
         const response = await axiosInstance.post('/auth/reissue');
-        const newAccessToken = response.data.accessToken;
         
-        // 새 액세스 토큰 저장
-        useAuthStore.getState().setAuth(newAccessToken);
-        
-        // 원래 요청의 헤더에 새 토큰 설정
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        return axiosInstance(originalRequest);
+        // 응답 헤더에서 새 액세스 토큰 추출
+        if (response.headers.authorization || response.headers.Authorization) {
+          const authHeader = response.headers.authorization || response.headers.Authorization;
+          const newToken = authHeader.split('Bearer ')[1];
+          
+          if (newToken) {
+            // 스토어 업데이트
+            const { roleType, isRegistered } = useAuthStore.getState();
+            useAuthStore.getState().setAuth(newToken, roleType, isRegistered);
+            
+            // 원래 요청의 헤더에 새 토큰 설정
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            return axiosInstance(originalRequest);
+          }
+        }
+        throw new Error('No token in refresh response');
       } catch (refreshError) {
+        // 리프레시 실패 시 로그아웃 처리
         useAuthStore.getState().clearAuth();
         window.location.href = '/auth/login';
         return Promise.reject(refreshError);
@@ -53,6 +64,5 @@ axiosInstance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
 
 export default axiosInstance;
