@@ -31,7 +31,7 @@ public class IngredientSearchDto {
     private List<IngredientDetailDto> filterOthers(List<CosmeticIngredient> cosmeticIngredients) {
         return cosmeticIngredients.stream()
                 .map(ci -> new IngredientDetailDto(ci.getIngredient(), ci.getSequence()))
-                .filter(dto -> dto.getEwgScoreMax() == null) // ✅ EWG 점수가 없는 경우만 포함
+                .filter(dto -> dto.getEwgScoreMax() == null || dto.getEwgScoreMax() == 0) // ✅ EWG 점수가 없는 경우만 포함
                 .sorted((i1, i2) -> Integer.compare(i1.getSequence(), i2.getSequence()))
                 .collect(Collectors.toList());
     }
