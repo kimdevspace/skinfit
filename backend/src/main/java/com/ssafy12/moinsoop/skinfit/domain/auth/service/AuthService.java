@@ -48,6 +48,7 @@ public class AuthService {
         SignInResponse response = SignInResponse
                 .builder()
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .isRegistered(isRegistered)
                 .roleType(user.getRoleType())
                 .build();
