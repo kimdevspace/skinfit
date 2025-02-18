@@ -248,6 +248,30 @@ function MyPage() {
           {isWithdrawOpen && <PwCheckPopUp onClose={handleWithdrawPopup} state="withdraw" />}
         </div>
       </div>
+
+      {/* 검색 팝업창 */}
+      {editPopupProps && <SearchPopup {...editPopupProps} />}
+
+        {/* 리뷰 목록 */}
+        <div className="review-wrapper">
+          <h2>리뷰 목록</h2>
+          {/* props로 함수 전달 */}
+          <ToggleButton text1="내가 좋아요한 리뷰" text2="내가 작성한 리뷰" handler={reviewHandler} />
+
+          {/* 리뷰 데이터를 하나씩 전달 */}
+          {isReviewClicked === "내가 좋아요한 리뷰"
+            ? likedReviews?.map((review) => <ReviewItem key={review.reviewId} review={review} reviewType="likedReviews" />)
+            : myReviews?.map((review) => <ReviewItem key={review.reviewId} review={review} reviewType="myReviews" />)}
+        </div>
+
+        {/* 회원탈퇴 */}
+        <hr className="hr-line" />
+        <div>
+          <p className="signout" onClick={handleWithdrawPopup}>
+            회원탈퇴
+          </p>
+          {isWithdrawOpen && <PwCheckPopUp onClose={handleWithdrawPopup} state="withdraw" />}
+        </div>
       <NavBar />
     </>
   )
