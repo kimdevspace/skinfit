@@ -31,13 +31,21 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
   // 검색 완료시 api 요청
   const handleSearchSubmit = () => {
     setQuery(searchWord); // 검색어 쿼리 전달
-    setApiCategory(type); // 검색어 api 경로 쿼리 전달 
+    if (type === 'ingredient') {
+      setApiCategory('ingredients'); // 검색어 api 경로 쿼리 전달 
+    } else {
+      setApiCategory(type); // 검색어 api 경로 쿼리 전달 
+    }
     setIsSubmit(true);
   };
 
   // 화장품명/성분명 검색 완료 & 연관검색 api 요청
   useEffect(() => {
-    setApiCategory2(type); // 연관검색어 api 경로 쿼리 전달
+    if (type === 'ingredient') {
+      setApiCategory('ingredients'); // 연관검색어 api 경로 쿼리 전달
+    } else {
+      setApiCategory(type); // 연관검색어 api 경로 쿼리 전달
+    }
     setRelatedQuery(searchWord); // ** 연관검색어 쿼리 전달 // 여기 위치가 맞나?
   }, [type, searchWord, setApiCategory2,  setRelatedQuery]); // 무한루프 방지 // ** 
 
