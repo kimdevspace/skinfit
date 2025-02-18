@@ -75,7 +75,7 @@ function ReviewRegister(cosmeticId) {
     }
 
     // content 유효성 검사
-    if (!reviewData.reviewContent) {
+    if (!reviewData.reviewContent === "") {
       contentErrorRef.current.classList.add("error")
       return
     } else {
