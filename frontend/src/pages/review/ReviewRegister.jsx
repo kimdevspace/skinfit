@@ -26,7 +26,9 @@ function ReviewRegister(cosmeticId) {
   // 폼 데이터 변경 감지 함수
   const hasUnsavedChanges = () => {
     // 폼 데이터 변경 여부 확인 로직
-    return Object.keys(reviewData).length > 0
+    return reviewData.rating !== null || 
+           reviewData.reviewContent !== "" || 
+           reviewData.images.length > 0
   }
 
   // 피부 적합 여부
@@ -65,7 +67,7 @@ function ReviewRegister(cosmeticId) {
     e.preventDefault()
 
     // rating 유효성 검사
-    if (!reviewData.rating) {
+    if (reviewData.rating === null) {
       ratingErrorRef.current.classList.add("error")
       return
     } else {
