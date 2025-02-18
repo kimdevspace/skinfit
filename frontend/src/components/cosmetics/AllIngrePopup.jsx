@@ -8,7 +8,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 // 전성분 정보 가져오는 api 요청
 const fetchAllIngredient = async (cosmeticId) => {
-  const response = await axios.get(`cosmetic/${cosmeticId}/all-ingredients`);
+  const response = await axios.get(`search/${cosmeticId}/details`);
   return response.data;
 };
 

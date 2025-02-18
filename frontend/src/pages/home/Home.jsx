@@ -21,6 +21,8 @@ function Home() {
   // 메인 페이지(추천 상품, 화장품 정보) 필요한 정보 api 요청
   const fetchMainPageInfo = async () => {
     const response = await axios.get("mainpage");
+    console.log("여긴 홈.jsx",response.data);
+    
     return response.data;
   };
 
@@ -33,16 +35,18 @@ function Home() {
     queryFn: fetchMainPageInfo,
   });
 
+    // 로딩, 에러 확인
+    if (isLoading) {
+      return console.log("로딩중", isLoading);
+    }
+    if (isError) {
+      return console.log("에러", isError);
+    }
+  
+
   // api에서 받아온 정보 데이터
   const { level, goodCosmeticsCount, badCosmeticsCount, recommendedCosmetics } = mainInfo
 
-  // 로딩, 에러 확인
-  if (isLoading) {
-    return console.log("로딩중", isLoading);
-  }
-  if (isError) {
-    return console.log("에러", isError);
-  }
 
   const levelImg = {
     1: level1Img,

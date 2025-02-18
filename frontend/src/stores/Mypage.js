@@ -1,216 +1,245 @@
-import { create } from "zustand"
-import axios from "../api/axiosInstance"
-import { useQuery } from "@tanstack/react-query"
+import { useEffect } from "react";
+import { create } from "zustand";
+import axios from "../api/axiosInstance";
+import { useQuery } from "@tanstack/react-query";
 
-//#region 마이페이지 메인(닉네임, 피부타입 등등)
-// 액션
+//
+//#region 마이페이지 메인 (닉네임, 피부타입 등)
+// 액션: MyPage 데이터 패칭 함수
 const fetchMyPage = async () => {
-  const response = await axios.get("user/mypage")
-  if (response.data.status === "success") {
-    return response.data
-  }
-  throw new Error("Failed to fetch cosmetics")
-}
+  const response = await axios.get("user/mypage");
+  console.log("응답데이터 (MyPage):", response.data);
+  // 응답 데이터가 바로 데이터 객체라면 반환
+  return response.data;
+};
 
-//set 함수 : zustand store 업데이트 함수
-// create : 스토어 생성
+// Zustand 스토어 생성
 export const useMyPageStore = create((set) => ({
-  setNickname: (nickname) => set({ nickname }),
-  setSkinTypeId: (skinTypeId) => set({ skinTypeId }),
-}))
+  myInfos: null,
+  setMyInfos: (infos) => {
+    console.log("setMyInfos 호출됨 with:", infos);
+    set({ myInfos: infos });
+  },
+}));
 
-// React Query hook (캐싱된 데이터를 불러온다다)
+// React Query 훅
 export const useMyPageInfo = () => {
-  const setNickname = useMyPageStore((state) => state.setNickname)
-  const setSkinTypeId = useMyPageStore((state) => state.setSkinTypeId)
-
-  //useQuery 는 서버로부터 데이터를 요청하여 받아오는 GET api
-  // const {data} = useQuery(쿼리 키, 쿼리 함수, 옵션);
-  // 쿼리함수 => 비동기 익명 함수
-  return useQuery({
+  const setMyInfos = useMyPageStore((state) => state.setMyInfos);
+  const queryResult = useQuery({
     queryKey: ["myPage"],
     queryFn: fetchMyPage,
-    // 성공시 콜백함수
-    onSuccess: (data) => {
-      setNickname(data.nickname)
-      setSkinTypeId(Array.isArray(data.skinTypeId ? data.skinTypeId : [data.skinTypeId]))
-    },
-  })
-}
+    // 매번 새 데이터를 받도록 옵션 설정
+    refetchOnMount: true,
+    staleTime: 0,
+  });
 
-export default useMyPageStore
+  useEffect(() => {
+    if (queryResult.data) {
+      console.log("useEffect - queryResult.data 있음:", queryResult.data);
+      setMyInfos(queryResult.data);
+      console.log("useEffect - 스토어 업데이트 완료");
+    }
+  }, [queryResult.data, setMyInfos]);
+
+  return queryResult;
+};
+
+export default useMyPageStore;
 //#endregion
 
-//#region top3 데이터 불러오기
-
+//
+//#region Top3 데이터 불러오기
 const fetchTop3Data = async () => {
-  const response = await axios.get("user/mypage/bad-ingredient-three")
-  return response.data
-}
+  const response = await axios.get("user/mypage/bad-ingredients-three");
+  console.log("Mypage.js 안좋은 성분 top 3:", response.data);
+  return response.data;
+};
 
-// create : 스토어 생성
+// Zustand 스토어 생성
 export const useTop3DataStore = create((set) => ({
-  top3Data :[],
-  setTop3Data: (data) => set({ top3Data: data })
-}))
+  top3Data: [],
+  setTop3Data: (data) => set({ top3Data: data }),
+}));
 
-
+// React Query 훅 (useEffect를 이용하여 zustand 스토어 업데이트)
 export const useTop3Data = () => {
-  const setTop3Data = useTop3DataStore((state) => state.setTop3Data)
-
-  return useQuery({
+  const setTop3Data = useTop3DataStore((state) => state.setTop3Data);
+  const queryResult = useQuery({
     queryKey: ["top3Data"],
     queryFn: fetchTop3Data,
-    onSuccess: (data) => {
-      console.log("TOP3 데이터 조회완료", data)
-      setTop3Data(data.ingredients)
-    },
-    onError: (error) => {
-      console.error("top3 성분 조회 에러", error)
-    },
-  })
-}
+    refetchOnMount: true,
+    staleTime: 0,
+  });
+
+  useEffect(() => {
+    if (queryResult.data) {
+      // API 응답 데이터의 ingredientNames 필드를 zustand 스토어에 저장
+      console.log("useEffect - Top3 데이터:", queryResult.data.ingredientNames);
+      setTop3Data(queryResult.data.ingredientNames);
+    }
+  }, [queryResult.data, setTop3Data]);
+
+  return queryResult;
+};
 //#endregion
 
+//
 //#region 내가 등록한 화장품 목록 불러오기
 const fetchMyCosmetics = async () => {
-  const response = await axios.get("users/mypage/cosmetics")
-  return response.data
-}
+  const response = await axios.get("user/mypage/cosmetics");
+  console.log("내가등록화장품", response.data);
+  return response.data;
+};
 
-
-// create : 스토어 생성
+// Zustand 스토어 생성
 export const useMyCosmeticsStore = create((set) => ({
   myMatchedCosData: [],
-  myUnmatchedCosData : [],
-  //기존 객체 업데이트
+  myUnMatchedCosData: [],
   setMyMatchedCosData: (data) => set({ myMatchedCosData: data }),
   setMyUnMatchedCosData: (data) => set({ myUnMatchedCosData: data }),
+}));
 
-}))
-
+// React Query 훅 (useEffect를 사용하여 zustand 스토어 업데이트)
 export const useMyCosmetics = () => {
-  const setMyMatchedCosData = useMyCosmeticsStore((state) => state.setMyMatchedCosData)
-  const setMyUnMatchedCosData = useMyCosmeticsStore((state) => state.setMyUnMatchedCosData)
+  const setMyMatchedCosData = useMyCosmeticsStore(
+    (state) => state.setMyMatchedCosData
+  );
+  const setMyUnMatchedCosData = useMyCosmeticsStore(
+    (state) => state.setMyUnMatchedCosData
+  );
 
-  return useQuery({
+  // useQuery를 사용하여 데이터를 패칭합니다.
+  const queryResult = useQuery({
     queryKey: ["myCosmetics"],
     queryFn: fetchMyCosmetics,
-    onSuccess: (data) => {
-      console.log("내가 등록한 화장품 데이터 조회완료", data)
-      setMyMatchedCosData(data.suitableCosmetics) // 데이터 저장
-      setMyUnMatchedCosData(data.unsuitableCosmetics)
-    },
-    onError: (error) => {
-      console.error("내가 등록한 화장품 데이터 조회 에러", error)
-    },
-  })
-}
+    refetchOnMount: true,
+    staleTime: 0,
+  });
 
-//#endregion 
+  // queryResult.data가 업데이트되면 zustand 스토어에 저장합니다.
+  useEffect(() => {
+    if (queryResult.data) {
+      console.log("useEffect - 내가 등록한 화장품 데이터 조회완료:", queryResult.data);
+      setMyMatchedCosData(queryResult.data.suitableCosmetics);
+      setMyUnMatchedCosData(queryResult.data.unsuitableCosmetics);
+    }
+  }, [queryResult.data, setMyMatchedCosData, setMyUnMatchedCosData]);
 
+  return queryResult;
+};
+//#endregion
 
-
+//
 //#region 내가 등록한 성분 목록 불러오기
 const fetchMyIngredients = async () => {
-  const response = await axios.get("user/mypage/ingredients")
-  return response.data
-}
+  const response = await axios.get("user/mypage/ingredients");
+  return response.data;
+};
 
-// create : 스토어 생성
+// Zustand 스토어 생성
 export const useMyIngredientsStore = create((set) => ({
   myMatchedIngreData: [],
   myUnMatchedIngreData: [],
-  //기존 객체 업데이트
   setMyMatchedIngreData: (data) => set({ myMatchedIngreData: data }),
   setMyUnMatchedIngreData: (data) => set({ myUnMatchedIngreData: data }),
-}))
+}));
 
+// React Query 훅 (useEffect를 이용해 zustand 스토어 업데이트)
 export const useMyIngredients = () => {
-  const setMyMatchedIngreData = useMyIngredientsStore((state) => state.setMyMatchedIngreData)
-  const setMyUnMatchedIngreData = useMyIngredientsStore((state) => state.setMyUnMatchedIngreData)
+  const setMyMatchedIngreData = useMyIngredientsStore(
+    (state) => state.setMyMatchedIngreData
+  );
+  const setMyUnMatchedIngreData = useMyIngredientsStore(
+    (state) => state.setMyUnMatchedIngreData
+  );
 
-  return useQuery({
+  // useQuery를 통해 데이터를 패칭합니다.
+  const queryResult = useQuery({
     queryKey: ["myIngredients"],
     queryFn: fetchMyIngredients,
-    onSuccess: (data) => {
-      console.log("내가 등록한 성분 데이터 조회완료", data)
-      setMyMatchedIngreData(data.suitableIngredients) // 데이터 저장
-      setMyUnMatchedIngreData(data.unsuitableIngredients) // 데이터 저장
-    },
-    onError: (error) => {
-      console.error("내가 등록한 성분분 데이터 조회 에러", error)
-    },
-  })
-}
+    refetchOnMount: true,
+    staleTime: 0,
+  });
 
-//#endregion 
+  // queryResult.data가 업데이트되면 zustand 스토어를 업데이트합니다.
+  useEffect(() => {
+    if (queryResult.data) {
+      console.log("내가 등록한 성분 데이터 조회완료:", queryResult.data);
+      setMyMatchedIngreData(queryResult.data.suitableIngredients);
+      setMyUnMatchedIngreData(queryResult.data.unsuitableIngredients);
+    }
+  }, [queryResult.data, setMyMatchedIngreData, setMyUnMatchedIngreData]);
 
+  return queryResult;
+};
+//#endregion
+
+//
 //#region 리뷰 데이터 불러오기
 export const fetchReviews = async () => {
-  const response = await axios.get("user/mypage/review")
-  return response.data
-}
+  const response = await axios.get("user/mypage/review");
+  return response.data;
+};
 
-
-// Zustand store 생성
+// Zustand 스토어 생성
 export const useReviewsStore = create((set) => ({
   myReviews: [],
   likedReviews: [],
   setMyReviews: (data) => set({ myReviews: data }),
-  setLikedReviews: (data) => set({ likedReviews: data })
-}))
+  setLikedReviews: (data) => set({ likedReviews: data }),
+}));
 
-// 커스텀 훅: 리뷰 데이터 조회 및 상태 저장
+// React Query 훅 (useEffect를 사용해 zustand 스토어 업데이트)
 export const useReviews = () => {
-  const setMyReviews = useReviewsStore((state) => state.setMyReviews)
-  const setLikedReviews = useReviewsStore((state) => state.setLikedReviews)
+  const setMyReviews = useReviewsStore((state) => state.setMyReviews);
+  const setLikedReviews = useReviewsStore((state) => state.setLikedReviews);
+  
+  // useQuery로 데이터를 패칭합니다.
+  const queryResult = useQuery({
+    queryKey: ["reviews"],
+    queryFn: fetchReviews,
+    refetchOnMount: true,
+    staleTime: 0,
+  });
+  
+  // queryResult.data가 업데이트되면 zustand 스토어를 업데이트합니다.
+  useEffect(() => {
+    if (queryResult.data) {
+      console.log("리뷰 데이터 조회 완료:", queryResult.data);
+      setMyReviews(queryResult.data.myReviews);
+      setLikedReviews(queryResult.data.likedReviews);
+    }
+  }, [queryResult.data, setMyReviews, setLikedReviews]);
+  
+  return queryResult;
+};
+//#endregion
 
-  return useQuery({
-    queryKey: ['reviews'], // 쿼리 키는 하나로 설정
-    queryFn: fetchReviews, // 동일한 API 호출 함수 사용
-    onSuccess: (data) => {
-      console.log('리뷰 데이터 조회 완료', data)
-      setMyReviews(data.myReviews) // Zustand 스토어에 myReviews 저장
-      setLikedReviews(data.likedReviews) // Zustand 스토어에 likedReviews 저장
-    },
-    onError: (error) => {
-      console.error('리뷰 데이터 조회 에러', error)
-    },
-  })
-}
-//#endregion 
-
-
-//#region 성분 자세히 보기 데이터(랭킹)
+//
+//#region 성분 자세히 보기 데이터 (랭킹)
 export const fetchUnsuits = async () => {
-  const response = await axios.get("user/mypage/detail-unsuit-ingredients")
-  return response.data
-}
+  const response = await axios.get("user/mypage/detail-unsuit-ingredients");
+  return response.data;
+};
 
-
-// Zustand store 생성
+// Zustand 스토어 생성
 export const useUnsuitStore = create((set) => ({
   myUnsuits: [],
   setMyUnsuits: (data) => set({ myUnsuits: data }),
+}));
 
-}))
-
-// 커스텀 훅: 리뷰 데이터 조회 및 상태 저장
 export const useUnsuit = () => {
-  const setMyUnsuits = useUnsuitStore((state) => state.setMyUnsuits)
-
+  const setMyUnsuits = useUnsuitStore((state) => state.setMyUnsuits);
   return useQuery({
-    queryKey: ['unsuitData'], // 쿼리 키는 하나로 설정
-    queryFn: fetchUnsuits, // 동일한 API 호출 함수 사용
+    queryKey: ["unsuitData"],
+    queryFn: fetchUnsuits,
     onSuccess: (data) => {
-      console.log('안맞는 성분 랭킹 데이터 조회 완료', data)
-      setMyUnsuits(data.myReviews) 
-
+      console.log("안맞는 성분 랭킹 데이터 조회 완료:", data);
+      setMyUnsuits(data.myReviews);
     },
     onError: (error) => {
-      console.error('안맞는 성분 랭킹 데이터 조회 에러', error)
+      console.error("안맞는 성분 랭킹 데이터 조회 에러:", error);
     },
-  })
-}
-//#endregion 
+  });
+};
+//#endregion

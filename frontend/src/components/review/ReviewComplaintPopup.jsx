@@ -10,10 +10,10 @@ function ReviewComplaintPopup({ onClose, cosmeticId, reviewId }) {
   const [reportData, setReportData] = useState('');
 
   // 신고 post 요청
-  const reportReview = async (report) => {
+  const reportReview = async (reasonData) => {
     return axios.post(
       `cosmetics/${cosmeticId}/reviews/${reviewId}/report`,
-      { reason: report.reason }
+      { reason: reasonData }
     );
   };  
 
@@ -45,7 +45,7 @@ function ReviewComplaintPopup({ onClose, cosmeticId, reviewId }) {
     }
     
     //mutate 메서드 (비동기처리)
-    mutation.mutate({ reason: reportData});
+    mutation.mutate({ reason: reportData });
   }
 
   return (

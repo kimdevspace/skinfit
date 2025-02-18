@@ -5,7 +5,7 @@ import Login from "../pages/auth/Login";
 import SignUp from "../pages/auth/SignUp";
 import FindPW from "../pages/auth/FindPW";
 import UserForm from "../pages/auth/UserForm";
-import { ProtectedRoute, AuthRoute } from "./ProtectedRoutes";
+import { AuthRoute, UserFormRoute } from "./ProtectedRoutes";
 
 function AuthRoutes() {
   return (
@@ -37,9 +37,9 @@ function AuthRoutes() {
       <Route
         path="userform"
         element={
-          <ProtectedRoute>
+          <UserFormRoute>
             <UserForm />
-          </ProtectedRoute>
+          </UserFormRoute>
         }
       />
     </Routes>
