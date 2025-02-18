@@ -42,7 +42,7 @@ export default function PwCheckPopUp({ onClose, state }) {
 
   // 비밀번호 검증 요청
   const pwReview = async (userPassword) => {
-    return axios.post(`user/password-verify`, {
+    return axios.post(`user/mypage/password-verify`, {
       userPassword
     });
   };
@@ -53,7 +53,7 @@ export default function PwCheckPopUp({ onClose, state }) {
     onSuccess: () => {
       console.log("비밀번호 검증 완료");
 
-      navigate("/info"); // 내 정보수정하기 페이지로 이동
+      navigate("/mypage/edit"); // 내 정보수정하기 페이지로 이동
     },
     onError: (error) => {
       console.error("비밀번호 검증 에러", error);

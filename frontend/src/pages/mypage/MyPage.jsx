@@ -131,7 +131,7 @@ function MyPage() {
             <span>skinfit이 찾은 </span>
             <span className="color-text">나와 맞지 않는 성분 TOP 3</span>
           </div>
-          <hr />
+          <hr className='item-line' />
           <div className="ranking-text">
             {Array.isArray(top3Data) &&
               top3Data.map((ingredient) => (
@@ -190,7 +190,7 @@ function MyPage() {
                   <span className="cosmetic-name">{cos.cosmeticName}</span>
                   <img src={cos.imageUrl || ""} alt={cos.cosmeticName} />
                 </div>
-                <hr />
+                <hr className='item-line' />
               </div>
             ))}
           </div>
@@ -234,9 +234,17 @@ function MyPage() {
               <div key={ing.ingredientId }>
                 <div className="ingredient-list">
                   <div className="ingredient-name">{ing.ingredientName }</div>
-                  <div className="ewg-level">{ing.ewgScoreMin} - {ing.ewgScoreMax}</div>
+                  {ing.ewgScoreMin !== 0 ? (
+                        <div className={`ewg-level ${ing.ewgScoreMin <= 2 ? "green" : ing.ewgScoreMin <= 6 ? "orange" : "red"}`}>
+                          {ing.ewgScoreMin} - {ing.ewgScoreMax}
+                        </div>
+                      ) : ing.ewgScoreMax !== 0 ? (
+                        <div className={`ewg-level ${ing.ewgScoreMax <= 2 ? "green" : ing.ewgScoreMax <= 6 ? "orange" : "red"}`}>
+                          {ing.ewgScoreMax}
+                        </div>
+                      ) : <div>-</div>}
                 </div>
-                <hr />
+                <hr className='item-line' />
               </div>
             ))}
           </div>

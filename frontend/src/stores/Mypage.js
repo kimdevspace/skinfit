@@ -230,16 +230,20 @@ export const useUnsuitStore = create((set) => ({
 
 export const useUnsuit = () => {
   const setMyUnsuits = useUnsuitStore((state) => state.setMyUnsuits);
-  return useQuery({
+  const queryResult = useQuery({
     queryKey: ["unsuitData"],
     queryFn: fetchUnsuits,
-    onSuccess: (data) => {
-      console.log("안맞는 성분 랭킹 데이터 조회 완료:", data);
-      setMyUnsuits(data.myReviews);
-    },
-    onError: (error) => {
-      console.error("안맞는 성분 랭킹 데이터 조회 에러:", error);
-    },
+    refetchOnMount: true,
+    staleTime: 0,
   });
+
+  useEffect(() => {
+    if (queryResult.data) {
+      console.log("안맞는 성분 랭킹 데이터 조회 완료:", queryResult.data);
+      setMyUnsuits(queryResult.data.ingredients);
+    }
+  }, [queryResult.data, setMyUnsuits]);
+  
+  return queryResult;
 };
 //#endregion

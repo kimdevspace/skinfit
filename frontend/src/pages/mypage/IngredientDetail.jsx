@@ -151,22 +151,16 @@ export default function IngredientDetail() {
                     <div className="ingredient-count">{unsuit.detectionCount}회</div>
 
                     <div className="ewg-level-wrapper">
-                      {unsuit.ewgScoreMin ? (
+                      {unsuit.ewgScoreMin !== 0 ? (
                         <div className={`ewg-level ${unsuit.ewgScoreMin <= 2 ? "green" : unsuit.ewgScoreMin <= 6 ? "orange" : "red"}`}>
-                          <span>{unsuit.ewgScoreMin}</span>
-                          <span>-</span>
-                          <span>{unsuit.ewgScoreMax}</span>
+                          {unsuit.ewgScoreMin} - {unsuit.ewgScoreMax}
                         </div>
-                      ) : unsuit.ewgScoreMin == null ? (
+                      ) : unsuit.ewgScoreMax !== 0 ? (
                         <div className={`ewg-level ${unsuit.ewgScoreMax <= 2 ? "green" : unsuit.ewgScoreMax <= 6 ? "orange" : "red"}`}>
-                          <span className="blank-tag">{unsuit.ewgScoreMax}-</span>
-                          <span>{unsuit.ewgScoreMax}</span>
+                          {unsuit.ewgScoreMax}
                         </div>
-                      ) : unsuit.ewgScoreMax === "-" ? (
-                        <span>-</span>
-                      ) : null}
+                      ) : <div>-</div>}
                     </div>
-                    <hr />
                   </div>
                 </div>
               ))}
