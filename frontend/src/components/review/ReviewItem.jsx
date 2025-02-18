@@ -49,7 +49,7 @@ export default function ReviewItem({ review, reviewType }) {
   const params = useParams(); //
 
   //  인증 토큰
-  const { isAuthenticated, accessToken } = useAuthStore();
+  const { accessToken } = useAuthStore();
 
   //신고팝업창 관리
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -177,14 +177,7 @@ export default function ReviewItem({ review, reviewType }) {
       {reviewType !== "myReviews" ? (
         <div className="user-info-section">
           <span className="user-name">{review.userNickname}님</span>
-          <div className="age-skintype">
-            <span className="user-age">{review.userAgeGroup} |</span>
-            {review?.userSkinTypes?.map((skintype, index) => (
-              <span key={index} className="user-skintype">
-                {" "}
-                {skintype}{" "}
-              </span>
-            ))}
+          <div className="age-skintype">{review.userAgeGroup} | {review.userSkinTypes}
           </div>
           <span className={`user-answer ${scoreMap[review.score].class}`}>
             {scoreMap[review.score].text}
@@ -196,7 +189,7 @@ export default function ReviewItem({ review, reviewType }) {
 
       {/* review는 객체이므로 map을 사용할 수 없습니다. 수정이 필요합니다 */}
       <div className="review-content">
-        {review.content}
+        {review.reviewContent}
         {review.images?.map((img, imgIndex) => (
           <img
             key={imgIndex}
@@ -221,7 +214,7 @@ export default function ReviewItem({ review, reviewType }) {
               <button className="report-btn" onClick={handlePopup}>
                 신고 | {dayjs(review.createdAt).format("YYYY-MM-DD")}
               </button>
-              {isPopupOpen && <ReviewComplaintPopup onClose={handlePopup} />}
+              {isPopupOpen && <ReviewComplaintPopup onClose={handlePopup} cosmeticId={cosmeticId} reviewId={reviewId} />}
             </>
           ) : (
             <button className="report-btn" onClick={handleDeleteReview}>
