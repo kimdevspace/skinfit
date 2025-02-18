@@ -34,7 +34,7 @@ function Home() {
   });
 
   // api에서 받아온 정보 데이터
-  const { level, goodCosmeticsCount, badCosmeticsCount, recommendedCosmetics } = mainInfo.data
+  const { level, goodCosmeticsCount, badCosmeticsCount, recommendedCosmetics } = mainInfo
 
   // 로딩, 에러 확인
   if (isLoading) {

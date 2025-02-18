@@ -1,78 +1,81 @@
-import React, { useState } from "react";
-import Header from "../../components/common/Header.jsx";
-import UserInfo1 from "../../components/auth/UserInfo1.jsx";
-import Category from "../../components/common/Category.jsx";
-import Button from "../../components/common/Button.jsx";
-import UserInfo2 from "../../components/auth/UserInfo2.jsx";
-import { useMutation } from "@tanstack/react-query";
-import axios from "../../api/axiosInstance.js";
-import { useNavigate } from "react-router-dom";
-import { useSearchPopupStore } from "../../stores/SearchPopup.js";
-import SearchPopup from "../../components/search/SearchPopup.jsx";
+import React, { useState } from "react"
+import Header from "../../components/common/Header.jsx"
+import UserInfo1 from "../../components/auth/UserInfo1.jsx"
+import Category from "../../components/common/Category.jsx"
+import Button from "../../components/common/Button.jsx"
+import UserInfo2 from "../../components/auth/UserInfo2.jsx"
+import { useMutation } from "@tanstack/react-query"
+import axios from "../../api/axiosInstance.js"
+import { useNavigate } from "react-router-dom"
+import { useSearchPopupStore } from "../../stores/SearchPopup.js"
+import SearchPopup from "../../components/search/SearchPopup.jsx"
 
 function UserForm() {
   // ===== 1단계: 기본 회원정보 =====
-  const [gender, setGender] = useState("");
-  const [birthYear, setBirthYear] = useState(""); // 문자열로 입력됨 (최종 payload에서는 숫자로 변환)
-  const [nickname, setNickname] = useState("");
-  const [skinTypes, setSkinTypes] = useState([]);
-  const [nicknameChecked, setNicknameChecked] = useState(false);
+  const [gender, setGender] = useState("")
+  const [birthYear, setBirthYear] = useState("") // 문자열로 입력됨 (최종 payload에서는 숫자로 변환)
+  const [nickname, setNickname] = useState("")
+  const [skinTypes, setSkinTypes] = useState([])
+  const [nicknameChecked, setNicknameChecked] = useState(false)
 
-  // 멀티 스텝 관리
-  const [step, setStep] = useState(1);
-  const navigate = useNavigate();
+  // 데이터 변경 감지를 위한 초기 상태 저장(header 설정을 위함함)
+  const [initialState, setInitialState] = useState({
+    gender: "",
+    birthYear: "",
+    nickname: "",
+    skinTypes: [],
+    suitableCosmetics: [],
+    unsuitableCosmetics: [],
+    suitableIngredients: [],
+    unsuitableIngredients: [],
+  })
+
+  // 멀티 스텝 관리(경로는 같지만 여러 페이지인척척 다루기)
+  const [step, setStep] = useState(1)
+
+  // SearchPopup 상태 관리
+  const [isSearchPopupOpen, setIsSearchPopupOpen] = useState(false)
+  const [searchPopupProps, setSearchPopupProps] = useState(null)
+
+  const navigate = useNavigate()
+
 
   const nicknameMutation = useMutation({
     mutationFn: async (payload) => {
-      return axios.post("user/nickname-duplicate", payload);
+      return axios.post("user/nickname-duplicate", payload)
     },
     onSuccess: (response) => {
       // response.data에 응답 메시지가 있다고 가정합니다.
-      alert(response.data);
-      setNicknameChecked(true);
+      alert(response.data)
+      setNicknameChecked(true)
     },
     onError: () => {
-      alert("닉네임 중복 확인 중 오류가 발생했습니다.");
-      setNicknameChecked(false);
+      alert("닉네임 중복 확인 중 오류가 발생했습니다.")
+      setNicknameChecked(false)
     },
-  });
+  })
 
   const handleNicknameChange = (value) => {
-    setNickname(value);
-    setNicknameChecked(false);
-  };
+    setNickname(value)
+    setNicknameChecked(false)
+  }
 
   // 닉네임 중복확인
   const handleNicknameCheck = () => {
-    nicknameMutation.mutate({ nickname });
-  };
+    nicknameMutation.mutate({ nickname })
+  }
 
   // 피부타입 토글
   const toggleSkinType = (typeId) => {
     if (skinTypes.includes(typeId)) {
-      setSkinTypes(skinTypes.filter((id) => id !== typeId));
+      setSkinTypes(skinTypes.filter((id) => id !== typeId))
     } else {
-      setSkinTypes([...skinTypes, typeId]);
+      setSkinTypes([...skinTypes, typeId])
     }
-  };
-
-  // 뒤로가기 버튼 클릭
-  const handleBack = () => {
-    console.log("뒤로가기 클릭");
-    // 필요 시 step을 1로 되돌리거나, 라우터 navigate(-1) 등
-    if (step === 2) {
-      setStep(1);
-    } else {
-      // 다른 로직
-    }
-  };
+  }
 
   // 스토어에서 getApiPayload 함수와 items 가져오기
-  const { getApiPayload, items } = useSearchPopupStore();
-
-  // SearchPopup 상태 관리
-  const [isSearchPopupOpen, setIsSearchPopupOpen] = useState(false);
-  const [searchPopupProps, setSearchPopupProps] = useState(null);
+  const { getApiPayload, items } = useSearchPopupStore()
 
   // 검색 팝업 열기
   const handleSearch = (category) => {
@@ -80,52 +83,76 @@ function UserForm() {
       type: category.includes("Cosmetics") ? "cosmetic" : "ingredient",
       suitability: category.includes("unsuitable") ? "unsuitable" : "suitable",
       category: category,
-    };
-    setSearchPopupProps(props);
-    setIsSearchPopupOpen(true); // 팝업 열기
-  };
+    }
+    setSearchPopupProps(props)
+    setIsSearchPopupOpen(true) // 팝업 열기
+  }
 
   // 검색 팝업 닫기
   const handleClosePopup = () => {
-    setIsSearchPopupOpen(false); // 팝업 닫기
+    setIsSearchPopupOpen(false) // 팝업 닫기
     // props는 유지 (다음에 같은 카테고리 검색할 때 사용)
-  };
+  }
 
   const uploadUserInit = async (payload) => {
-    return axios.post("user/init", payload);
-  };
+    return axios.post("user/init", payload)
+  }
 
   const mutation = useMutation({
     mutationFn: uploadUserInit,
     onSuccess: () => {
-      alert("회원 정보 등록에 성공했습니다.");
-      useSearchPopupStore.getState().resetItems(); // 스토어 초기화
-      navigate("/");
+      alert("회원 정보 등록에 성공했습니다.")
+      useSearchPopupStore.getState().resetItems() // 스토어 초기화
+      navigate("/")
     },
     onError: () => {
-      alert("회원 정보 등록 중 오류가 발생했습니다.");
+      alert("회원 정보 등록 중 오류가 발생했습니다.")
     },
-  });
+  })
+
+  // 현재 상태와 초기 상태를 비교하는 함수(header 설정을 위함함)
+  const hasUnsavedChanges = () => {
+    const currentState = {
+      gender,
+      birthYear,
+      nickname,
+      skinTypes,
+      suitableCosmetics: items.suitableCosmetics,
+      unsuitableCosmetics: items.unsuitableCosmetics,
+      suitableIngredients: items.suitableIngredients,
+      unsuitableIngredients: items.unsuitableIngredients,
+    }
+
+    return JSON.stringify(currentState) !== JSON.stringify(initialState)
+  }
 
   // 다음 버튼(1단계) / 완료 버튼(2단계)
   const handleNextOrSubmit = () => {
     if (step === 1) {
       // 1단계 데이터 확인 후 2단계로 이동
       if (!nicknameChecked) {
-        alert("닉네임 중복확인을 해주세요!");
-        return;
+        alert("닉네임 중복확인을 해주세요!")
+        return
       }
-      const step1Data = { gender, birthYear, nickname, skinTypes };
-      console.log("1단계 입력 데이터: ", step1Data);
-      setStep(2);
+
+      // 2단계로 넘어갈 때 현재 상태를 초기 상태로 저장
+      setInitialState({
+        gender,
+        birthYear,
+        nickname,
+        skinTypes,
+        suitableCosmetics: items.suitableCosmetics,
+        unsuitableCosmetics: items.unsuitableCosmetics,
+        suitableIngredients: items.suitableIngredients,
+        unsuitableIngredients: items.unsuitableIngredients,
+      })
+      console.log("step1data", initialState)
+      setStep(2)
     } else if (step === 2) {
       // 필수 항목 체크
-      if (
-        !items.suitableCosmetics.length ||
-        !items.unsuitableCosmetics.length
-      ) {
-        alert("잘 맞는 화장품과 맞지 않는 화장품은 필수로 등록해야 합니다.");
-        return;
+      if (!items.suitableCosmetics.length || !items.unsuitableCosmetics.length) {
+        alert("잘 맞는 화장품과 맞지 않는 화장품은 필수로 등록해야 합니다.")
+        return
       }
 
       const payload = {
@@ -134,15 +161,16 @@ function UserForm() {
         nickname: nickname,
         skinTypeIds: skinTypes,
         ...getApiPayload(), // 스토에의 변환 함수 사용
-      };
-      console.log("최종 payload: ", payload);
-      mutation.mutate(payload);
+      }
+      console.log("최종 payload: ", payload)
+      mutation.mutate(payload)
     }
-  };
+  }
 
   return (
     <div className="user-form-container">
-      <Header title="회원정보 입력" onBack={handleBack} />
+      {/* 두번째 페이지에서만 뒤로가기 버튼이 필요요 */}
+      <Header title="회원정보 입력" onBack={() => setStep(1)} showBackButton={step === 2} confirmBack={hasUnsavedChanges()} />
 
       {step === 1 && (
         <>
@@ -169,41 +197,19 @@ function UserForm() {
 
       {step === 2 && (
         <>
-          <UserInfo2
-            label="나에게 잘 맞는 화장품 등록(필수)"
-            placeholder="나에게 잘 맞는 화장품을 등록해주세요"
-            onSearchClick={handleSearch}
-            category="suitableCosmetics"
-          />
-          <UserInfo2
-            label="나에게 잘 맞는 성분 등록(선택)"
-            placeholder="나에게 잘 맞는 성분을 등록해주세요"
-            onSearchClick={handleSearch}
-            category="suitableIngredients"
-          />
-          <UserInfo2
-            label="나에게 맞지 않는 화장품 등록(필수)"
-            placeholder="나에게 맞지 않는 화장품을 등록해주세요"
-            onSearchClick={handleSearch}
-            category="unsuitableCosmetics"
-          />
-          <UserInfo2
-            label="나에게 맞지 않는 성분 등록(선택)"
-            placeholder="나에게 맞지 않는 성분을 등록해주세요"
-            onSearchClick={handleSearch}
-            category="unsuitableIngredients"
-          />
+          <UserInfo2 label="나에게 잘 맞는 화장품 등록(필수)" placeholder="나에게 잘 맞는 화장품을 등록해주세요" onSearchClick={handleSearch} category="suitableCosmetics" />
+          <UserInfo2 label="나에게 잘 맞는 성분 등록(선택)" placeholder="나에게 잘 맞는 성분을 등록해주세요" onSearchClick={handleSearch} category="suitableIngredients" />
+          <UserInfo2 label="나에게 맞지 않는 화장품 등록(필수)" placeholder="나에게 맞지 않는 화장품을 등록해주세요" onSearchClick={handleSearch} category="unsuitableCosmetics" />
+          <UserInfo2 label="나에게 맞지 않는 성분 등록(선택)" placeholder="나에게 맞지 않는 성분을 등록해주세요" onSearchClick={handleSearch} category="unsuitableIngredients" />
 
           <Button text="완료" color="white" onClick={handleNextOrSubmit} />
 
           {/* 검색 팝업 */}
-          {isSearchPopupOpen && searchPopupProps && (
-            <SearchPopup {...searchPopupProps} onClose={handleClosePopup} />
-          )}
+          {isSearchPopupOpen && searchPopupProps && <SearchPopup {...searchPopupProps} onClose={handleClosePopup} />}
         </>
       )}
     </div>
-  );
+  )
 }
 
-export default UserForm;
+export default UserForm
