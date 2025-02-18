@@ -5,14 +5,13 @@ import useAuthStore from '../stores/Auth';
 // baseURL을 설정하면 이후 요청 시 자동으로 붙습니다.
 // 서버 주소가 "http://localhost:8080/api/v1/"로 시작하는 경우:
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8080/api/v1/', // 서버 기본 URL 설정
-  // withCredentials: true // 쿠키를 주고받기 위해 필수
+  baseURL: '/api/v1/', // 서버 기본 URL 설정
+  withCredentials: true // 쿠키를 주고받기 위해 필수
 });
 
 // 요청 인터셉터
 axiosInstance.interceptors.request.use((config) => {
   const accessToken = JSON.parse(localStorage.getItem("auth-storage")).state.accessToken;
-  // const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjIyLCJyb2xlVHlwZSI6IlVTRVIiLCJpYXQiOjE3Mzk4ODA4NjQsImV4cCI6MTc0MTY4MDg2NH0.TRWBT28fO-qeZCDeewqmQDeVckklKaGyB7IDnp0Kd0Q"
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
