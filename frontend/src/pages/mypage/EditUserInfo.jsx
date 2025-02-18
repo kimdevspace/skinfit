@@ -1,6 +1,6 @@
 import "./EditUserInfo.scss";
 import Category from "../../components/common/Category";
-import { useState, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../../api/axiosInstance.js";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -13,7 +13,7 @@ export default function EditUserInfo() {
   const navigate = useNavigate();
 
   // 닉네임 관리 변수
-  const [nickname, setNickname] = useState(userData?.nickname || "");
+  const [nickname, setNickname] = useState("");
 
   // 닉네임 중복확인
   const [nicknameChecked, setNicknameChecked] = useState(false);
@@ -36,21 +36,106 @@ export default function EditUserInfo() {
     return response.data;
   };
 
-  const useUserData = () => {
-    return useQuery({
-      queryKey: ["userData"], // 쿼리 키
-      queryFn: fetchUserData, // 데이터를 가져오는 함수
-      onSuccess: (data) => {
-        console.log("기존 유저 데이터 조회 완료", data);
-      },
-      onError: (error) => {
-        console.error("기존 유저 데이터 조회 에러", error);
-      },
-    });
+  const {
+    data: userData,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["userData"],
+    queryFn: fetchUserData,
+  });
+
+  // 사용자 데이터 로드 시 초기값 설정 (useEffect 사용)
+  useEffect(() => {
+    if (userData) {
+      setNickname(userData.nickname || "");
+      setSkinTypes(userData.skinTypes || []);
+      // 기존 닉네임은 검증이 필요 없으므로 중복 확인 상태를 true로 설정
+      setNicknameChecked(true);
+    }
+  }, [userData]);
+
+  //#endregion
+
+  //#region 닉네임 변경
+
+  //닉네임 중복확인 POST 요청
+  const nicknameMutation = useMutation({
+    mutationFn: async (payload) => {
+      return axios.post("user/nickname-duplicate", payload);
+    },
+    onSuccess: (response) => {
+      // response.data에 응답 메시지가 있다고 가정합니다.
+      alert(response.data);
+      setNicknameChecked(true);
+    },
+    onError: (error) => {
+      console.log(" 닉네임 중복확인 오류", error);
+      alert("닉네임 중복 확인 중 오류가 발생했습니다.");
+      setNicknameChecked(false);
+    },
+  });
+
+  // 닉네임 중복확인 post 요청 실행 함수
+  const handleNicknameCheck = () => {
+    nicknameMutation.mutate({ nickname });
   };
 
-  //기존 데이터 추출 //userData : 객체형태
-  const { data: userData } = useUserData();
+  // 닉네임 변경 핸들러
+  const handleNicknameChange = (value) => {
+    setNickname(value);
+    // 기존 닉네임과 다른 경우에만 중복 확인 상태 초기화
+    if (value !== userData?.nickname) {
+      setNicknameChecked(false);
+    } else {
+      // 원래 닉네임으로 돌아온 경우 중복 확인 불필요
+      setNicknameChecked(true);
+    }
+  };
+
+  //#endregion
+
+  //#region 비밀번호 변경
+
+  // 비밀번호 유효성 검사
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPwInput(value);
+    console.log("새 비밀번호", value);
+
+    // 간단한 예: 10자 이상 + 특수문자 포함 여부
+    if (value.length > 0) {
+      if (value.length < 10) {
+        setPasswordErrorMsg("총 10글자 이상이 되어야해요");
+        console.log("10글자 안됨 메시지", passwordErrorMsg);
+      } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+        setPasswordErrorMsg("특수문자가 포함되어 있지 않아요");
+        console.log("특수문자 포함 안됨 메시지", passwordErrorMsg);
+      } else {
+        setPasswordErrorMsg("");
+      }
+    } else {
+      setPasswordErrorMsg("");
+    }
+  };
+
+  // 비번 보임 설정정
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
+  //#endregion
+
+  //#region 피부타입
+
+  // 피부타입 토글
+  const toggleSkinType = (typeId) => {
+    if (skinTypes.includes(typeId)) {
+      setSkinTypes(skinTypes.filter((id) => id !== typeId));
+    } else {
+      setSkinTypes([...skinTypes, typeId]);
+    }
+  };
 
   //#endregion
 
@@ -98,75 +183,8 @@ export default function EditUserInfo() {
     mutation.mutate(payload);
   };
 
-  //#endregion
-
-  //#region 닉네임 변경
-
-  //닉네임 중복확인 POST 요청
-  const nicknameMutation = useMutation({
-    mutationFn: async (payload) => {
-      return axios.post("user/nickname-duplicate", payload);
-    },
-    onSuccess: (response) => {
-      // response.data에 응답 메시지가 있다고 가정합니다.
-      alert(response.data);
-      setNicknameChecked(true);
-    },
-    onError: (error) => {
-      console.log(" 닉네임 중복확인 오류", error);
-      alert("닉네임 중복 확인 중 오류가 발생했습니다.");
-      setNicknameChecked(false);
-    },
-  });
-
-  // 닉네임 중복확인 post 요청 실행 함수
-  const handleNicknameCheck = () => {
-    nicknameMutation.mutate({ nickname });
-  };
-
-  //#endregion
-
-  //#region 비밀번호 변경
-
-  // 비밀번호 유효성 검사
-  const handlePasswordChange = (e) => {
-    const value = e.target.value;
-    setPwInput(value);
-    console.log("새 비밀번호", value);
-
-    // 간단한 예: 10자 이상 + 특수문자 포함 여부
-    if (pwInput.length > 0) {
-      if (pwInput.length < 10) {
-        setPasswordErrorMsg("총 10글자 이상이 되어야해요");
-        console.log("10글자 안됨 메시지", passwordErrorMsg);
-      } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
-        setPasswordErrorMsg("특수문자가 포함되어 있지 않아요");
-        console.log("특수문자 포함 안됨 메시지", passwordErrorMsg);
-      } else {
-        setPasswordErrorMsg("");
-      }
-    } else {
-      setPasswordErrorMsg("");
-    }
-  };
-
-  // 비번 보임 설정정
-  const togglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev);
-  };
-
-  //#endregion
-
-  //#region 피부타입
-
-  // 피부타입 토글
-  const toggleSkinType = (typeId) => {
-    if (skinTypes.includes(typeId)) {
-      setSkinTypes(skinTypes.filter((id) => id !== typeId));
-    } else {
-      setSkinTypes([...skinTypes, typeId]);
-    }
-  };
+  if (isLoading) return <div>로딩 중...</div>;
+  if (error) return <div>오류가 발생했습니다: {error.message}</div>;
 
   //#endregion
 
@@ -181,7 +199,7 @@ export default function EditUserInfo() {
               id="nn"
               type="text"
               value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
+              onChange={(e) => handleNicknameChange(e.target.value)}
             />
             <button
               type="button"
@@ -203,7 +221,8 @@ export default function EditUserInfo() {
               <input
                 name="pw"
                 id="pw"
-                type={showPassword ? "password" : "text"}
+                type={showPassword ? "text" : "password"} // 수정된 부분
+                value={pwInput} // 추가: 제어 컴포넌트로 변경
                 placeholder="새 비밀번호를 입력해주세요"
                 onChange={handlePasswordChange}
               />
@@ -230,8 +249,8 @@ export default function EditUserInfo() {
         <Button
           text="완료"
           color="white"
-          onSubmit={handleUserInfoSubmit}
-          type="submit"
+          onClick={handleUserInfoSubmit} // onSubmit 대신 onClick 사용
+          type="button" // submit 대신 button 타입 사용
         />
       </div>
       <NavBar />
