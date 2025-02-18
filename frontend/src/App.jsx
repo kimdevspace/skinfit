@@ -9,7 +9,7 @@ import Search from "./pages/search/Search";
 import OcrScanner from "./pages/ocr/OcrScanner";
 import AdminRoutes from "./routes/AdminRoutes";
 import CompletePopUp from "./components/common/CompletePopUp";
-import { ProtectedRoute, AdminRoute } from "./routes/ProtectedRoutes";
+import { ProtectedRoute } from "./routes/ProtectedRoutes";
 
 function App() {
   return (
@@ -19,9 +19,9 @@ function App() {
         <Route
           path="/"
           element={
-            <ProtectedRoute>
+            // <ProtectedRoute>
               <Home />
-            </ProtectedRoute>
+            // </ProtectedRoute>
           }
         />
         <Route path="/intro" element={<Intro />} />
@@ -34,33 +34,33 @@ function App() {
         <Route
           path="/mypage/*"
           element={
-            <ProtectedRoute>
+            // <ProtectedRoute>
               <MyPageRoute />
-            </ProtectedRoute>
+            // {/* </ProtectedRoute> */}
           }
         />
         <Route
           path="/cosmetics/*"
           element={
-            <ProtectedRoute>
-              <CosmeticsRoute />
-            </ProtectedRoute>
+            // <ProtectedRoute>
+            <CosmeticsRoute />
+            // </ProtectedRoute>
           }
         />
         <Route
           path="/search"
           element={
-            <ProtectedRoute>
+            // <ProtectedRoute>
               <Search />
-            </ProtectedRoute>
+            // </ProtectedRoute>
           }
         />
         <Route
           path="/ocr"
           element={
-            <ProtectedRoute>
+            // <ProtectedRoute>
               <OcrScanner />
-            </ProtectedRoute>
+            // </ProtectedRoute>
           }
         />
 
@@ -68,9 +68,9 @@ function App() {
         <Route
           path="/admin/*"
           element={
-            <AdminRoute>
+            <ProtectedRoute>
               <AdminRoutes />
-            </AdminRoute>
+            </ProtectedRoute> 
           }
         />
       </Routes>
