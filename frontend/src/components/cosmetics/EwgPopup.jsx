@@ -3,7 +3,7 @@ import ewgImg from "../../assets/images/ewg_popup.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
-export default function EwgPopUp({onClose}) {
+export default function EwgPopup({onClose}) {
 
   return (
     <div className='popup-overlay'>

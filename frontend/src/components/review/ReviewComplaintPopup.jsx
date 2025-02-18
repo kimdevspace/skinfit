@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useState, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import axios from "../../api/axiosInstance";
 
 function ReviewComplaintPopup({ onClose, cosmeticId, reviewId }) {
   //신고 데이터
@@ -11,20 +11,18 @@ function ReviewComplaintPopup({ onClose, cosmeticId, reviewId }) {
 
   // 신고 post 요청
   const reportReview = async (report) => {
-    const formData = new FormData();
-    formData.append("reason", report.reason);
-
     return axios.post(
-      `/api/v1/cosmetics/${cosmeticId}/reviews/${reviewId}/report`,
-      formData
+      `cosmetics/${cosmeticId}/reviews/${reviewId}/report`,
+      { reason: report.reason }
     );
-  };
+  };  
 
   //react query
   const mutation = useMutation({
     mutationFn: reportReview,
     onSuccess: () => {
       console.log("신고접수 완료");
+      onClose();
     },
     onError: (error) => {
       console.error("신고 접수 에러", error);

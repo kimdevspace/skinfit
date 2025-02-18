@@ -54,13 +54,13 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
   const getApiUrl = () => {
     switch (category) {
       case "suitableCosmetics":
-        return "/api/v1/user/mypage/good-cosmetics";
+        return "user/mypage/good-cosmetics";
       case "unsuitableCosmetics":
-        return "/api/v1/user/mypage/bad-cosmetics";
+        return "user/mypage/bad-cosmetics";
       case "suitableIngredients":
-        return "/api/v1/user/mypage/good-ingredient";
+        return "user/mypage/good-ingredient";
       case "unsuitableIngredients":
-        return "/api/v1/user/mypage/bad-ingredient";
+        return "user/mypage/bad-ingredient";
       default:
         return "";
     }
@@ -78,7 +78,6 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
 
   // 수정 mutation
   const updateMutation = useMutation({
-    mutationKey: [category, "update"],
     mutationFn: (payload) => axios.put(getApiUrl(), payload),
     onSuccess: () => {
       alert("수정이 완료되었습니다.");

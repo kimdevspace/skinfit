@@ -1,34 +1,31 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import axios from "../../api/axiosInstance.js";
+import axios from "@/api/axiosInstance.js";
 import "./Home.scss";
-import Logo from "../../components/common/Logo";
-import RecommendItem from "../../components/home/RecommendItem";
+import Logo from "@/components/common/Logo";
+import RecommendItem from "@/components/home/RecommendItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
-import NavBar from "../../components/common/NavBar";
-import level1Img from "../../assets/images/level1.png";
-import level2Img from "../../assets/images/level2.png";
-import level3Img from "../../assets/images/level3.png";
-import AnalysisPopup from "../../components/home/AnalysisPopup.jsx";
+import NavBar from "@/components/common/NavBar";
+import level1Img from "@/assets/images/Level1.png";
+import level2Img from "@/assets/images/Level2.png";
+import level3Img from "@/assets/images/Level3.png";
+import AnalysisPopup from "@/components/home/AnalysisPopup.jsx";
 
 function Home() {
+  // 내 피부분석 정확도 팝업창 제어
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
   // 메인 페이지(추천 상품, 화장품 정보) 필요한 정보 api 요청
   const fetchMainPageInfo = async () => {
-    const response = await axios.get("mainpage", {
-      headers: {
-        // 'Authorization': `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await axios.get("mainpage");
     return response.data;
   };
 
   const {
     data: mainInfo,
-    error,
     isLoading,
     isError,
   } = useQuery({
@@ -37,14 +34,14 @@ function Home() {
   });
 
   // api에서 받아온 정보 데이터
-  // const { level, goodCosmeticsCount, badCosmeticsCount, recomCosmetic } = mainInfo.data
+  const { level, goodCosmeticsCount, badCosmeticsCount, recommendedCosmetics } = mainInfo
 
   // 로딩, 에러 확인
   if (isLoading) {
     return console.log("로딩중", isLoading);
   }
   if (isError) {
-    return console.log("에러", isLoading);
+    return console.log("에러", isError);
   }
 
   const levelImg = {
@@ -53,38 +50,7 @@ function Home() {
     3: level3Img,
   };
 
-  // #region 더미 데이터
-  // api 요청 받을 수 없어서 오류남 -> 더미 데이터 생성
-  const level = 3;
-  const goodCosmeticsCount = "2";
-  const badCosmeticsCount = "3";
-  const recomCosmetic = [
-    {
-      cosmeticId: 101,
-      cosmeticName: "수분 크림",
-      brandName: "브랜드 A",
-      imageUrl: "https://example.com/images/product1.jpg",
-      badge: {
-        mismatchedIngredientsCount: 0,
-        mismatchedIngredients: [],
-      },
-    },
-    {
-      cosmeticId: 102,
-      cosmeticName: "보습 로션",
-      brandName: "브랜드 B",
-      imageUrl: "https://example.com/images/product2.jpg",
-      badge: {
-        mismatchedIngredientsCount: 0,
-        mismatchedIngredients: [],
-      },
-    },
-  ];
-  // #endregion
-
   // #region 내 피부분석 정확도 안내 팝업창 함수
-  // 내 피부분석 정확도 팝업창 제어
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   // 내 피부분석 정확도 팝업 열기
   const openPopup = () => {
@@ -164,7 +130,7 @@ function Home() {
           <span className="nickname">먀먀</span>님의 추천 화장품
         </p>
         <div className="recommend-list">
-          {recomCosmetic.map((cosmetic) => (
+          {recommendedCosmetics.map((cosmetic) => (
             <RecommendItem key={cosmetic.cosmeticId} cosmetic={cosmetic} />
           ))}
         </div>

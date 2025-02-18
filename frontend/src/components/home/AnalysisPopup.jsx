@@ -2,9 +2,9 @@ import React from "react";
 import "./AnalysisPopup.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import level1Img from "../../assets/images/level1.png";
-import level2Img from "../../assets/images/level2.png";
-import level3Img from "../../assets/images/level3.png";
+import level1Img from "@/assets/images/Level1.png";
+import level2Img from "@/assets/images/Level2.png";
+import level3Img from "@/assets/images/Level3.png";
 
 function AnalysisPopup({ closePopup }) {
   const accuracyInfo = [

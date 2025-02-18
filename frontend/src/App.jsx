@@ -5,6 +5,7 @@ import HomeRoute from "./routes/HomeRoute";
 import CosmeticsRoute from "./routes/CosmeticsRoute";
 import Search from "./pages/search/Search";
 import OcrScanner from "./pages/ocr/OcrScanner";
+import AdminRoutes from "./routes/AdminRoutes";
 import CompletePopUp from "./components/common/CompletePopUp";
 
 function App() {
@@ -14,17 +15,13 @@ function App() {
         {/* 홈 관련 라우트 */}
         <Route path="/*" element={<HomeRoute />} />
 
-        {/* 기본 경로에서 '/auth/login'으로 리디렉트 */}
-        {/* frontend 개발 진행할 때 바꿔가면서 진행하시고 최종에 삭제 예정 */}
-        {/* <Route path="/" element={<Navigate to="/auth/login" replace />} /> */}
-
         {/* 인증 관련 라우트 */}
         <Route path="/auth/*" element={<AuthRoutes />} />
 
         {/* 마이페이지 라우트 */}
         <Route path="/mypage/*" element={<MyPageRoute />} />
 
-        {/* 제품 관련 페이지 라우트(제품 상세 페이지) */}
+        {/* 제품 관련 페이지 라우트 */}
         <Route path="/cosmetics/*" element={<CosmeticsRoute />} />
 
         {/* 검색 페이지 */}
@@ -32,9 +29,12 @@ function App() {
 
         {/* OCR 스캐너 페이지 */}
         <Route path="/ocr" element={<OcrScanner />} />
+        
+        {/* 어드민 관련 라우트 */}
+        <Route path="/admin/*" element={<AdminRoutes />} />
       </Routes>
 
-      {/* 완료 팝업창(전역적으로 사용하기 위해 라우트 밖에 배치) */}
+      {/* 완료 팝업창 (전역적으로 사용하기 위해 라우트 밖에 배치) */}
       <CompletePopUp />
     </>
   );
