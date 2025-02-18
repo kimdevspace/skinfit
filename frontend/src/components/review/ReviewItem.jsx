@@ -189,7 +189,7 @@ export default function ReviewItem({ review, reviewType }) {
 
       {/* review는 객체이므로 map을 사용할 수 없습니다. 수정이 필요합니다 */}
       <div className="review-content">
-        {review.content}
+        {reviewType === 'generalReviews' ? review.content : review.reviewContent}
         {review.images?.map((img, imgIndex) => (
           <img
             key={imgIndex}
