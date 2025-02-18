@@ -11,10 +11,21 @@ const axiosInstance = axios.create({
 
 // 요청 인터셉터
 axiosInstance.interceptors.request.use((config) => {
-  const accessToken = JSON.parse(localStorage.getItem("auth-storage")).state.accessToken;
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
+  try {
+    const authStorage = localStorage.getItem("auth-storage");
+    if (authStorage) {
+      const parsedAuth = JSON.parse(authStorage);
+      const accessToken = parsedAuth?.state?.accessToken;
+      
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
+    }
+  } catch (error) {
+    console.error("토큰 처리 중 오류 발생:", error);
+    // 토큰 처리 실패해도 요청은 계속 진행
   }
+  
   // FormData나 JSON에 따라 자동으로 Content-Type 설정
   return config;
 });
