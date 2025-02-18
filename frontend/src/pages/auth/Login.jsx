@@ -22,8 +22,8 @@ function Login() {
       console.log("registered 값:", registered, " | 타입:", typeof registered);
       console.log("로그인 성공:", response.data);
 
-      // 액세스 토큰 저장
-      setAuth(accessToken);
+      // 액세스 토큰과 등록 상태를 함께 저장
+      setAuth(accessToken, roleType, registered);
 
       // roleType에 따른 페이지 라우팅
       if (roleType === "ADMIN") {
