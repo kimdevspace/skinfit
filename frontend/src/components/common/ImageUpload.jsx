@@ -18,11 +18,19 @@ function ImageUpload({ images, setImages, maxImages, dataType, onError, error })
     const newFiles = Array.from(e.target.files)
     const allFiles = [...images, ...newFiles].slice(0, maxImages)
 
-    setImages((prev) => ({
-      ...prev,
-      images: allFiles,
-    }))
-
+    // 부모 컴포넌트의 상태 업데이트 방식에 따라 다르게 처리
+    if (typeof setImages === 'function') {
+      if (dataType === 'review' || dataType === 'ocr') {
+        // reviewData나 ocrData 객체의 images 필드 업데이트
+        setImages(prev => ({
+          ...prev,
+          images: allFiles
+        }));
+      } else {
+        // 단순 배열 업데이트
+        setImages(allFiles);
+      }
+    }
     // 사진 미리보기를 위한 URL 생성
     const newPreviewUrls = newFiles.map((file) => URL.createObjectURL(file))
     setImagePreviews((prevPreviews) => [...prevPreviews, ...newPreviewUrls].slice(0, maxImages))
@@ -44,18 +52,23 @@ function ImageUpload({ images, setImages, maxImages, dataType, onError, error })
       return updatedPreviews
     })
 
-    setImages((prevData) => {
-      const updatedImages = [...prevData.images]
-      updatedImages.splice(index, 1)
-
-      if (error && updatedImages.length === 0) {
-        onError(true) // 모든 이미지 삭제됐을 경우 에러 true 
+    // 부모 컴포넌트의 상태 업데이트 방식에 따라 다르게 처리
+    if (typeof setImages === 'function') {
+      if (dataType === 'review' || dataType === 'ocr') {
+        setImages(prev => {
+          const updatedImages = [...prev.images];
+          updatedImages.splice(index, 1);
+          return {
+            ...prev,
+            images: updatedImages
+          };
+        });
+      } else {
+        const updatedImages = [...images];
+        updatedImages.splice(index, 1);
+        setImages(updatedImages);
       }
-      return {
-        ...prevData,
-        images: updatedImages,
-      }
-    })
+    }
   }
 
   console.log(error)
