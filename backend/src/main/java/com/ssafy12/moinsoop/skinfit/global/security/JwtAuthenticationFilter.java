@@ -33,37 +33,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             if (token != null && jwtTokenProvider.validateToken(token)) {
-                // 유효한 토큰인 경우 정상 처리
                 Claims claims = jwtTokenProvider.getClaims(token);
-                setAuthentication(claims);  // 이 부분 추가
+                setAuthentication(claims);
             }
         } catch (ExpiredJwtException e) {
-            try {
-                // 만료된 액세스 토큰에서 정보 추출
-                Claims expiredClaims = e.getClaims();
-                Integer userId = expiredClaims.get("userId", Integer.class);
-                RoleType roleType = RoleType.valueOf(expiredClaims.get("roleType", String.class));
-
-                // Redis에서 리프레시 토큰 조회
-                String refreshToken = refreshTokenService.getRefreshToken(userId);
-                if (refreshToken != null && jwtTokenProvider.validateToken(refreshToken)) {
-                    // 새 액세스 토큰 생성
-                    String newAccessToken = jwtTokenProvider.generateAccessToken(userId, roleType);
-
-                    // 응답 헤더에 새 액세스 토큰 설정
-                    response.setHeader("Authorization", "Bearer " + newAccessToken);
-
-                    // 새 토큰의 클레임으로 인증 정보 설정
-                    Claims newClaims = jwtTokenProvider.getClaims(newAccessToken);
-                    setAuthentication(newClaims);  // 이 부분 추가
-                } else {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    return;
-                }
-            } catch (Exception refreshException) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
-            }
+            System.out.println("Token Expired Exception 발생!"); // 로그 추가
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"message\": \"Token is expired\"}");
+            response.getWriter().flush();
+            return;
+        } catch (Exception e) {
+            System.out.println("Other Exception: " + e.getMessage()); // 로그 추가
         }
 
         filterChain.doFilter(request, response);

@@ -1,10 +1,7 @@
 package com.ssafy12.moinsoop.skinfit.global.security;
 
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.enums.RoleType;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -42,12 +39,17 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
+            System.out.println("Validating token..."); // 로그 추가
             Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())
                     .build()
                     .parseClaimsJws(token);
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
+        } catch (ExpiredJwtException e) {
+            System.out.println("Token is expired in validateToken"); // 로그 추가
+            throw e;
+        } catch (Exception e) {
+            System.out.println("Token validation failed: " + e.getMessage()); // 로그 추가
             return false;
         }
     }
