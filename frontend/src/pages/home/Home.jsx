@@ -52,8 +52,8 @@ function Home() {
     const { level, goodCosmeticsCount, badCosmeticsCount, recommendedCosmetics } = mainInfo;
 
     // 추천 화장품 페이지네이션 로직
-    const totalPages = Math.ceil(recommendedCosmetics.length / itemsPerPage);
-    const paginatedCosmetics = recommendedCosmetics.slice(
+    const totalPages = Math.ceil(recommendedCosmetics?.length / itemsPerPage);
+    const paginatedCosmetics = recommendedCosmetics?.slice(
       (currentPage - 1) * itemsPerPage,
       currentPage * itemsPerPage
     );
@@ -117,7 +117,7 @@ function Home() {
             <span className="nickname">먀먀</span>님의 추천 화장품
           </p>
           <div className="recommend-list">
-            {paginatedCosmetics.map((cosmetic) => (
+            {paginatedCosmetics?.map((cosmetic) => (
               <RecommendItem key={cosmetic.cosmeticId} cosmetic={cosmetic} />
             ))}
           </div>

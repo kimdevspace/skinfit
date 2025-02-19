@@ -71,9 +71,7 @@ const FetchSearchComplete = async ({ queryKey }) => {
   const response = await axios.get(`search/${apiCategory}/result`, {
     params: {
       query: params.query,
-      filterByUserPreference: params.filterByUserPreference,
-      category: typeof params.category.name === 'string' ? params.category.name : params.category?.name,
-    },
+      category: params.category?.name  === '전체' ? null : params.category?.name   },
   });
   console.log("검색완료 store search ", response.data);
 
@@ -88,14 +86,11 @@ const FetchSearchComplete = async ({ queryKey }) => {
 export const useSearchCompleteStore = create((set) => ({
   // 디폴트값 세팅
   query: "",
-  filterByUserPreference: false,
   category: null,
   apiCategory: "", // 성분명, 화장품명 검색 구분
 
   // 업데이트 역할
   setQuery: (query) => set({ query }),
-  setFilterByUserPreference: (filter) =>
-    set({ filterByUserPreference: filter }),
   setCategory: (category) => set({ category }),
   setApiCategory: (apiCategory) => set({ apiCategory }),
   
@@ -104,7 +99,7 @@ export const useSearchCompleteStore = create((set) => ({
 
 // React Query (캐싱된 데이터를 불러온다다)
 export const useSearchComplete = () => {
-  const { query, filterByUserPreference, category, apiCategory } =
+  const { query, category, apiCategory } =
     useSearchCompleteStore();
 
   //useQuery 는 서버로부터 데이터를 요청하여 받아오는 GET api
@@ -113,7 +108,7 @@ export const useSearchComplete = () => {
   return useQuery({
     queryKey: [
       "searchComplete", //queryId
-      { query, filterByUserPreference, category, apiCategory },
+      { query, category, apiCategory },
     ],
     queryFn: FetchSearchComplete,
     enabled: !!query, // 검색어 있을때만 검색되게

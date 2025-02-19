@@ -48,6 +48,12 @@ function SearchResult({
   // 검색돋보기 검색목록 스토어 사용
   const { data: searchedData, isLoading } = useSearchComplete();
 
+  // SearchResult.jsx 내부
+  useEffect(() => {
+    console.log("SearchResult 컴포넌트 수신한 데이터:", datas);
+
+  }, [datas]);
+
   // 실시간 검색어 감지(연관검색어 api 요청)
   useEffect(() => {
     if (searchWord && searchWord?.length > 0) {
@@ -167,26 +173,24 @@ function SearchResult({
                 Array.isArray(searchedData.cosmetics) &&
                 // 화장품 검색 결과 표시
                 searchedData?.cosmetics?.map((item) => (
-              
                   <SearchPopupItem
                     key={item.cosmeticId}
                     item={item}
                     type={type}
                     category={category}
                   />
-                  
                 ))
             : // 페이지에서 사용될 때 (검색 결과 표시용)
-              searchedData?.cosmetics &&
-              Array.isArray(searchedData.cosmetics) &&
+            datas?.cosmetics &&
+              Array.isArray(datas.cosmetics) &&
               // 검색 결과 표시
-              searchedData.cosmetics.map((item) => {
-                console.log('Item ID:', item.cosmeticId);
+              datas.cosmetics.map((item) => {
+                console.log("Item ID:", item.cosmeticId);
                 return (
-                  <SearchItem 
+                  <SearchItem
                     key={item.cosmeticId}
-                    idType={item.cosmeticId} 
-                    data={item} 
+                    idType={item.cosmeticId}
+                    data={item}
                   />
                 );
               })}

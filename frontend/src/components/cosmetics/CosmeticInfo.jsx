@@ -55,7 +55,7 @@ function CosmeticInfo({ cosmeticData }) {
                 {cosmeticData?.ingredients.map((ingredient, idx) => (
                   <div key={idx} className="analysis analysis-result">
                     <p className="ingredient-name">{ingredient.ingredientName}</p>
-                    <p className="found-count">{ingredient.foundCount ? `${ingredient.foundCount}회` : "-"}</p>
+                    <p className="found-count">{ingredient.detectionCount ? `${ingredient.detectionCount}회` : "-"}</p>
                     <p className={`ewg-score ${ingredient.ewgScoreMax <= 2 ? "low" : ingredient.ewgScoreMax <= 6 ? "moderate" : "high"}`}>
                       {ingredient.ewgScoreMin !== 0 && `${ingredient.ewgScoreMin}-`}
                       {ingredient.ewgScoreMax !== 0 ? `${ingredient.ewgScoreMax}` : "-"}

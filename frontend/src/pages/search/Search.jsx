@@ -1,6 +1,6 @@
 import SearchBar from "../../components/search/SearchBar.jsx";
 import SearchResult from "../../components/search/SearchResult.jsx";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchCompleteStore, useSearchComplete } from "../../stores/Search"; // 검색 store (pinia)
 import "./Search.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -37,60 +37,65 @@ function Search() {
   // 선택한 카테고리 value
   const [selectedOption, setSelectedOption] = useState({
     id: "",
-    name: "",
+    name: "전체",
   });
 
+  // 필터링된 결과를 위한 새로운 상태 추가
+  const [filteredResults, setFilteredResults] = useState(null);
+
   // 스토어 상태 데이터 & 상태관리 함수 불러오기
-  const { setQuery, setFilterByUserPreference, setCategory, setApiCategory } =
-    useSearchCompleteStore();
+  const { setQuery, setCategory, setApiCategory } = useSearchCompleteStore();
 
   // useQuery 훅으로 반환하는 객체(데이터) 불러오기
   // data == 유저 검색어로 검색된 결과 데이터
   const { data, isLoading, error } = useSearchComplete();
 
-  // console.log(isLoading, "검색 결과 로딩중")
-  // console.log(error, "검색 결과 랜더링 에러")
-  // 헤더설정을 위함
-  const { searchHistory, addSearchHistory } = useNavigateStore(); // Zustand store에서 검색 이력 관리
-
-  // 헤더 설정
+  // useEffect로 필터링 처리
   useEffect(() => {
-    console.log("검색 히스토리 변경:", searchHistory);
-  }, [searchHistory]);
+    if (!data) {
+      console.log("데이터 없음, 필터링 건너뜀");
+      setFilteredResults(null);
+      return;
+    }
+    if (isActive && data.cosmetics) {
+      console.log("필터 적용 전 제품 수:", data.cosmetics.length);
+      const filtered = {
+        ...data,
+        cosmetics: data.cosmetics.filter((item) => item.safetyStatus === true),
+      };
+      console.log("필터 적용 후 제품 수:", filtered.cosmetics.length);
+      setFilteredResults(filtered);
+    } else {
+      console.log("필터 미적용, 원본 데이터 사용");
+      setFilteredResults(data);
+    }
+  }, [data, isActive]);
 
   const navigate = useNavigate();
 
   // 기본 검색 함수
-  const handleSearch = (searchInput, addToHistory = true) => {
-    console.log("handleSearch 시작:", { searchInput, addToHistory });
+  const handleSearch = (searchInput) => {
+    console.log("검색 요청 파라미터:", {
+      검색어: searchInput,
+      카테고리: selectedOption,
+      저장된카테고리: useSearchCompleteStore.getState().category,
+      잘맞는화장품: isActive,
+    });
 
     // 1.검색시 카테고리/잘맞는화장품보기 선택 고려
     if (selectedOption && isActive) {
-      setCategory(selectedOption.name);
-      setFilterByUserPreference(isActive);
+      setCategory(selectedOption);
     } else if (selectedOption) {
-      setCategory(selectedOption.name);
+      setCategory(selectedOption);
       // console.log("selected option", selectedOption);
     } else if (isActive) {
-      setFilterByUserPreference(isActive);
     }
 
     // 2. 검색 관련 상태 설정
     setQuery(searchInput); // 사용자 검색어
     setApiCategory("cosmetic");
     setIsSubmit(true);
-    setSearchWord(searchInput); //검색바에 보여질 단어 업데이트
-
-    // 3.히스토리 관리(헤더 뒤로가기시 이전검색어로 가게끔)
-    if (addToHistory) {
-      addSearchHistory(searchInput);
-      console.log(
-        "히스토리 추가 후:",
-        useNavigateStore.getState().searchHistory
-      );
-    }
-
-    console.log("현재검색어", searchInput); //searchWord 비동기 처리
+    // setSearchWord(searchInput); //검색바에 보여질 단어 업데이트
   };
 
   // 폼 제출 이벤트 핸들러
@@ -105,6 +110,7 @@ function Search() {
   const handleUserPreferBtnClick = () => {
     setIsActive(!isActive);
   };
+
   //#endregion
 
   //#region 카테고리 버튼
@@ -128,30 +134,7 @@ function Search() {
 
   //헤더 뒤로가기 설정함수
   const handleBack = () => {
-    // 1. 현재 store의 상태 확인
-    const currentHistory = useNavigateStore.getState().searchHistory;
-    console.log("1. 현재 전체 히스토리:", currentHistory);
-
-    if (searchHistory.length > 0) {
-      // -1 : 현재 검색어, -2 : 이전 검색어
-      const prevSearch = searchHistory[searchHistory.length - 2];
-      // 이전 검색어가 존재하는 경우 이전 검색어로 검색
-      console.log("검색 히스토리:", searchHistory);
-      console.log("이전 검색어:", prevSearch);
-
-      if (prevSearch) {
-        // 이전 검색어가 없는 경우 (첫 번째 검색인 경우)
-        // 이전 페이지로 이동
-        console.log("이전 검색어로 검색 시도");
-        handleSearch(prevSearch, false);
-      } else {
-        navigate(-1);
-      }
-    } else {
-      // 검색 기록이 전혀 없는 경우
-      // 이전 페이지로 이동
-      navigate(-1);
-    }
+    navigate(-1);
   };
 
   return (
@@ -167,9 +150,7 @@ function Search() {
               className={`category-btn ${isOpen ? "active" : ""}`}
               onClick={toggleDropdown}
             >
-              <button className="cursor-off">
-                {selectedOption.name || "카테고리"}
-              </button>
+              <button className="cursor-off">{selectedOption.name}</button>
               <FontAwesomeIcon icon={faChevronDown} />
             </div>
             {isOpen && (
@@ -195,7 +176,7 @@ function Search() {
 
       {/* 화장품 검색결과/혹은 검색결과 없을 때의 화면 / 혹은 실시간 검색어 검색바에 입력시 실시간으로 연관검색어 목록 뜨게 하기기 */}
       <SearchResult
-        datas={data}
+        datas={filteredResults}
         searchWord={searchWord}
         setSearchWord={setSearchWord}
         isSubmit={isSubmit}

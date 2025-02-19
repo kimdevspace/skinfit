@@ -31,7 +31,7 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
   // 검색 완료시 api 요청
   const handleSearchSubmit = () => {
     setQuery(searchWord); // 검색어 쿼리 전달
-    if (type === 'ingredient' | 'unsuitableIngredients' | 'suitableIngredients') {
+    if (type === 'ingredient' || 'unsuitableIngredients' || 'suitableIngredients') {
       setApiCategory('ingredients'); // 검색어 api 경로 쿼리 전달 
     } else {
       console.log('회원정보폼 화장품검색',type)
@@ -193,7 +193,7 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
         <div className="my-list-box">
           <p className="title">
             {`${suitability === "suitable" ? "잘 맞는" : "맞지 않는"} ${
-              type === "cosmetic" ? "화장품" : "성분"
+              type === "cosmetics" ? "화장품" : "성분"
             }`}
           </p>
           <div className="my-search-list">
@@ -210,7 +210,7 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
               <p className="info-msg">
                 {`나와 ${
                   suitability === "suitable" ? "잘 맞는" : "맞지 않는"
-                } ${type === "cosmetic" ? "화장품" : "성분"}을 추가해주세요`}
+                } ${type === "cosmetics" ? "화장품" : "성분"}을 추가해주세요`}
               </p>
             )}
           </div>

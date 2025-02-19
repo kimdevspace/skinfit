@@ -79,7 +79,7 @@ function SearchItem({ idType, data }) {
         {/* 안전/유의 뱃지 */}
         <div className="badge">
           <div className={`badge ${data.safetyStatus ? "isSafe" : "isWarned"}`}>
-            유의
+            { data.safetyStatus ? '안전' : '유의'}
           </div>
         </div>
       </div>
