@@ -51,16 +51,18 @@
 }
 
 // 연관검색어 css
-.margin-setting {
+.related-margin-setting {
   margin-left: 3rem;
   margin-right: 3rem;
 
   p {
+    padding: 0 1rem;
     font-size: 1.4rem;
   }
 
-  hr {
+  .related-hr {
     height: 0.1rem;
+    margin: 0.8rem 0rem;
     border: none;
     background-color: #dedede;
   }
@@ -69,3 +71,5 @@
 .search-result-box {
   overflow: auto;
 }
+
+
