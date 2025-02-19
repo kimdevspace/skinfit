@@ -19,9 +19,9 @@ function App() {
         <Route
           path="/"
           element={
-            // <ProtectedRoute>
+            <ProtectedRoute>
               <Home />
-            // </ProtectedRoute>
+            </ProtectedRoute>
           }
         />
         <Route path="/intro" element={<Intro />} />
@@ -34,33 +34,33 @@ function App() {
         <Route
           path="/mypage/*"
           element={
-            // <ProtectedRoute>
+            <ProtectedRoute>
               <MyPageRoute />
-            // {/* </ProtectedRoute> */}
+            </ProtectedRoute>
           }
         />
         <Route
           path="/cosmetics/*"
           element={
-            // <ProtectedRoute>
+            <ProtectedRoute>
             <CosmeticsRoute />
-            // </ProtectedRoute>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/search"
           element={
-            // <ProtectedRoute>
+            <ProtectedRoute>
               <Search />
-            // </ProtectedRoute>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/ocr"
           element={
-            // <ProtectedRoute>
+            <ProtectedRoute>
               <OcrScanner />
-            // </ProtectedRoute>
+            </ProtectedRoute>
           }
         />
 
