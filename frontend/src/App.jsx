@@ -9,7 +9,7 @@ import Search from "./pages/search/Search";
 import OcrScanner from "./pages/ocr/OcrScanner";
 import AdminRoutes from "./routes/AdminRoutes";
 import CompletePopUp from "./components/common/CompletePopUp";
-import { ProtectedRoute } from "./routes/ProtectedRoutes";
+import { ProtectedRoute, AdminRoute } from "./routes/ProtectedRoutes";
 
 function App() {
   return (
@@ -43,7 +43,7 @@ function App() {
           path="/cosmetics/*"
           element={
             <ProtectedRoute>
-            <CosmeticsRoute />
+              <CosmeticsRoute />
             </ProtectedRoute>
           }
         />
@@ -68,9 +68,9 @@ function App() {
         <Route
           path="/admin/*"
           element={
-            <ProtectedRoute>
+            <AdminRoute>
               <AdminRoutes />
-            </ProtectedRoute> 
+            </AdminRoute>
           }
         />
       </Routes>
