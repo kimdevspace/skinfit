@@ -29,7 +29,11 @@ function Home() {
     return response.data;
   };
 
-  const { data: mainInfo, isLoading, isError } = useQuery({
+  const {
+    data: mainInfo,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["mainPageInfo"],
     queryFn: fetchMainPageInfo,
   });
@@ -44,12 +48,21 @@ function Home() {
   // 렌더링할 내용을 변수에 저장 (조건부 렌더링)
   let content;
   if (isLoading) {
-    content = <div>로딩중...</div>;
+    content = (
+      <div className="loading-container">
+        <div className="spinner"></div>
+      </div>
+    );
   } else if (isError) {
     content = <div>에러 발생!</div>;
   } else {
     // API 응답 데이터를 구조 분해
-    const { level, goodCosmeticsCount, badCosmeticsCount, recommendedCosmetics } = mainInfo;
+    const {
+      level,
+      goodCosmeticsCount,
+      badCosmeticsCount,
+      recommendedCosmetics,
+    } = mainInfo;
 
     // 추천 화장품 페이지네이션 로직
     const totalPages = Math.ceil(recommendedCosmetics?.length / itemsPerPage);
@@ -75,7 +88,9 @@ function Home() {
             </button>
           </div>
           {/* 내 피부분석 정확도 안내 팝업 */}
-          {isPopupOpen && <AnalysisPopup closePopup={() => setIsPopupOpen(false)} />}
+          {isPopupOpen && (
+            <AnalysisPopup closePopup={() => setIsPopupOpen(false)} />
+          )}
           <div className="analysis-accuracy-info-box">
             {/* 분석 정확도 */}
             <div className="accuracy-level-box">
@@ -105,7 +120,9 @@ function Home() {
                 </div>
               </div>
               <Link to="mypage/">
-                <button className="cosmetic-register-btn">화장품 등록하기</button>
+                <button className="cosmetic-register-btn">
+                  화장품 등록하기
+                </button>
               </Link>
             </div>
           </div>
@@ -113,9 +130,7 @@ function Home() {
 
         {/* 추천 화장품 박스 */}
         <div className="recommend-cosmetic">
-          <p className="title">
-            <span className="nickname">먀먀</span>님의 추천 화장품
-          </p>
+          <p className="title">추천 화장품</p>
           <div className="recommend-list">
             {paginatedCosmetics?.map((cosmetic) => (
               <RecommendItem key={cosmetic.cosmeticId} cosmetic={cosmetic} />
@@ -123,23 +138,30 @@ function Home() {
           </div>
           {/* 페이지네이션 컨트롤 */}
           {totalPages > 1 && (
-            <div className="pagination">
-              <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((prev) => prev - 1)}
-              >
-                Prev
-              </button>
-              <span>
-                Page {currentPage} of {totalPages}
-              </span>
-              <button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((prev) => prev + 1)}
-              >
-                Next
-              </button>
-            </div>
+  <div className="simple-pagination">
+    <button 
+      className={`prev-btn ${currentPage === 1 ? 'disabled' : ''}`}
+      disabled={currentPage === 1}
+      onClick={() => setCurrentPage((prev) => prev - 1)}
+    >
+      &lt;
+    </button>
+    
+    <div className="page-indicator">
+      <span className="current-page">{currentPage}</span>
+      <span className="separator">/</span>
+      <span className="total-pages">{totalPages}</span>
+    </div>
+    
+    <button 
+      className={`next-btn ${currentPage === totalPages ? 'disabled' : ''}`}
+      disabled={currentPage === totalPages}
+      onClick={() => setCurrentPage((prev) => prev + 1)}
+    >
+      &gt;
+    </button>
+  </div>
+
           )}
         </div>
       </>
