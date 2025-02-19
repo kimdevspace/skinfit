@@ -46,7 +46,7 @@ function SearchResult({
 
   //**
   // 검색돋보기 검색목록 스토어 사용
-  const { data: searchedData } = useSearchComplete();
+  const { data: searchedData, isLoading } = useSearchComplete();
 
   // 실시간 검색어 감지(연관검색어 api 요청) 
   useEffect(() => {
