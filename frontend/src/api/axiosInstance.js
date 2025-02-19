@@ -5,7 +5,7 @@ import useAuthStore from '../stores/Auth';
 // baseURL을 설정하면 이후 요청 시 자동으로 붙습니다.
 // 서버 주소가 "http://localhost:8080/api/v1/"로 시작하는 경우:
 const axiosInstance = axios.create({
-  baseURL: '/api/v1/', // 서버 기본 URL 설정
+  baseURL: 'http://localhost:8080/api/v1/', // 서버 기본 URL 설정
   withCredentials: true // 쿠키를 주고받기 위해 필수
 });
 

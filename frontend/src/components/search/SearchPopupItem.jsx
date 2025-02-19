@@ -51,13 +51,20 @@ function SearchPopupItem({ item, type, category }) {
 
   return (
     <div className="search-popup-item">
-      {console.log(item)}
+      {console.log("서치팝업 item 상세", {
+        item,
+        type,
+        typeCheck: typeof type,
+        isCosmetic: type === "cosmetic",
+        isCosmetics: type === "cosmetics",
+        isIngredient: type === "ingredient",
+      })}
       {type === "cosmetic" ? (
-        // 화장품인 경우hh
+        // 화장품인 경우
         <>
           <img
             src={item.imageUrl}
-            alt={`{item.cosmeticBrand} {item.cosmeticName}`}
+            alt={`${item.cosmeticBrand} ${item.cosmeticName}`}
           />
           <div className="text-box">
             <p className="brand-name">{item.cosmeticBrand}</p>

@@ -7,17 +7,21 @@
 .search-wrapper {
   display: flex;
   justify-content: space-between;
-  padding: 1rem;
+  padding: 0.5rem;
+  align-items: center;
 
-  p {
+  .cosmetic-box {
     font-size: 1.4rem;
+    flex-grow: 10;
+    margin-left: 1rem;
 
-    &.brand-name {
+    .brand-name {
       font-size: 1.1rem;
+      align-self: center;
     }
   }
 
-  hr {
+  .search-hr {
     height: 0.1rem;
     border: none;
     background-color: #dedede;
@@ -27,30 +31,26 @@
     width: 4rem;
     aspect-ratio: 1/1;
   }
-    
-  }
+}
 
-
- 
 // 안전 / 유의 뱃지지
 %common {
-    font-size: 1.3rem;
+  font-size: 1.2rem;
 }
 
 .badge {
-    @extend %common;
-    padding: 0.8rem 0.6rem;
-    border-radius: 50%;
+  @extend %common;
+  padding: 0.8rem 0.6rem;
+  border-radius: 50%;
 
-    &.isSafe {
-        background-color: #69B293;
-        color: #fff
-    }
 
-    &.isWarned {
-      background-color: #69B293;
-      color: #F38B71;
+  &.isSafe {
+    background-color: #69b293;
+    color: #fff;
+    
+  }
 
-    }
-
+  &.isWarned {
+    background-color: #69b293;
+    color: #fff;  }
 }

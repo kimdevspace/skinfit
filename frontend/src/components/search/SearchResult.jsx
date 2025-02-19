@@ -119,6 +119,7 @@ function SearchResult({
         </div>
       )}
 
+      {/* // 아래코드무시 */}
       {/* 2. 검색이 제출되었고 결과가 있을 때 */}
       {/* {!isSearchWordModified && 
         searchWord &&
@@ -143,23 +144,54 @@ function SearchResult({
                 ))}
           </>
         )} */}
-
       {console.log(isLoading, searchedData)}
       {isLoading ? (
+        // 로딩 상태일 때 로딩 표시
         <div>로딩중</div>
       ) : (
+        // 데이터 로드 완료 시 결과 표시
         <div className="search-result-box">
-          {searchedData?.cosmetics?.map((item) => (
-            <SearchPopupItem
-              key={item.cosmeticId || item.ingredientId}
-              item={item}
-              type={type}
-              category={category}
-            />
-          ))}
+          {location !== "page"
+            ? // 팝업에서 사용될 때 (검색 결과 선택용)
+              type === "ingredient" && Array.isArray(searchedData)
+              ? // 성분 검색 결과 표시
+                searchedData?.map((item) => (
+                  <SearchPopupItem
+                    key={item.ingredientId}
+                    item={item}
+                    type={type}
+                    category={category}
+                  />
+                ))
+              : searchedData?.cosmetics &&
+                Array.isArray(searchedData.cosmetics) &&
+                // 화장품 검색 결과 표시
+                searchedData?.cosmetics?.map((item) => (
+              
+                  <SearchPopupItem
+                    key={item.cosmeticId}
+                    item={item}
+                    type={type}
+                    category={category}
+                  />
+                  
+                ))
+            : // 페이지에서 사용될 때 (검색 결과 표시용)
+              searchedData?.cosmetics &&
+              Array.isArray(searchedData.cosmetics) &&
+              // 검색 결과 표시
+              searchedData.cosmetics.map((item) => {
+                console.log('Item ID:', item.cosmeticId);
+                return (
+                  <SearchItem 
+                    key={item.cosmeticId}
+                    idType={item.cosmeticId} 
+                    data={item} 
+                  />
+                );
+              })}
         </div>
       )}
-
       {/* 3. 검색이 제출되었고 결과가 없을 때 */}
       {!isSearchWordModified &&
         searchWord &&

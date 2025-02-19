@@ -72,13 +72,10 @@ const FetchSearchComplete = async ({ queryKey }) => {
     params: {
       query: params.query,
       filterByUserPreference: params.filterByUserPreference,
-      category: params.category,
+      category: typeof params.category.name === 'string' ? params.category.name : params.category?.name,
     },
-    // headers : {
-    //     Authorization :
-    // }
   });
-  console.log(" store search ", response.data);
+  console.log("검색완료 store search ", response.data);
 
   if (response.data) {
     return response.data;
@@ -101,6 +98,7 @@ export const useSearchCompleteStore = create((set) => ({
     set({ filterByUserPreference: filter }),
   setCategory: (category) => set({ category }),
   setApiCategory: (apiCategory) => set({ apiCategory }),
+  
 }));
 //#endregion
 
