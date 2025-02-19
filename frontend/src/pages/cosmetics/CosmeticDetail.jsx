@@ -33,7 +33,7 @@ function CosmeticDetail() {
   const navigate = useNavigate();
 
   // 헤더 뒤로가기
-  const handleBack = () => navigate("/search");
+  const handleBack = () => navigate(-1);
 
   // 정렬
   const handleSort = (order) => {
@@ -50,6 +50,7 @@ function CosmeticDetail() {
         MyReview: isMyReview ? "true" : "false",
       },
     });
+    console.log('내피부맞춤',isMyReview, sort)
     return response.data.reviews;
   };
 
