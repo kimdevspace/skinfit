@@ -2,8 +2,7 @@ import "./SearchBar.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect } from "react";
-import { useRelatedCosmeticsStore } from '../../stores/Search.js'
-
+import { useRelatedCosmeticsStore } from "../../stores/Search.js";
 
 // 연관검색어 onChange 이벤트 핸들러 delay 설정(디바운싱 hook)
 function useDebounce(value, delay) {
@@ -25,8 +24,12 @@ function useDebounce(value, delay) {
 }
 
 // 검색바 컴포넌트트
-function SearchBar({ searchWord, setSearchWord, category, handleSearchSubmit }) {
-
+function SearchBar({
+  searchWord,
+  setSearchWord,
+  category,
+  handleSearchSubmit,
+}) {
   // 디바운싱
   const [inputValue, setInputValue] = useState(searchWord);
 
@@ -38,12 +41,19 @@ function SearchBar({ searchWord, setSearchWord, category, handleSearchSubmit }) 
     setSearchWord(debouncedValue);
   }, [debouncedValue, setSearchWord]);
 
+   // 검색바 검색어 업데이트
+  useEffect(() => {
+    setInputValue(searchWord);
+  }, [searchWord]);
+
   return (
     <div className="search-container">
       <input
         className="search-bar"
         type="text"
         placeholder="검색어를 입력하세요."
+        value={inputValue}  // Add this line
+
         onChange={(e) => setInputValue(e.target.value)}
       />
 
