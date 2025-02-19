@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import Header from "../../components/common/Header.jsx";
 import { useNavigate } from "react-router-dom";
-import { useNavigateStore } from "../../stores/Navigation.js";
 
 // 카테고리 옵션
 const categoryOptions = [
@@ -95,7 +94,6 @@ function Search() {
     setQuery(searchInput); // 사용자 검색어
     setApiCategory("cosmetic");
     setIsSubmit(true);
-    // setSearchWord(searchInput); //검색바에 보여질 단어 업데이트
   };
 
   // 폼 제출 이벤트 핸들러
@@ -137,6 +135,28 @@ function Search() {
     navigate(-1);
   };
 
+  // 컴포넌트가 마운트될 때 상태 초기화
+  useEffect(() => {
+    // 검색어 초기화
+    setSearchWord("");
+
+    // 상태 초기화
+    setIsSubmit(false);
+    setIsActive(false);
+    setSelectedOption({
+      id: "",
+      name: "전체",
+    });
+
+    // 필터링 결과 초기화
+    setFilteredResults(null);
+
+    // 스토어 상태 초기화
+    setQuery("");
+    setCategory({ id: null, name: "전체" });
+
+
+  }, []); // 빈 의존성 배열 - 컴포넌트가 마운트될 때만 실행
   return (
     <div>
       <Header title="화장품 검색" onBack={handleBack} />
