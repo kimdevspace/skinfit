@@ -76,6 +76,7 @@ function ReviewRegister() {
     onSuccess: () => {
       alert("리뷰가 등록되었습니다.");
       setReviewData({ rating: "", reviewContent: "", images: [] });
+      navigate(`/cosmetics/${cosmeticId}`)
     },
     onError: () => {
       alert("리뷰 등록에 실패했습니다.");
