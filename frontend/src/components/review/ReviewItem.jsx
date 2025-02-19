@@ -177,7 +177,8 @@ export default function ReviewItem({ review, reviewType }) {
       {reviewType !== "myReviews" ? (
         <div className="user-info-section">
           <span className="user-name">{review.userNickname}님</span>
-          <div className="age-skintype">{review.userAgeGroup} | {review.userSkinTypes}
+          <div className="age-skintype">{review.userAgeGroup} | {review.userSkinType}
+            
           </div>
           <span className={`user-answer ${scoreMap[review.score].class}`}>
             {scoreMap[review.score].text}
@@ -216,7 +217,7 @@ export default function ReviewItem({ review, reviewType }) {
               </button>
               {isPopupOpen && <ReviewComplaintPopup onClose={handlePopup} cosmeticId={cosmeticId} reviewId={reviewId} />}
             </>
-          ) : (
+          ) :  (
             <button className="report-btn" onClick={handleDeleteReview}>
               삭제 | {dayjs(review.createdAt).format("YYYY-MM-DD")}
             </button>

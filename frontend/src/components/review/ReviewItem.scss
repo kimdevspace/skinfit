@@ -53,7 +53,7 @@
       font-size: 1rem;
       color: #8e8e8e;
     }
-    
+
     .user-answer {
       font-size: 1rem;
       font-weight: bold;
@@ -86,7 +86,7 @@
 
     .review-photo {
       width: 9rem;
-      height: 6rem;
+      aspect-ratio: 1/1;
       margin-top: 1rem;
       object-fit: contain; // 이미지 잘리지 않게 수정
     }
