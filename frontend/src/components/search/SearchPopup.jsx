@@ -43,6 +43,15 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
     }
     setIsSubmit(true);
   };
+  
+  // 팝업이 열릴 때마다 검색 관련 상태 초기화
+  useEffect(() => {
+    setSearchWord("");
+    setRelatedQuery("");
+    setQuery("");
+    // 팝업이 ingredient용이면 api 카테고리를 ingredients로 초기화, 그렇지 않으면 type 그대로
+    setApiCategory(type === "ingredient" ? "ingredients" : type);
+  }, [setRelatedQuery, setApiCategory, setQuery, type]);
 
   // 화장품명/성분명 검색 완료 & 연관검색 api 요청
   useEffect(() => {
@@ -101,7 +110,7 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
   const handleSubmit = () => {
     if (isEdit) {
       const payload = useSearchPopupStore.getState().getApiPayload(category);
-      console.log('payload',payload);
+      console.log("payload", payload);
       updateMutation.mutate(payload);
     } else {
       onClose();
@@ -183,7 +192,7 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
         onMouseLeave={handleDragEnd}
         onClick={(e) => e.stopPropagation()}
       >
-        <hr />
+        <hr className="related-hr"/>
         <SearchBar
           searchWord={searchWord}
           setSearchWord={setSearchWord}
@@ -200,6 +209,7 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
             setSearchWord={setSearchWord}
             isSubmit={isSubmit}
             setIsSubmit={setIsSubmit}
+            suitability={suitability}
           />
         </div>
 

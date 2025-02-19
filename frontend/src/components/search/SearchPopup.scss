@@ -28,9 +28,9 @@
     overflow: auto;
     transition: transform 0.3s ease-out;
 
-    hr {
-      width: max(5rem, 15%);
-      margin: 0 auto;
+    .related-hr {
+      // width: max(5rem, 15%);
+      margin: 0.8rem auto;
       border: 1.5px solid #e1e1e1;
     }
 
