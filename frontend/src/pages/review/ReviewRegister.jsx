@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useParams,useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import axios from "../../api/axiosInstance.js";
 import "./ReviewRegister.scss";
@@ -6,7 +7,9 @@ import Header from "../../components/common/Header";
 import Button from "../../components/common/Button";
 import ImageUpload from "../../components/common/ImageUpload";
 
-function ReviewRegister(cosmeticId) {
+function ReviewRegister() {
+  const { cosmeticId } = useParams(); // URL 파라미터에서 cosmeticId 추출
+
   // 리뷰 데이터
   const [reviewData, setReviewData] = useState({
     rating: null,
@@ -22,10 +25,8 @@ function ReviewRegister(cosmeticId) {
     }));
   };
 
-  //헤더 뒤로가기 설정
   // 폼 데이터 변경 감지 함수
   const hasUnsavedChanges = () => {
-    // 폼 데이터 변경 여부 확인 로직
     return (
       reviewData.rating !== null ||
       reviewData.reviewContent !== "" ||
@@ -33,7 +34,23 @@ function ReviewRegister(cosmeticId) {
     );
   };
 
-  // 피부 적합 여부
+  const navigate = useNavigate()
+  
+  // 뒤로가기 핸들러 추가
+  const handleBack = () => {
+    // 변경사항이 있으면 확인
+    if (hasUnsavedChanges()) {
+      const confirmed = window.confirm('작성 중인 내용이 있습니다. 뒤로 가시겠습니까?');
+      if (confirmed) {
+        navigate(-1); // 뒤로가기
+      }
+      // 확인 안 하면 그대로 유지
+    } else {
+      navigate(-1); // 변경사항 없으면 바로 뒤로가기
+    }
+  };
+
+  // 피부 적합 여부 옵션
   const ratingOption = [
     { value: 0, label: "잘 맞았어요" },
     { value: 1, label: "안 맞았어요" },
@@ -43,11 +60,14 @@ function ReviewRegister(cosmeticId) {
   // 리뷰 데이터 POST 요청
   const uploadReview = async (review) => {
     const formData = new FormData();
-    formData.append("reviewContent", review.reviewContent);
-    formData.append("rating", review.rating);
+    const reviewDataBlob = new Blob(
+      [JSON.stringify({ reviewContent: review.reviewContent, score: review.rating })],
+      { type: "application/json" }
+    );
+    formData.append("review", reviewDataBlob);
     review.images.forEach((file) => formData.append("images", file));
-    console.log("upload 한다");
-
+  
+    // 실제 axios 요청 추가
     return axios.post(`cosmetics/${cosmeticId}/reviews`, formData);
   };
 
@@ -89,14 +109,14 @@ function ReviewRegister(cosmeticId) {
 
   return (
     <div className="review-register">
-      <Header title="리뷰 등록" confirmBack={hasUnsavedChanges} />
+      <Header title="리뷰 등록"  onBack={handleBack} />
 
       <form onSubmit={handleSubmit}>
         {/* 상품명 */}
-        <div className="input-wrapper cosmetic-name">
+        {/* <div className="input-wrapper cosmetic-name">
           <p className="input-title">상품명</p>
           <p>리뷰 쓸 상품명</p>
-        </div>
+        </div> */}
 
         {/* 피부 적합 여부 */}
         <div className="input-wrapper review-rating">

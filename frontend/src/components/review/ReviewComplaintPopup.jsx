@@ -10,22 +10,26 @@ function ReviewComplaintPopup({ onClose, cosmeticId, reviewId }) {
   const [reportData, setReportData] = useState('');
 
   // 신고 post 요청
-  const reportReview = async (reasonData) => {
-    return axios.post(
-      `cosmetics/${cosmeticId}/reviews/${reviewId}/report`,
-      { reason: reasonData }
-    );
-  };  
+const reportReview = async ({ reason }) => {
+  return axios.post(
+    `cosmetics/${cosmeticId}/reviews/${reviewId}/report`,
+    { reason }
+  );
+};
+
 
   //react query
   const mutation = useMutation({
     mutationFn: reportReview,
     onSuccess: () => {
       console.log("신고접수 완료");
-      onClose();
+        alert("신고가 정상적으로 접수되었습니다.");
+        onClose();
+  
     },
     onError: (error) => {
       console.error("신고 접수 에러", error);
+      alert("신고 접수에 실패했습니다. 다시 시도해주세요.");
     },
   });
 
