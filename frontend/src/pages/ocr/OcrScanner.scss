@@ -12,7 +12,6 @@
       display: block;
     }
   }
-  
   // 공통 style
   .input-wrapper {
     @include input-group();
@@ -21,8 +20,9 @@
       @include input-title();
     }
 
-
-    #name {
+    #cosmeticName,
+    #cosmeticBrand,
+    #cosmeticVolume {
       @include input-text();
       @include input-border();
       width: 100%;
@@ -32,7 +32,6 @@
       padding-top: 1rem;
       padding-bottom: 1rem;
     }
-
   }
 
   .category-group {
