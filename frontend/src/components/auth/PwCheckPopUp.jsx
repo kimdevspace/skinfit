@@ -11,7 +11,7 @@ import useAuthStore from "../../stores/Auth";
 
 export default function PwCheckPopUp({ onClose, state }) {
   const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
-  const clearAuth = useAuthStore(state => state.clearAuth);
+  const clearAuth = useAuthStore((state) => state.clearAuth);
 
   //비밀번호 맞지않아요 에러
   const pwErrorRef = useRef(null);
@@ -20,7 +20,7 @@ export default function PwCheckPopUp({ onClose, state }) {
   const deleteAccountMutation = useMutation({
     mutationFn: (password) =>
       axios.delete("auth/withdraw", {
-        data: { password }
+        data: { password },
       }),
     onSuccess: () => {
       clearAuth(); // JWT 제거
@@ -43,15 +43,38 @@ export default function PwCheckPopUp({ onClose, state }) {
   // 비밀번호 검증 요청
   const pwReview = async (userPassword) => {
     return axios.post(`user/mypage/password-verify`, {
-      userPassword
+      userPassword,
     });
   };
 
   //react query
   const mutation = useMutation({
     mutationFn: pwReview,
-    onSuccess: () => {
-      console.log("비밀번호 검증 완료");
+    onSuccess: (response) => {
+      // 응답 헤더에서 새 액세스 토큰 가져오기
+      const newAccessToken =
+        response.headers.authorization ||
+        response.headers.Authorization ||
+        response.headers["Authorization"];
+
+      if (newAccessToken) {
+        // Authorization 헤더가 'Bearer {token}' 형식이라면 파싱
+        const tokenValue = newAccessToken.startsWith("Bearer ")
+          ? newAccessToken.substring(7)
+          : newAccessToken;
+
+        // 기존 상태값 유지하면서 토큰만 업데이트
+        const currentState = useAuthStore.getState();
+        useAuthStore
+          .getState()
+          .setAuth(
+            tokenValue,
+            currentState.roleType,
+            currentState.isRegistered
+          );
+
+        console.log("액세스 토큰이 갱신되었습니다");
+      }
 
       navigate("/mypage/edit"); // 내 정보수정하기 페이지로 이동
     },
