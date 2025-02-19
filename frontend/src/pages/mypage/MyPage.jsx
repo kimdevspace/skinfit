@@ -37,7 +37,7 @@ function MyPage() {
   const { isLoading: top3Loading, error: top3Error } = useTop3Data();
   const top3Data = useTop3DataStore((state) => state.top3Data);
 
-  const { error: cosError } = useMyCosmetics();
+  const { error: cosError, refetch: refetchCosmetics } = useMyCosmetics();
   const myMatchedCosData = useMyCosmeticsStore(
     (state) => state.myMatchedCosData
   );
@@ -45,7 +45,7 @@ function MyPage() {
     (state) => state.myUnMatchedCosData
   );
 
-  const { error: ingError } = useMyIngredients();
+  const { error: ingError, refetch: refetchIngredients } = useMyIngredients();
   const myMatchedIngreData = useMyIngredientsStore(
     (state) => state.myMatchedIngreData
   );
@@ -53,7 +53,7 @@ function MyPage() {
     (state) => state.myUnMatchedIngreData
   );
 
-  const { error: reviewError } = useReviews();
+  const { error: reviewError, refetch: refetchReviews } = useReviews();
   const myReviews = useReviewsStore((state) => state.myReviews);
   const likedReviews = useReviewsStore((state) => state.likedReviews);
 
@@ -62,6 +62,17 @@ function MyPage() {
     console.log("useEffect - myInfos 업데이트:", myInfos);
   }, [myInfos]);
 
+  // 수정 후 데이터 새로고침을 위한 useEffect
+  useEffect(() => {
+    if (editPopupProps === null) {
+      // 모든 데이터 새로고침
+      refetchCosmetics();
+      refetchIngredients();
+      refetchReviews();
+
+      console.log("팝업 닫힘 감지: 데이터 새로고침 실행");
+    }
+  }, [editPopupProps, refetchCosmetics, refetchIngredients, refetchReviews]);
   const navigate = useNavigate();
 
   if (error1) {
@@ -131,7 +142,7 @@ function MyPage() {
             <span>skinfit이 찾은 </span>
             <span className="color-text">나와 맞지 않는 성분 TOP 3</span>
           </div>
-          <hr className='item-line' />
+          <hr className="item-line" />
           <div className="ranking-text">
             {Array.isArray(top3Data) &&
               top3Data.map((ingredient) => (
@@ -190,7 +201,7 @@ function MyPage() {
                   <span className="cosmetic-name">{cos.cosmeticName}</span>
                   <img src={cos.imageUrl || ""} alt={cos.cosmeticName} />
                 </div>
-                <hr className='item-line' />
+                <hr className="item-line" />
               </div>
             ))}
           </div>
@@ -231,20 +242,38 @@ function MyPage() {
               ? myMatchedIngreData
               : myUnMatchedIngreData
             )?.map((ing) => (
-              <div key={ing.ingredientId }>
+              <div key={ing.ingredientId}>
                 <div className="ingredient-list">
-                  <div className="ingredient-name">{ing.ingredientName }</div>
+                  <div className="ingredient-name">{ing.ingredientName}</div>
                   {ing.ewgScoreMin !== 0 ? (
-                        <div className={`ewg-level ${ing.ewgScoreMin <= 2 ? "green" : ing.ewgScoreMin <= 6 ? "orange" : "red"}`}>
-                          {ing.ewgScoreMin} - {ing.ewgScoreMax}
-                        </div>
-                      ) : ing.ewgScoreMax !== 0 ? (
-                        <div className={`ewg-level ${ing.ewgScoreMax <= 2 ? "green" : ing.ewgScoreMax <= 6 ? "orange" : "red"}`}>
-                          {ing.ewgScoreMax}
-                        </div>
-                      ) : <div>-</div>}
+                    <div
+                      className={`ewg-level ${
+                        ing.ewgScoreMin <= 2
+                          ? "green"
+                          : ing.ewgScoreMin <= 6
+                          ? "orange"
+                          : "red"
+                      }`}
+                    >
+                      {ing.ewgScoreMin} - {ing.ewgScoreMax}
+                    </div>
+                  ) : ing.ewgScoreMax !== 0 ? (
+                    <div
+                      className={`ewg-level ${
+                        ing.ewgScoreMax <= 2
+                          ? "green"
+                          : ing.ewgScoreMax <= 6
+                          ? "orange"
+                          : "red"
+                      }`}
+                    >
+                      {ing.ewgScoreMax}
+                    </div>
+                  ) : (
+                    <div>-</div>
+                  )}
                 </div>
-                <hr className='item-line' />
+                <hr className="item-line" />
               </div>
             ))}
           </div>

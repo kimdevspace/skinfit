@@ -41,31 +41,100 @@ export const useSearchPopupStore = create((set, get) => ({
     }));
   },
 
-  // API 요청을 위한 데이터 변환 함수
-  getApiPayload: (category) => {
-    const { items } = get();
 
-    if (category) {
-      // 단일 카테고리 변환
-      const idKey = get().getIdKey(category);
-      // 정확히 "unsuitable"을 포함하는지 확인
-      const isUnsuitable = category.includes("unsuitable");
+// API 요청을 위한 데이터 변환 함수 수정
+getApiPayload: (category) => {
+  const { items } = get();
+
+  // 카테고리가 없으면 전체 데이터 반환
+  if (!category) {
+    return {
+      suitableCosmetics: get().getApiPayload("suitableCosmetics"),
+      unsuitableCosmetics: get().getApiPayload("unsuitableCosmetics"),
+      suitableIngredients: get().getApiPayload("suitableIngredients"),
+      unsuitableIngredients: get().getApiPayload("unsuitableIngredients"),
+    };
+  }
+
+  // 카테고리별 아이템과 ID 키 가져오기
+  const idKey = get().getIdKey(category);
+  const categoryItems = items[category] || [];
   
-      return items[category].map((item) => ({
-        [idKey]: item[idKey],
-        ...(isUnsuitable && item.symptoms ? { symptomIds: item.symptoms } : {})
-      }));
-    } else {
-      // 전체 데이터 변환
-      return {
-        suitableCosmetics: get().getApiPayload("suitableCosmetics"),
-        unsuitableCosmetics: get().getApiPayload("unsuitableCosmetics"),
-        suitableIngredients: get().getApiPayload("suitableIngredients"),
-        unsuitableIngredients: get().getApiPayload("unsuitableIngredients"),
-      };
-    }
-  },
+  console.log(`처리 카테고리: ${category}, 아이템 개수: ${categoryItems.length}`);
 
+  // 맞는 화장품
+  if (category === "suitableCosmetics") {
+    const result = categoryItems
+      .map((item) => {
+        const cosmeticId = typeof item[idKey] === "number" ? item[idKey] : parseInt(item[idKey], 10);
+        return isNaN(cosmeticId) ? null : { cosmeticId };
+      })
+      .filter(Boolean);
+    console.log("맞는 화장품 결과:", result);
+    return result;
+  } 
+  // 안 맞는 화장품  
+  else if (category === "unsuitableCosmetics") {
+    const result = categoryItems
+      .map((item) => {
+        const cosmeticId = typeof item[idKey] === "number" ? item[idKey] : parseInt(item[idKey], 10);
+        if (isNaN(cosmeticId)) return null;
+
+        let symptomIds = [];
+        if (item.symptoms && Array.isArray(item.symptoms)) {
+          symptomIds = item.symptoms
+            .map((s) => (typeof s === "number" ? s : parseInt(s, 10)))
+            .filter((id) => !isNaN(id));
+        }
+
+        return {
+          cosmeticId,
+          symptomIds: symptomIds.length > 0 ? symptomIds : []
+        };
+      })
+      .filter(Boolean);
+    console.log("안 맞는 화장품 결과:", result);
+    return result;
+  } 
+  // 맞는 성분
+  else if (category === "suitableIngredients") {
+    const result = categoryItems
+      .map((item) => {
+        const ingredientId = typeof item[idKey] === "number" ? item[idKey] : parseInt(item[idKey], 10);
+        return isNaN(ingredientId) ? null : { ingredientId };
+      })
+      .filter(Boolean);
+    console.log("맞는 성분 결과:", result);
+    return result;
+  } 
+  // 안 맞는 성분
+  else if (category === "unsuitableIngredients") {
+    const result = categoryItems
+      .map((item) => {
+        const ingredientId = typeof item[idKey] === "number" ? item[idKey] : parseInt(item[idKey], 10);
+        if (isNaN(ingredientId)) return null;
+
+        let symptomIds = [];
+        if (item.symptoms && Array.isArray(item.symptoms)) {
+          symptomIds = item.symptoms
+            .map((s) => (typeof s === "number" ? s : parseInt(s, 10)))
+            .filter((id) => !isNaN(id));
+        }
+
+        return {
+          ingredientId,
+          symptomIds: symptomIds.length > 0 ? symptomIds : []
+        };
+      })
+      .filter(Boolean);
+    console.log("안 맞는 성분 결과:", result);
+    return result;
+  }
+  
+  // 기본 반환값 (빈 배열)
+  console.log("해당 카테고리 없음, 빈 배열 반환");
+  return [];
+},
   // 증상 리스트
   symptoms: [
     { name: "부음", value: 1 },
@@ -88,26 +157,13 @@ export const useSearchPopupStore = create((set, get) => ({
       .join(", ");
   },
 
-
-  // 정보 수정 시 기존 정보 가져와 저장하는 함수
-setItems: (category, items) => 
-  set((state) => {
-    // 정확히 "unsuitable"을 포함하는지 확인
-    const isUnsuitable = category.includes("unsuitable");
-    
-    // 증상 정보가 있는 경우 symptomIds로 매핑
-    const processedItems = items.map(item => ({
-      ...item,
-      ...(isUnsuitable && item.symptoms ? { symptomIds: item.symptoms } : {})
-    }));
-    
-    return {
+  setItems: (category, items) =>
+    set((state) => ({
       items: {
         ...state.items,
-        [category]: processedItems,
+        [category]: items,
       },
-    };
-  }),
+    })),
 
   // 전체 데이터 초기화
   resetItems: () =>
