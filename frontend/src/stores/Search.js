@@ -80,7 +80,7 @@ const FetchSearchComplete = async ({ queryKey }) => {
   });
   console.log(" store search ", response.data);
 
-  if (response.data.status === "success") {
+  if (response.data) {
     return response.data;
   }
   throw new Error(response.data.message || "검색 중 오류가 발생했습니다");

@@ -48,23 +48,22 @@ function SearchResult({
   // 검색돋보기 검색목록 스토어 사용
   const { data: searchedData } = useSearchComplete();
 
-    // 실시간 검색어 감지(연관검색어 api 요청) 
-    useEffect(() => {
-      if (searchWord && searchWord?.length > 0) {
-        if (category === 'suitableCosmetics' | 'unsuitableCosmetics') 
-        {
-          setApiCategory2('cosmetic');
-  
-        } else  if (category === 'suitableIngredients' | 'unsuitableIngredients') {
-          setApiCategory2('ingredients')
-        }
-        else {
-          setApiCategory2(category);
-  
-        }
-        setRelatedQuery(searchWord); // 연관검색어 쿼리 업데이트 설정 -> api 요청 수행
-        console.log("연관검색어 쿼리요청 검색어 :", searchWord);
+  // 실시간 검색어 감지(연관검색어 api 요청) 
+  useEffect(() => {
+    if (searchWord && searchWord?.length > 0) {
+      if (category === 'suitableCosmetics' | 'unsuitableCosmetics') {
+        setApiCategory2('cosmetic');
+
+      } else if (category === 'suitableIngredients' | 'unsuitableIngredients') {
+        setApiCategory2('ingredients')
       }
+      else {
+        setApiCategory2(category);
+
+      }
+      setRelatedQuery(searchWord); // 연관검색어 쿼리 업데이트 설정 -> api 요청 수행
+      console.log("연관검색어 쿼리요청 검색어 :", searchWord);
+    }
 
     if (isSubmit) {
       // 제출되었을 때 지금 검색어 != 이전 검색어 구분 (연관검색어 관리리)
@@ -115,7 +114,7 @@ function SearchResult({
       )}
 
       {/* 2. 검색이 제출되었고 결과가 있을 때 */}
-      {!isSearchWordModified && 
+      {/* {!isSearchWordModified && 
         searchWord &&
         (location === "page"
           ? datas?.length > 0
@@ -133,14 +132,17 @@ function SearchResult({
                     key={item.cosmeticId || item.ingredientId}
                     data={item}
                     type={type}
-                    category={category}
+                    category={category}F
                   />
                 ))}
           </>
-        )}
+        )} */}
+
+      {console.log(isLoading, searchedData)}
+      {isLoading ? (<div>로딩중</div>) : (<div>{searchedData}</div>)}
 
       {/* 3. 검색이 제출되었고 결과가 없을 때 */}
-      {!isSearchWordModified && 
+      {!isSearchWordModified &&
         searchWord &&
         (location === "page" ? !datas?.length : !searchedData?.length) && (
           <div className="wrong-search">
