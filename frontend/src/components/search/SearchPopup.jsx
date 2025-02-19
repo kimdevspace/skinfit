@@ -27,28 +27,32 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
   //실시간 검색어 연동 여부, setSearchWord : searchWord 변수를 바꿔주는 애
   const [searchWord, setSearchWord] = useState("");
 
+  const categoryItems = useSearchPopupStore(
+    (state) => state.items[category] || []
+  );
+
   // **
   // 검색 완료시 api 요청
   const handleSearchSubmit = () => {
     setQuery(searchWord); // 검색어 쿼리 전달
-    if (type === 'ingredient' || 'unsuitableIngredients' || 'suitableIngredients') {
-      setApiCategory('ingredients'); // 검색어 api 경로 쿼리 전달 
+    if (type === "ingredient") {
+      setApiCategory("ingredients"); // 검색어 api 경로 쿼리 전달
     } else {
-      console.log('회원정보폼 화장품검색',type)
-      setApiCategory(type); // 검색어 api 경로 쿼리 전달 
+      console.log("회원정보폼 화장품검색", type);
+      setApiCategory(type); // 검색어 api 경로 쿼리 전달
     }
     setIsSubmit(true);
   };
 
   // 화장품명/성분명 검색 완료 & 연관검색 api 요청
   useEffect(() => {
-    if (type === 'ingredient') {
-      setApiCategory('ingredients'); // 연관검색어 api 경로 쿼리 전달
+    if (type === "ingredient") {
+      setApiCategory("ingredients"); // 연관검색어 api 경로 쿼리 전달
     } else {
       setApiCategory(type); // 연관검색어 api 경로 쿼리 전달
     }
     setRelatedQuery(searchWord); // ** 연관검색어 쿼리 전달 // 여기 위치가 맞나?
-  }, [type, searchWord, setApiCategory,  setRelatedQuery]); // 무한루프 방지 // ** 
+  }, [type, searchWord, setApiCategory, setRelatedQuery]); // 무한루프 방지 // **
 
   // 스토어에서 데이터 가져오기
   const items = useSearchPopupStore((state) => state.items);
@@ -67,23 +71,13 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
       case "unsuitableCosmetics":
         return "user/mypage/bad-cosmetics";
       case "suitableIngredients":
-        return "user/mypage/good-ingredient";
+        return "user/mypage/good-ingredients";
       case "unsuitableIngredients":
-        return "user/mypage/bad-ingredient";
+        return "user/mypage/bad-ingredients";
       default:
         return "";
     }
   };
-
-  // API 요청 훅
-  const { isLoading } = useQuery({
-    queryKey: [category, "edit"],
-    queryFn: () => axios.get(getApiUrl()),
-    enabled: isEdit,
-    onSuccess: (response) => {
-      useSearchPopupStore.getState().setItems(category, response.data);
-    },
-  });
 
   // 수정 mutation
   const updateMutation = useMutation({
@@ -92,8 +86,14 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
       alert("수정이 완료되었습니다.");
       onClose();
     },
-    onError: () => {
-      alert("수정 중 오류가 발생했습니다.");
+    onError: (error) => {
+      console.log(error);
+      console.error("수정 오류:", error.response?.data || error.message);
+      alert(
+        `수정 중 오류가 발생했습니다: ${
+          error.response?.data?.message || error.message
+        }`
+      );
     },
   });
 
@@ -101,15 +101,13 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
   const handleSubmit = () => {
     if (isEdit) {
       const payload = useSearchPopupStore.getState().getApiPayload(category);
+      console.log('payload',payload);
       updateMutation.mutate(payload);
     } else {
       onClose();
     }
   };
 
-  if (isEdit && isLoading) {
-    return <div>로딩 중...</div>;
-  }
   //#endregion
 
   //#region 팝업창 닫기
@@ -159,6 +157,21 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
 
   //#endregion
 
+  const { isLoading, data } = useQuery({
+    queryKey: [category, "edit"],
+    queryFn: () => axios.get(getApiUrl()),
+    enabled: isEdit,
+  });
+
+  // 항상 같은 순서로 호출되는 단일 useEffect로 처리
+  useEffect(() => {
+    // data가 존재하고 isEdit일 때만 스토어 업데이트
+    if (data && isEdit) {
+      console.log(`${category} 데이터 로드 성공:`, data.data);
+      useSearchPopupStore.getState().setItems(category, data.data);
+    }
+  }, [data, category, isEdit]);
+
   return (
     <div className="search-popup-overlay" onClick={handleOverlayClick}>
       <div
@@ -186,19 +199,19 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
             searchWord={searchWord}
             setSearchWord={setSearchWord}
             isSubmit={isSubmit}
-            setIsSubmit ={setIsSubmit}
+            setIsSubmit={setIsSubmit}
           />
         </div>
 
         <div className="my-list-box">
           <p className="title">
             {`${suitability === "suitable" ? "잘 맞는" : "맞지 않는"} ${
-              type === "cosmetics" ? "화장품" : "성분"
+              type === "cosmetic" ? "화장품" : "성분"
             }`}
           </p>
           <div className="my-search-list">
-            {items[category]?.length > 0 ? (
-              items[category].map((item) => (
+            {categoryItems.length > 0 ? (
+              categoryItems.map((item) => (
                 <SearchPopupItem
                   key={item.cosmeticId || item.ingredientId}
                   item={item}
@@ -210,7 +223,7 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
               <p className="info-msg">
                 {`나와 ${
                   suitability === "suitable" ? "잘 맞는" : "맞지 않는"
-                } ${type === "cosmetics" ? "화장품" : "성분"}을 추가해주세요`}
+                } ${type === "cosmetic" ? "화장품" : "성분"}을 추가해주세요`}
               </p>
             )}
           </div>

@@ -163,7 +163,7 @@ function MyPage() {
               className="edit-del-btn"
               onClick={() =>
                 setEditPopupProps({
-                  type: "cosmetics",
+                  type: "cosmetic",
                   suitability:
                     isCosmeticClicked === "맞는 화장품"
                       ? "suitable"

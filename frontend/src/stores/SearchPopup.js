@@ -88,14 +88,26 @@ export const useSearchPopupStore = create((set, get) => ({
       .join(", ");
   },
 
+
   // 정보 수정 시 기존 정보 가져와 저장하는 함수
-  setItems: (category, items) =>
-    set((state) => ({
+setItems: (category, items) => 
+  set((state) => {
+    // 정확히 "unsuitable"을 포함하는지 확인
+    const isUnsuitable = category.includes("unsuitable");
+    
+    // 증상 정보가 있는 경우 symptomIds로 매핑
+    const processedItems = items.map(item => ({
+      ...item,
+      ...(isUnsuitable && item.symptoms ? { symptomIds: item.symptoms } : {})
+    }));
+    
+    return {
       items: {
         ...state.items,
-        [category]: items,
+        [category]: processedItems,
       },
-    })),
+    };
+  }),
 
   // 전체 데이터 초기화
   resetItems: () =>
