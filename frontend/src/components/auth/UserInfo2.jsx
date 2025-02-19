@@ -25,7 +25,7 @@ function UserInfo2({ label, placeholder, onSearchClick, category }) {
           : "";
 
         if ("cosmeticId" in item) {
-          return `${item.brandName} ${item.cosmeticName}${symptoms}`;
+          return `${item.cosmeticBrand} ${item.cosmeticName}${symptoms}`;
         }
         return `${item.ingredientName}${symptoms}`;
       })

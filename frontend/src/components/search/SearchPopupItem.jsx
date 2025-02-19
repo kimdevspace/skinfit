@@ -7,24 +7,20 @@ import SymptomPopup from "./SymptomPopup";
 // type : 화장품인지 성분인지
 // category : 잘 맞는/안 맞는, 화장품/성분 4가지 경우 중 1가지의 경우
 function SearchPopupItem({ item, type, category }) {
-  
   // 스토어에서 필요 데이터, 함수 가져오기
   const { items, addItem, removeItem, getIdKey } = useSearchPopupStore();
 
   // 현재 카테고리의 아이템 목록과 선택 여부를 메모이제이션
-  const isSelected = useMemo(() => {
+  const { isItemSelected } = useMemo(() => {
     // 현재 카테고리의 아이템 목록
     const currentItems = items[category] || [];
-
     // 현재 아이템의 id키 가져오기
     const idKey = getIdKey(category);
-
     // 현재 아이템이 선택되었는지 확인
-    const isSelected = currentItems.some(
+    const isItemSelected = currentItems.some(
       (selected) => selected[idKey] === item[idKey]
     );
-
-    return { currentItems, isSelected };
+    return { isItemSelected };
   }, [items, category, item, getIdKey]);
 
   // 증상 선택 팝업 상태
@@ -55,12 +51,16 @@ function SearchPopupItem({ item, type, category }) {
 
   return (
     <div className="search-popup-item">
-      {type === "cosmetics" ? (
+      {console.log(item)}
+      {type === "cosmetic" ? (
         // 화장품인 경우hh
         <>
-          <img src="" alt="" />
+          <img
+            src={item.imageUrl}
+            alt={`{item.cosmeticBrand} {item.cosmeticName}`}
+          />
           <div className="text-box">
-            <p className="brand-name">{item.brandName}</p>
+            <p className="brand-name">{item.cosmeticBrand}</p>
             <p className="main-text">{item.cosmeticName}</p>
           </div>
         </>
@@ -74,13 +74,13 @@ function SearchPopupItem({ item, type, category }) {
       {/* 추가/삭제 버튼 */}
       <div className="btn-box">
         <button
-          className={`btn add-btn ${!isSelected ? "active" : ""}`}
+          className={`btn add-btn ${!isItemSelected ? "active" : ""}`}
           onClick={handleAdd}
         >
           추가
         </button>
         <button
-          className={`btn remove-btn ${isSelected ? "active" : ""}`}
+          className={`btn remove-btn ${isItemSelected ? "active" : ""}`}
           onClick={handleRemove}
         >
           삭제

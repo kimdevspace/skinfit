@@ -48,11 +48,12 @@ export const useSearchPopupStore = create((set, get) => ({
     if (category) {
       // 단일 카테고리 변환
       const idKey = get().getIdKey(category);
-      const isSuitable = category.includes("suitable");
-
+      // 정확히 "unsuitable"을 포함하는지 확인
+      const isUnsuitable = category.includes("unsuitable");
+  
       return items[category].map((item) => ({
         [idKey]: item[idKey],
-        ...(isSuitable ? {} : { symptomIds: item.symptoms || [] }),
+        ...(isUnsuitable && item.symptoms ? { symptomIds: item.symptoms } : {})
       }));
     } else {
       // 전체 데이터 변환
@@ -67,15 +68,15 @@ export const useSearchPopupStore = create((set, get) => ({
 
   // 증상 리스트
   symptoms: [
-    { name: "부음", value: 0 },
-    { name: "열감", value: 1 },
-    { name: "건조함", value: 2 },
-    { name: "여드름", value: 3 },
-    { name: "두드러기", value: 4 },
-    { name: "가려움", value: 5 },
-    { name: "따가움", value: 6 },
-    { name: "기타", value: 7 },
-    { name: "모름", value: 8 },
+    { name: "부음", value: 1 },
+    { name: "열감", value: 2 },
+    { name: "건조함", value: 3 },
+    { name: "여드름", value: 4 },
+    { name: "두드러기", value: 5 },
+    { name: "가려움", value: 6 },
+    { name: "따가움", value: 7 },
+    { name: "기타", value: 8 },
+    { name: "모름", value: 9 },
   ],
 
   // 증상 이름 가져오는 유틸 함수

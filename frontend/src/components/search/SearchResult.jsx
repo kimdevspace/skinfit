@@ -35,7 +35,7 @@ function SearchResult({
   searchWord,
   setSearchWord,
   isSubmit,
-  setIsSubmit
+  setIsSubmit,
 }) {
   // 제출된 검색어를 저장할 상태 추가(연관검색어관리)
   const [submittedWord, setSubmittedWord] = useState("");
@@ -48,18 +48,18 @@ function SearchResult({
   // 검색돋보기 검색목록 스토어 사용
   const { data: searchedData, isLoading } = useSearchComplete();
 
-  // 실시간 검색어 감지(연관검색어 api 요청) 
+  // 실시간 검색어 감지(연관검색어 api 요청)
   useEffect(() => {
     if (searchWord && searchWord?.length > 0) {
-      if (category === 'suitableCosmetics' | 'unsuitableCosmetics') {
-        setApiCategory2('cosmetic');
-
-      } else if (category === 'suitableIngredients' | 'unsuitableIngredients') {
-        setApiCategory2('ingredients')
-      }
-      else {
+      if ((category === "suitableCosmetics") | "unsuitableCosmetics") {
+        setApiCategory2("cosmetic");
+      } else if (
+        (category === "suitableIngredients") |
+        "unsuitableIngredients"
+      ) {
+        setApiCategory2("ingredients");
+      } else {
         setApiCategory2(category);
-
       }
       setRelatedQuery(searchWord); // 연관검색어 쿼리 업데이트 설정 -> api 요청 수행
       console.log("연관검색어 쿼리요청 검색어 :", searchWord);
@@ -70,10 +70,16 @@ function SearchResult({
       setSubmittedWord(searchWord);
       // 제출 시 연관검색어 쿼리 초기화
       setRelatedQuery("");
-      setIsSubmit(false); // 제출 상태 초기화 
-
+      setIsSubmit(false); // 제출 상태 초기화
     }
-  }, [isSubmit, setIsSubmit, searchWord, setRelatedQuery, setApiCategory2, category]);
+  }, [
+    isSubmit,
+    setIsSubmit,
+    searchWord,
+    setRelatedQuery,
+    setApiCategory2,
+    category,
+  ]);
 
   // 현재 검색어가 수정 중인지 확인(연관검색어관리)
   const isSearchWordModified = searchWord !== submittedWord;
@@ -132,14 +138,27 @@ function SearchResult({
                     key={item.cosmeticId || item.ingredientId}
                     data={item}
                     type={type}
-                    category={category}F
+                    category={category}
                   />
                 ))}
           </>
         )} */}
 
       {console.log(isLoading, searchedData)}
-      {isLoading ? (<div>로딩중</div>) : (<div>{searchedData}</div>)}
+      {isLoading ? (
+        <div>로딩중</div>
+      ) : (
+        <div className="search-result-box">
+          {searchedData?.cosmetics?.map((item) => (
+            <SearchPopupItem
+              key={item.cosmeticId || item.ingredientId}
+              item={item}
+              type={type}
+              category={category}
+            />
+          ))}
+        </div>
+      )}
 
       {/* 3. 검색이 제출되었고 결과가 없을 때 */}
       {!isSearchWordModified &&

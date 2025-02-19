@@ -7,6 +7,15 @@ import "./Category.scss";
  * @param {Function} onToggleType - 피부타입 클릭 시 선택/해제하는 함수
  */
 function Category({ skinTypes, onToggleType }) {
+  // 피부타입 매핑 (문자열 -> ID)
+  const typeMap = {
+    "지성": 1,
+    "건성": 2,
+    "중성": 3,
+    "복합성": 4,
+    "민감성": 5
+  };
+
   const allTypes = ["지성", "건성", "중성", "복합성", "민감성"];
 
   return (
@@ -17,8 +26,8 @@ function Category({ skinTypes, onToggleType }) {
           <button
             key={type}
             type="button"
-            className={`skin-btn ${skinTypes.includes(type) ? "selected" : ""}`}
-            onClick={() => onToggleType(type)}
+            className={`skin-btn ${skinTypes.includes(typeMap[type]) ? "selected" : ""}`}
+            onClick={() => onToggleType(typeMap[type])}
           >
             {type}
           </button>

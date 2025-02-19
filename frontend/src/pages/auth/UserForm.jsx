@@ -72,12 +72,20 @@ function UserForm() {
   const userInitMutation = useMutation({
     mutationFn: (payload) => axios.post("user/init", payload),
     onSuccess: (response) => {
-      if (response.data?.token) {
-        setAuth(response.data.token, response.data.roleType || 'USER', true)
-      }
-      resetItems()
-      alert("회원 정보 등록에 성공했습니다.")
-      navigate("/")
+      // 현재 인증 상태를 유지하면서 isRegistered만 true로 설정
+    const authState = useAuthStore.getState();
+    setAuth(
+      authState.accessToken, 
+      authState.roleType,
+      true  // isRegistered를 true로 설정
+    );
+
+      // 저장이 완료될 시간을 주기 위해 약간의 지연 추가
+      setTimeout(() => {
+        resetItems()
+        alert("회원 정보 등록에 성공했습니다.")
+        navigate("/")
+      }, 100) // 100ms 지연
     },
     onError: (error) => {
       const errorMessage = error.response?.data?.message || "회원 정보 등록 중 오류가 발생했습니다."
@@ -252,6 +260,7 @@ function UserForm() {
       setStep(2)
     } else if (step === 2) {
       setIsSubmitting(true)
+      console.log(getApiPayload())
       
       if (!items.suitableCosmetics.length || !items.unsuitableCosmetics.length) {
         setIsSubmitting(false)
@@ -266,6 +275,8 @@ function UserForm() {
         skinTypeIds: skinTypes,
         ...getApiPayload()
       }
+
+      console.log(payload)
       
       // 즉시 API 호출
       userInitMutation.mutate(payload)
