@@ -60,7 +60,7 @@ public class OCRService {
         OcrResponse ocrResponse;
         try {
             ocrResponse = restTemplate.postForObject(
-                    "http://localhost:8000/ocr/img_ocr",
+                    "https://i12b111.p.ssafy.io/ocr/img_ocr",
                     Map.of("image", imageUrl),
                     OcrResponse.class
             );
