@@ -13,7 +13,7 @@ const FetchRelatedCosmetics = async ({ queryKey }) => {
   if (!params.query || params.query.trim() === "") {
     return []; // 또는 return null;
   }
-  console.log("연관검색params", params);
+  // console.log("연관검색params", params);
   const apiCategory2 = params.apiCategory2;
 
   const response = await axios.get(`search/${apiCategory2}/autocomplete`, {
@@ -22,7 +22,7 @@ const FetchRelatedCosmetics = async ({ queryKey }) => {
     },
   });
 
-  if (response.data.status === "success") {
+  if (response.data) {
     return response.data;
   }
   throw new Error(response.data.message || "검색 중 오류가 발생했습니다");
@@ -53,6 +53,7 @@ export const useRelatedCosmetics = () => {
     ],
     queryFn: FetchRelatedCosmetics,
     enabled: !!query, // 검색어 있을때만 검색되게
+    initialData: [] // 초기 데이터로 빈 배열 설정
   });
 };
 
@@ -64,7 +65,7 @@ export default useRelatedCosmeticsStore;
 // 액션
 const FetchSearchComplete = async ({ queryKey }) => {
   const params = queryKey[1]; // 바로 params 가져오기
-  console.log("검색완료params", params);
+  // console.log("검색완료params", params);
 
   const apiCategory = params.apiCategory;
 
