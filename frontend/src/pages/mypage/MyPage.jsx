@@ -57,10 +57,13 @@ function MyPage() {
   const myReviews = useReviewsStore((state) => state.myReviews);
   const likedReviews = useReviewsStore((state) => state.likedReviews);
 
+
   // myInfos 변경 시 로그 출력 (스토어 업데이트 확인)
   useEffect(() => {
     console.log("useEffect - myInfos 업데이트:", myInfos);
-  }, [myInfos]);
+    console.log('likedReviews',likedReviews)
+    console.log('myReviews',myReviews)
+  }, [myInfos, likedReviews,myReviews]);
 
   // 수정 후 데이터 새로고침을 위한 useEffect
   useEffect(() => {
