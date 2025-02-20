@@ -229,7 +229,7 @@ export default function EditUserInfo() {
 
     const payload = {
       nickname: nickname,
-      skinTypes: skinTypes,
+      skinTypeIds: skinTypes,
     };
 
     // 비밀번호가 입력되었고, 에러 메시지가 없는 경우에만 포함
