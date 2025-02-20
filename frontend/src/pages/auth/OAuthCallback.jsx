@@ -1,8 +1,10 @@
 import { useEffect } from "react";
-import { setAuth } from '../../stores/Auth';
+import useAuthStore from '../../stores/Auth.js';
 import './OAuthCallback.scss';
 
 function OAuthCallback() {
+  const setAuth = useAuthStore((state) => state.setAuth);
+  
   useEffect(() => {
     // URL 파라미터에서 데이터 추출
     const params = new URLSearchParams(window.location.search);
