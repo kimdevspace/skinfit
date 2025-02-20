@@ -1,5 +1,6 @@
 package com.ssafy12.moinsoop.skinfit.global.oauth.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy12.moinsoop.skinfit.domain.auth.dto.response.SignInResponse;
 import com.ssafy12.moinsoop.skinfit.domain.auth.dto.response.TokenResponse;
 import com.ssafy12.moinsoop.skinfit.domain.user.entity.User;
@@ -19,6 +20,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
 
@@ -58,8 +60,8 @@ public class KakaoOAuthController {
     }
 
     @GetMapping("/login/oauth2/code/kakao")
-    public ResponseEntity<?> kakaoCallback(@RequestParam String code,
-                                           HttpServletResponse response) {
+    public void kakaoCallback(@RequestParam String code,
+                                           HttpServletResponse response) throws IOException {
         log.info("인가 코드: {}", code);
 
         // 토큰 요청을 위한 헤더 설정
@@ -127,18 +129,27 @@ public class KakaoOAuthController {
                             .roleType(user.getRoleType())
                             .build();
 
-                    return ResponseEntity.ok(signInResponse);
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    String jsonResponse = objectMapper.writeValueAsString(signInResponse);
 
+                    // 응답 설정
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write(jsonResponse);
+
+                    // 프론트엔드 URL로 리다이렉트
+                    String frontendUrl = "https://i12b111.p.ssafy.io";
+                    String redirectUrl = frontendUrl + (isRegistered ? "/main" : "auth/userform");
+                    response.sendRedirect(redirectUrl);
                 }
             }
 
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("토큰 응답이 비어있습니다.");
 
         } catch (Exception e) {
             log.error("카카오 로그인 실패", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("카카오 로그인 실패: " + e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            String frontendUrl = "https://i12b111.p.ssafy.io/login";
+            response.sendRedirect(frontendUrl);
         }
     }
 
