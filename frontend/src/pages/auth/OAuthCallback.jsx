@@ -1,8 +1,10 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../stores/Auth.js";
 import "./OAuthCallback.scss";
 
 function OAuthCallback() {
+  const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
 
   useEffect(() => {
@@ -17,6 +19,13 @@ function OAuthCallback() {
     if (accessToken) {
       // 토큰 저장
       setAuth(accessToken, "USER", isRegistered);
+
+      // 회원정보 기록 상태에 따른 페이지 이동
+      if (isRegistered === true) {
+        navigate("/");
+      } else {
+        navigate("/auth/userform");
+      }
     }
   }, []);
 
