@@ -195,7 +195,7 @@ export default function ReviewItem({ review, reviewType }) {
           <img
             key={imgIndex}
             className="review-photo"
-            src={img.imageUrl}
+            src={reviewType === 'generalReviews' ? img : img.imageUrl}
             alt="user-review-photo"
           />
         ))}
