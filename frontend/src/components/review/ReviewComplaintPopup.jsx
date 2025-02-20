@@ -4,10 +4,13 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useState, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "../../api/axiosInstance";
+import { useCompletePopupStore } from '../../stores/CompletePopup';
 
 function ReviewComplaintPopup({ onClose, cosmeticId, reviewId }) {
   //신고 데이터
   const [reportData, setReportData] = useState('');
+
+  const showPopup = useCompletePopupStore(state => state.showPopup);
 
   // 신고 post 요청
 const reportReview = async ({ reason }) => {
@@ -23,7 +26,7 @@ const reportReview = async ({ reason }) => {
     mutationFn: reportReview,
     onSuccess: () => {
       console.log("신고접수 완료");
-        alert("신고가 정상적으로 접수되었습니다.");
+      showPopup('신고');
         onClose();
   
     },

@@ -10,8 +10,11 @@ import { useNavigate } from "react-router-dom"
 import { useSearchPopupStore } from "../../stores/SearchPopup.js"
 import SearchPopup from "../../components/search/SearchPopup.jsx"
 import useAuthStore from "../../stores/Auth.js"
+import { useCompletePopupStore } from '../../stores/CompletePopup.js'
 
 function UserForm() {
+  const showPopup = useCompletePopupStore(state => state.showPopup);
+  
   // 통합된 유저 폼 상태
   const [formData, setFormData] = useState({
     gender: "",
@@ -83,7 +86,7 @@ function UserForm() {
       // 저장이 완료될 시간을 주기 위해 약간의 지연 추가
       setTimeout(() => {
         resetItems()
-        alert("회원 정보 등록에 성공했습니다.")
+        showPopup('회원 정보 등록');
         navigate("/")
       }, 100) // 100ms 지연
     },

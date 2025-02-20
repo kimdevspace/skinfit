@@ -6,10 +6,13 @@ import "./ReviewRegister.scss";
 import Header from "../../components/common/Header";
 import Button from "../../components/common/Button";
 import ImageUpload from "../../components/common/ImageUpload";
+import { useCompletePopupStore } from '../../stores/CompletePopup.js'
 
 function ReviewRegister() {
   const { cosmeticId } = useParams(); // URL 파라미터에서 cosmeticId 추출
 
+  const showPopup = useCompletePopupStore(state => state.showPopup);
+  
   // 리뷰 데이터
   const [reviewData, setReviewData] = useState({
     rating: null,
@@ -74,7 +77,7 @@ function ReviewRegister() {
   const mutation = useMutation({
     mutationFn: uploadReview,
     onSuccess: () => {
-      alert("리뷰가 등록되었습니다.");
+      showPopup('리뷰 등록')
       setReviewData({ rating: "", reviewContent: "", images: [] });
       navigate(`/cosmetics/${cosmeticId}`)
     },

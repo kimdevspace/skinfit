@@ -9,9 +9,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import NavBar from "../../components/common/NavBar";
 import useAuthStore from "../../stores/Auth.js";
+import { useCompletePopupStore } from '../../stores/CompletePopup.js'
 
 export default function EditUserInfo() {
   const navigate = useNavigate();
+
+  const showPopup = useCompletePopupStore(state => state.showPopup);
+  
 
   // 닉네임 관리 변수
   const [nickname, setNickname] = useState("");
@@ -200,7 +204,7 @@ export default function EditUserInfo() {
   const mutation = useMutation({
     mutationFn: updateUserInfo, // 업데이트 함수
     onSuccess: (data) => {
-      console.log("사용자 정보 업데이트 성공", data);
+      showPopup('정보 수정')
       navigate("/mypage");
     },
     onError: (error) => {

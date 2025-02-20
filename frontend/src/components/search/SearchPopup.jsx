@@ -11,11 +11,14 @@ import {
   useRelatedCosmeticsStore,
   useSearchCompleteStore,
 } from "../../stores/Search.js";
+import { useCompletePopupStore } from '../../stores/CompletePopup.js'
 
 // type : 화장품(cosmetic)인지 성분(ingredient)인지
 // suitability : 잘 맞는(suitable) / 맞지 않는(unsuitable)
 // category : suitableCosmetics, suitableIngredients, unsuitableCosmetics, unsuitableIngredients
 function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
+  const showPopup = useCompletePopupStore(state => state.showPopup);
+  
   // 검색 완료 여부
   const [isSubmit, setIsSubmit] = useState(false);
 
@@ -92,7 +95,7 @@ function SearchPopup({ type, suitability, category, onClose, isEdit = false }) {
   const updateMutation = useMutation({
     mutationFn: (payload) => axios.put(getApiUrl(), payload),
     onSuccess: () => {
-      alert("수정이 완료되었습니다.");
+      showPopup('수정');
       onClose();
     },
     onError: (error) => {
