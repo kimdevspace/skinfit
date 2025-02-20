@@ -10,6 +10,7 @@ import OcrScanner from "./pages/ocr/OcrScanner";
 import AdminRoutes from "./routes/AdminRoutes";
 import CompletePopUp from "./components/common/CompletePopUp";
 import { ProtectedRoute, AdminRoute } from "./routes/ProtectedRoutes";
+import KakaoCallbackPage from './pages/auth/KakaoCallbackPage'
 
 function App() {
   return (
