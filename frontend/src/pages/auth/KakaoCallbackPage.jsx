@@ -1,71 +1,126 @@
-import React, { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/Auth.js';
 import './KakaoCallbackPage.scss';
 
 const KakaoCallbackPage = () => {
   const navigate = useNavigate();
-  const { setAuth } = useAuthStore();
+  const setAuth = useAuthStore((state) => state.setAuth);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // URL에서 code 파라미터 가져오기
-    const code = new URLSearchParams(window.location.search).get('code');
-    
-    if (!code) {
-      console.error('인증 코드가 없습니다.');
-      navigate('/auth/login');
-      return;
-    }
+    const handleKakaoCallback = async () => {
+      try {
+        // pre 태그의 내용을 가져오는 함수
+        const extractJsonFromPre = () => {
+          const preElement = document.querySelector("pre");
+          if (!preElement) {
+            throw new Error("토큰 데이터를 찾을 수 없습니다 (pre 태그 없음)");
+          }
+          return preElement.textContent;
+        };
 
-    // 페이지 콘텐츠에서 JSON 추출 시도
-    try {
-      // body 전체 텍스트 추출
-      const bodyText = document.body.textContent || document.body.innerText;
-      
-      // JSON 형식 문자열 찾기 (중괄호로 시작하는 부분을 찾음)
-      const jsonStartIndex = bodyText.indexOf('{');
-      if (jsonStartIndex !== -1) {
-        const jsonSubstring = bodyText.substring(jsonStartIndex);
-        const jsonEndIndex = jsonSubstring.lastIndexOf('}') + 1;
-        const jsonStr = jsonSubstring.substring(0, jsonEndIndex);
-        
-        // JSON 파싱
-        const data = JSON.parse(jsonStr);
-        console.log('추출된 데이터:', data);
-        
-        if (data.accessToken) {
-          // 로그인 상태 설정
+        // JSON 파싱 시도
+        const processData = (jsonText) => {
+          try {
+            const data = JSON.parse(jsonText);
+            if (!data.accessToken) {
+              throw new Error("액세스 토큰이 없습니다");
+            }
+            return data;
+          } catch (parseError) {
+            throw new Error(`JSON 파싱 오류: ${parseError.message}`);
+          }
+        };
+
+        // 데이터 처리 및 리다이렉션
+        const handleAuthData = (data) => {
+          // 인증 상태 설정
           setAuth(
             data.accessToken,
-            data.roleType || 'USER',
-            data.registered === true // boolean 값으로 변환
+            data.roleType || "USER",
+            data.registered === true
           );
-          
+
           // 회원가입 상태에 따라 리다이렉트
           if (data.registered === false) {
-            navigate('/auth/userform');
+            navigate("/auth/userform", { replace: true });
           } else {
-            navigate('/');
+            navigate("/", { replace: true });
           }
-          return;
-        }
+        };
+
+        // 실행
+        const jsonText = extractJsonFromPre();
+        const data = processData(jsonText);
+        handleAuthData(data);
+      } catch (error) {
+        console.error("카카오 로그인 처리 중 오류:", error);
+        setError(error.message);
+        // 3초 후 로그인 페이지로 리다이렉트
+        setTimeout(() => navigate("/auth/login", { replace: true }), 3000);
+      } finally {
+        setLoading(false);
       }
-      
-      // JSON을 찾지 못했거나 처리할 수 없는 경우
-      console.error('유효한 응답 데이터를 찾을 수 없습니다.');
-      navigate('/auth/login');
-    } catch (error) {
-      console.error('응답 처리 중 오류 발생:', error);
-      navigate('/auth/login');
-    }
+    };
+
+    handleKakaoCallback();
   }, [navigate, setAuth]);
 
-  return (
-    <div className="loading-container">
-      <div className="spinner"></div>
-      <p>카카오 로그인 처리 중...</p>
-    </div>
-  );
+  // 로딩 화면
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: '#f9f9f9'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: '50px',
+            height: '50px',
+            border: '5px solid rgba(0, 0, 0, 0.1)',
+            borderRadius: '50%',
+            borderTop: '5px solid #3498db',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 20px'
+          }}></div>
+          <p>로그인 처리 중입니다...</p>
+        </div>
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  // 에러 화면
+  if (error) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: '#f9f9f9'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ color: 'red' }}>로그인 처리 중 오류가 발생했습니다</p>
+          <p>오류 내용: {error}</p>
+          <p>잠시 후 로그인 페이지로 이동합니다...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 일반적으로 이 부분은 렌더링되지 않음 (이미 리다이렉트됨)
+  return null;
 };
 
 export default KakaoCallbackPage;

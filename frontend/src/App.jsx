@@ -17,7 +17,7 @@ function App() {
     <>
       <Routes>
         {/* 카카오 콜백을 위한 라우트 추가 */}
-        <Route path="/login/oauth2/code/kakao" element={<KakaoCallbackPage />} />
+        <Route path="/api/v1/login/oauth2/code/kakao" element={<KakaoCallbackPage />} />
         {/* 홈 관련 라우트 */}
         <Route
           path="/"
