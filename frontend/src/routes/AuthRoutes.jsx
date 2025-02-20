@@ -6,7 +6,6 @@ import SignUp from "../pages/auth/SignUp";
 import FindPW from "../pages/auth/FindPW";
 import UserForm from "../pages/auth/UserForm";
 import { AuthRoute, UserFormRoute } from "./ProtectedRoutes";
-import KakaoCallbackPage from "../pages/auth/KakaoCallbackPage";
 
 function AuthRoutes() {
   return (
