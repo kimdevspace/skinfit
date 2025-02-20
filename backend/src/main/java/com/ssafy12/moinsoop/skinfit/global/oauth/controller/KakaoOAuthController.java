@@ -139,7 +139,7 @@ public class KakaoOAuthController {
 
                     // 프론트엔드 URL로 리다이렉트
                     String frontendUrl = "https://i12b111.p.ssafy.io";
-                    String redirectUrl = frontendUrl + (isRegistered ? "/main" : "auth/userform");
+                    String redirectUrl = frontendUrl + (isRegistered ? "/main" : "/auth/userform");
                     response.sendRedirect(redirectUrl);
                 }
             }
