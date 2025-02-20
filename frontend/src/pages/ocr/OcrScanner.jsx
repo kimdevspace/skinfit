@@ -152,6 +152,8 @@ export default function OcrScanner() {
     },
   });
 
+  console.log('isLoading?', mutation.isLoading)
+
   //미입력 에러메시지 관리리
   const brandNameErrorRef = useRef(null);
   const cosmeticNameErrorRef = useRef(null);
