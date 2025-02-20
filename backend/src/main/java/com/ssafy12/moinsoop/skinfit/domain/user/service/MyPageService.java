@@ -26,6 +26,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -433,7 +435,12 @@ public class MyPageService {
         cosmeticExperienceRepository.saveAll(experiencesToAdd);
 
         // 6. 추천알고리즘 다시 실행
-        refreshRecommendations(user.getUserId());
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+            @Override
+            public void afterCommit() {
+                refreshRecommendations(user.getUserId());
+            }
+        });
     }
 
     // 업데이트 성분 DTO 변환
@@ -514,7 +521,12 @@ public class MyPageService {
         ingredientExperienceRepository.saveAll(experiencesToAdd);
 
         // 6. 추천 알고리즘 다시 적용
-        refreshRecommendations(user.getUserId());
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+            @Override
+            public void afterCommit() {
+                refreshRecommendations(user.getUserId());
+            }
+        });
     }
 
     private void refreshRecommendations(Integer userId) {
