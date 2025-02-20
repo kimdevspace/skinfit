@@ -176,8 +176,8 @@ export default function ReviewItem({ review, reviewType }) {
 
       {reviewType !== "myReviews" ? (
         <div className="user-info-section">
-          <span className="user-name">{reviewType === 'generalReviews' ? review.userNickname : review.nickname}님</span>
-          <div className="age-skintype">{reviewType === 'generalReviews' ? review.userAgeGroup : review.ageRange} | {review.userSkinType}
+          <span className="user-name">{reviewType === 'generalReviews' ? review.userNickname : review.writer.nickname}님</span>
+          <div className="age-skintype">{reviewType === 'generalReviews' ? review.userAgeGroup : review.writer.ageRange} | {review.userSkinType}
             
           </div>
           <span className={`user-answer ${scoreMap[review.score].class}`}>
