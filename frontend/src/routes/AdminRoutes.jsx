@@ -9,7 +9,7 @@ import CosmeticForm from '../pages/admin/CosmeticForm';
 // 컴포넌트 대신 함수로 정의하여 Route 요소들을 반환
 function AdminRoutes() {
   return [
-    <Route key="admin-main" path="/" element={<AdminLayout />}>
+    <Route key="admin-main" element={<AdminLayout />}>
       <Route index element={<AdminHome />} />
       <Route path="reviews" element={<ReviewManagement />} />
       <Route path="cosmetics" element={<CosmeticCheck />} />
