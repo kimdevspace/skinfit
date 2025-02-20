@@ -6,7 +6,7 @@ import axios from "../../api/axiosInstance";
 import { useMutation } from "@tanstack/react-query";
 import Header from "../../components/common/Header.jsx";
 import { useNavigate } from "react-router-dom";
-import useCompletePopupStore from '../../stores/CompletePopup.js'
+import { useCompletePopupStore } from '../../stores/CompletePopup.js'
 
 export default function OcrScanner() {
   const navigate = useNavigate();
