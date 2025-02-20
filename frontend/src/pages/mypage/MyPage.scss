@@ -3,7 +3,7 @@
   margin-right: 2rem;
   padding-bottom: 10rem;
 
-.item-line {
+  .item-line {
     margin: 1rem 2rem;
     background-color: #dedede;
     border: 0;
@@ -140,21 +140,30 @@
       margin-top: 0.8rem;
     }
 
-    .cosmetic-item {
+    .cosmetic-item-wrapper {
       margin-top: 4rem;
       margin-left: 2rem;
       margin-right: 2rem;
-      display: flex;
-      justify-content: space-between;
+      overflow: hidden;
 
-      .cosmetic-name {
-        font-size: 1.1rem;
-        align-self: center;
-      }
+      .cosmetic-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
 
-      img {
-        width: 2rem;
-        height: 4rem;
+        .cosmetic-name {
+          width: 90%;
+          font-size: 1.1rem;
+          color: #565656;
+          white-space: nowrap; // 줄바꿈 방지
+          overflow: hidden; // 넘치는 텍스트 숨기기
+          text-overflow: ellipsis; // '...' 표시
+        }
+
+        img {
+          width: 4rem;
+          height: 4rem;
+        }
       }
     }
   }
@@ -222,7 +231,5 @@
     font-size: 1rem;
     margin-top: 0.5rem;
     cursor: pointer;
-
   }
-
 }

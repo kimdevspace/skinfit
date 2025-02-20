@@ -57,13 +57,12 @@ function MyPage() {
   const myReviews = useReviewsStore((state) => state.myReviews);
   const likedReviews = useReviewsStore((state) => state.likedReviews);
 
-
   // myInfos 변경 시 로그 출력 (스토어 업데이트 확인)
   useEffect(() => {
     console.log("useEffect - myInfos 업데이트:", myInfos);
-    console.log('likedReviews',likedReviews)
-    console.log('myReviews',myReviews)
-  }, [myInfos, likedReviews,myReviews]);
+    console.log("likedReviews", likedReviews);
+    console.log("myReviews", myReviews);
+  }, [myInfos, likedReviews, myReviews]);
 
   // 수정 후 데이터 새로고침을 위한 useEffect
   useEffect(() => {
@@ -194,17 +193,14 @@ function MyPage() {
               수정
             </button>
           </div>
-          <div>
+          <div className="cosmetic-item-wrapper">
             {(isCosmeticClicked === "맞는 화장품"
               ? myMatchedCosData
               : myUnMatchedCosData
             )?.map((cos) => (
-              <div key={cos.id} className="cosmetic-item-wrapper">
-                <div className="cosmetic-item">
-                  <span className="cosmetic-name">{cos.cosmeticName}</span>
-                  <img src={cos.imageUrl || ""} alt={cos.cosmeticName} />
-                </div>
-                <hr className="item-line" />
+              <div key={cos.id} className="cosmetic-item">
+                <span className="cosmetic-name">{cos.cosmeticName}</span>
+                <img src={cos.imageUrl || ""} alt={cos.cosmeticName} />
               </div>
             ))}
           </div>
