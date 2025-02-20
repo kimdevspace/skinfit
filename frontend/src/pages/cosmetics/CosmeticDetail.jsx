@@ -41,16 +41,16 @@ function CosmeticDetail() {
   };
 
   // 리뷰 요청 함수
-  const fetchReviews = async ({ cosmeticId, sort, page, isMyReview }) => {
+  const fetchReviews = async ({ cosmeticId, sort, page, custom }) => {
     const response = await axios.get(`cosmetics/${cosmeticId}/reviews`, {
       params: {
         sort,
         page,
         limit: 10,
-        MyReview: isMyReview ? "true" : "false",
+        MyReview: custom ? "true" : "false",
       },
     });
-    console.log('내피부맞춤',isMyReview, sort)
+    console.log('내피부맞춤',custom, sort)
     return response.data.reviews;
   };
 
@@ -69,7 +69,7 @@ function CosmeticDetail() {
         sort: sortOrder,
         page,
         limit: 10,
-        isMyReview: isOn,
+        custom: isOn,
       }),
   });
 
