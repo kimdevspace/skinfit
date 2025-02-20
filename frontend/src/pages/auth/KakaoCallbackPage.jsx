@@ -10,17 +10,23 @@ const KakaoCallbackPage = () => {
   useEffect(() => {
     // JSON 응답 파싱
     try {
+      const response = fetch(`/api/v1/login/oauth2/code/kakao${window.location.search}`);
+      if (response) {
+        const data = response.json();
+        console.log('data1', data)
+      }
       // 페이지 본문의 JSON 텍스트 가져오기
       const jsonText = document.body.textContent || document.body.innerText;
       if (jsonText && jsonText.includes("accessToken")) {
         const data = JSON.parse(jsonText);
         
         // 인증 상태 저장
-        setAuth(data.accessToken, data.roleType, data.isRegistered);
-        
+        setAuth(data.accessToken, data.roleType, data.registered);
+        console.log('data2', data)
+        console.log('카카오 로그인 완료')
         
         // 회원가입 상태에 따라 리다이렉트
-        if (data.isRegistered) {
+        if (data.registered) {
           navigate('/');
         } else {
           navigate('/auth/userform');
