@@ -174,6 +174,7 @@ export default function ReviewItem({ review, reviewType }) {
         </div>
       ) : null}
 
+{console.log(review)}
       {reviewType !== "myReviews" ? (
         <div className="user-info-section">
           <span className="user-name">{reviewType === 'generalReviews' ? review.userNickname : review.writer.nickname}님</span>
