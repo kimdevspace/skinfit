@@ -53,8 +53,8 @@ function ReviewRegister() {
   // 피부 적합 여부 옵션
   const ratingOption = [
     { value: 0, label: "잘 맞았어요" },
-    { value: 1, label: "안 맞았어요" },
-    { value: 2, label: "모르겠어요" },
+    { value: 1, label: "모르겠어요" },
+    { value: 2, label: "안 맞았어요" },
   ];
 
   // 리뷰 데이터 POST 요청
