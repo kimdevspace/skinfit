@@ -24,6 +24,7 @@ function Login() {
 
       // 액세스 토큰과 등록 상태를 함께 저장
       setAuth(accessToken, roleType, registered);
+      localStorage.removeItem('auth-storage');
 
       // roleType에 따른 페이지 라우팅
       if (roleType === "ADMIN") {

@@ -68,9 +68,9 @@ function App() {
         <Route
           path="/admin/*"
           element={
-            <AdminRoute>
+            // <AdminRoute>
               <AdminRoutes />
-            </AdminRoute>
+            // </AdminRoute>
           }
         />
       </Routes>
