@@ -12,7 +12,7 @@ import CompletePopUp from "./components/common/CompletePopUp";
 import { ProtectedRoute, AdminRoute } from "./routes/ProtectedRoutes";
 import KakaoCallbackPage from './pages/auth/KakaoCallbackPage'
 import { useEffect } from 'react';
-import useAuthStore from './stores/authStore';
+import useAuthStore from './stores/Auth';
 
 function App() {
   const navigate = useNavigate();
