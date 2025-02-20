@@ -29,15 +29,20 @@ function MyPage() {
   const [isReviewClicked, setReviewIsClicked] = useState("내가 좋아요한 리뷰");
   const [isWithdrawOpen, setWithdrawIsOpen] = useState(false);
   const [isMyInfoOpen, setyMyInfoOpen] = useState(false);
+  const [isDataInitialized, setIsDataInitialized] = useState(false);
 
   // React Query와 zustand를 이용해 데이터 가져오기
-  const { error: error1, isLoading } = useMyPageInfo();
+  const { error: error1, isLoading: myInfoLoading } = useMyPageInfo();
   const myInfos = useMyPageStore((state) => state.myInfos);
 
-  const { isLoading: top3Loading, error: top3Error } = useTop3Data();
+  const { 
+    isLoading: top3Loading, 
+    error: top3Error,
+    refetch: refetchTop3 
+  } = useTop3Data();
   const top3Data = useTop3DataStore((state) => state.top3Data);
 
-  const { error: cosError, refetch: refetchCosmetics } = useMyCosmetics();
+  const { isLoading: cosLoading, error: cosError, refetch: refetchCosmetics } = useMyCosmetics();
   const myMatchedCosData = useMyCosmeticsStore(
     (state) => state.myMatchedCosData
   );
@@ -45,7 +50,7 @@ function MyPage() {
     (state) => state.myUnMatchedCosData
   );
 
-  const { error: ingError, refetch: refetchIngredients } = useMyIngredients();
+  const { isLoading: ingLoading, error: ingError, refetch: refetchIngredients } = useMyIngredients();
   const myMatchedIngreData = useMyIngredientsStore(
     (state) => state.myMatchedIngreData
   );
@@ -53,35 +58,85 @@ function MyPage() {
     (state) => state.myUnMatchedIngreData
   );
 
-  const { error: reviewError, refetch: refetchReviews } = useReviews();
+  const { isLoading: reviewLoading, error: reviewError, refetch: refetchReviews } = useReviews();
   const myReviews = useReviewsStore((state) => state.myReviews);
   const likedReviews = useReviewsStore((state) => state.likedReviews);
 
+  // 데이터 로딩 상태 통합
+  const isLoading = myInfoLoading || top3Loading || cosLoading || ingLoading || reviewLoading;
+
+  // 컴포넌트 마운트 시 데이터 초기화 확인
+  useEffect(() => {
+    const initializeData = async () => {
+      try {
+        // 모든 데이터를 명시적으로 로드
+        await Promise.all([
+          refetchTop3(),
+          refetchCosmetics(),
+          refetchIngredients(),
+          refetchReviews()
+        ]);
+        setIsDataInitialized(true);
+        console.log("모든 데이터 초기화 완료");
+      } catch (error) {
+        console.error("데이터 초기화 중 오류 발생:", error);
+      }
+    };
+
+    if (!isDataInitialized) {
+      initializeData();
+    }
+  }, [
+    isDataInitialized,
+    refetchTop3,
+    refetchCosmetics,
+    refetchIngredients,
+    refetchReviews
+  ]);
+
   // myInfos 변경 시 로그 출력 (스토어 업데이트 확인)
   useEffect(() => {
-    console.log("useEffect - myInfos 업데이트:", myInfos);
-    console.log("likedReviews", likedReviews);
-    console.log("myReviews", myReviews);
-  }, [myInfos, likedReviews, myReviews]);
+    if (myInfos) {
+      console.log("useEffect - myInfos 업데이트:", myInfos);
+    }
+  }, [myInfos]);
+
+  // top3Data 변경 시 로그 출력
+  useEffect(() => {
+    if (top3Data) {
+      console.log("useEffect - top3Data 업데이트:", top3Data);
+    }
+  }, [top3Data]);
+
+  // 리뷰 데이터 변경 시 로그 출력
+  useEffect(() => {
+    if (likedReviews?.length > 0 || myReviews?.length > 0) {
+      console.log("likedReviews", likedReviews);
+      console.log("myReviews", myReviews);
+    }
+  }, [likedReviews, myReviews]);
 
   // 수정 후 데이터 새로고침을 위한 useEffect
   useEffect(() => {
     if (editPopupProps === null) {
       // 모든 데이터 새로고침
+      refetchTop3();
       refetchCosmetics();
       refetchIngredients();
       refetchReviews();
 
       console.log("팝업 닫힘 감지: 데이터 새로고침 실행");
     }
-  }, [editPopupProps, refetchCosmetics, refetchIngredients, refetchReviews]);
+  }, [editPopupProps, refetchTop3, refetchCosmetics, refetchIngredients, refetchReviews]);
+  
   const navigate = useNavigate();
 
   if (error1) {
-    console.log("마이페이지 유저 데이터 렌더링 오류:", error1.message);
+    console.error("마이페이지 유저 데이터 렌더링 오류:", error1.message);
+    return <div>데이터를 불러오는데 문제가 발생했습니다.</div>;
   }
 
-  if (isLoading) {
+  if (isLoading && !isDataInitialized) {
     return <div>로딩중...</div>;
   }
 
@@ -146,15 +201,18 @@ function MyPage() {
           </div>
           <hr className="item-line" />
           <div className="ranking-text">
-            {Array.isArray(top3Data) &&
-              top3Data.map((ingredient) => (
-                <div key={ingredient}>
-                  <span className="rank-num">
-                    {top3Data.indexOf(ingredient) + 1}
-                  </span>
-                  <span className="ingredient-name">{ingredient}</span>
+            {Array.isArray(top3Data) && top3Data.length > 0 ? (
+              top3Data.map((ingredient, index) => (
+                <div key={ingredient || `empty-${index}`}>
+                  <span className="rank-num">{index + 1}</span>
+                  <span className="ingredient-name">{ingredient || "-"}</span>
                 </div>
-              ))}
+              ))
+            ) : (
+              <div className="no-data-message">
+                아직 데이터가 충분하지 않습니다.
+              </div>
+            )}
           </div>
           <div className="ingredient-detail-btn">
             <Link to="/mypage/ingredient" className="detail-btn">
