@@ -22,16 +22,19 @@ import com.ssafy12.moinsoop.skinfit.domain.user.entity.repository.UserRepository
 import com.ssafy12.moinsoop.skinfit.global.core.analysis.IngredientAnalysisCacheManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class MyPageService {
 
     private final UserRepository userRepository;
@@ -45,6 +48,7 @@ public class MyPageService {
     private final IngredientRepository ingredientRepository;
     private final IngredientAnalysisCacheManager ingredientAnalysisCacheManager;
     private final RedisTemplate redisTemplate;
+    private final MainPageService mainPageService;
     @Transactional(readOnly = true)
     public UserNicknameAndUserSkinTypeResponse getUserNicknameAndSkinTypes(Integer userId) {
         User user = userRepository.findById(userId)
@@ -427,6 +431,9 @@ public class MyPageService {
         // 5. 변경사항 적용
         cosmeticExperienceRepository.deleteAll(experiencesToDelete);
         cosmeticExperienceRepository.saveAll(experiencesToAdd);
+
+        // 6. 추천알고리즘 다시 실행
+        refreshRecommendations(user.getUserId());
     }
 
     // 업데이트 성분 DTO 변환
@@ -505,6 +512,25 @@ public class MyPageService {
         // 5. 변경사항 적용
         ingredientExperienceRepository.deleteAll(experiencesToDelete);
         ingredientExperienceRepository.saveAll(experiencesToAdd);
+
+        // 6. 추천 알고리즘 다시 적용
+        refreshRecommendations(user.getUserId());
     }
 
+    private void refreshRecommendations(Integer userId) {
+        String cacheKey = "recommend" + userId;
+
+        if (redisTemplate.hasKey(cacheKey)) {
+            redisTemplate.delete(cacheKey);
+        }
+
+        CompletableFuture.runAsync(() -> {
+            try {
+                mainPageService.callFastAPIForRecommendation(userId);
+            } catch (Exception e) {
+                log.error("Failed to refresh recommendations for user: " + userId, e);
+            }
+        });
+
+    }
 }
