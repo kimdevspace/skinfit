@@ -23,10 +23,10 @@ public interface CosmeticRepository extends JpaRepository<Cosmetic, Integer> {
 
     // 🔍 화장품 돋보기 검색 (카테고리 필터 포함, 10개 제한)
     @Query("SELECT c FROM Cosmetic c " +
-            "WHERE (LOWER(c.cosmeticName) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "OR LOWER(c.cosmeticBrand) LIKE LOWER(CONCAT('%', :query, '%'))) " +
+            "WHERE LOWER(REPLACE(CONCAT(c.cosmeticBrand, c.cosmeticName), ' ', '')) " +
+            "LIKE LOWER(CONCAT('%', REPLACE(:query, ' ', ''), '%')) " +
             "AND c.status = true " +
-            "AND (:category IS NULL OR c.category.categoryName = :category) " + // 카테고리 필터링
+            "AND (:category IS NULL OR c.category.categoryName = :category) " +
             "ORDER BY " +
             "CASE WHEN c.cosmeticBrand LIKE '[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]%' THEN 1 ELSE 2 END, " +
             "c.cosmeticBrand ASC, " +
