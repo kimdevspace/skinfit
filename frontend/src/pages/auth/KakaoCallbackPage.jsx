@@ -1,72 +1,63 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import useAuthStore from '../../stores/Auth.js';
+import axios  from '../../api/axiosInstance.js';
 import './KakaoCallbackPage.scss';
 
 const KakaoCallbackPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const setAuth = useAuthStore((state) => state.setAuth);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const handleKakaoCallback = async () => {
+    const fetchAuthData = async () => {
+      console.log('KakaoCallbackPage다')
       try {
-        // pre 태그의 내용을 가져오는 함수
-        const extractJsonFromPre = () => {
-          const preElement = document.querySelector("pre");
-          if (!preElement) {
-            throw new Error("토큰 데이터를 찾을 수 없습니다 (pre 태그 없음)");
-          }
-          return preElement.textContent;
-        };
-
-        // JSON 파싱 시도
-        const processData = (jsonText) => {
-          try {
-            const data = JSON.parse(jsonText);
-            if (!data.accessToken) {
-              throw new Error("액세스 토큰이 없습니다");
-            }
-            return data;
-          } catch (parseError) {
-            throw new Error(`JSON 파싱 오류: ${parseError.message}`);
-          }
-        };
-
-        // 데이터 처리 및 리다이렉션
-        const handleAuthData = (data) => {
+        // URL에서 code 파라미터 가져오기
+        const code = new URLSearchParams(location.search).get('code');
+        
+        if (!code) {
+          throw new Error('인증 코드가 없습니다');
+        }
+        
+        console.log('인증 코드 확인:', code);
+        
+        // 백엔드에 직접 API 요청
+        const response = await axios.get(`/api/v1/login/oauth2/code/kakao?code=${code}`);
+        const data = response.data;
+        
+        console.log('로그인 응답 데이터:', data);
+        
+        if (data.accessToken) {
           // 인증 상태 설정
           setAuth(
             data.accessToken,
-            data.roleType || "USER",
-            data.registered === true
+            data.roleType || 'USER',
+            data.isRegistered === true
           );
-
+          
           // 회원가입 상태에 따라 리다이렉트
-          if (data.registered === false) {
-            navigate("/auth/userform", { replace: true });
+          if (data.isRegistered === false) {
+            navigate('/auth/userform', { replace: true });
           } else {
-            navigate("/", { replace: true });
+            navigate('/', { replace: true });
           }
-        };
-
-        // 실행
-        const jsonText = extractJsonFromPre();
-        const data = processData(jsonText);
-        handleAuthData(data);
+        } else {
+          throw new Error('액세스 토큰이 없습니다');
+        }
       } catch (error) {
-        console.error("카카오 로그인 처리 중 오류:", error);
-        setError(error.message);
-        // 3초 후 로그인 페이지로 리다이렉트
-        setTimeout(() => navigate("/auth/login", { replace: true }), 3000);
+        console.error('카카오 로그인 처리 중 오류:', error);
+        setError(error.message || '로그인 처리 중 오류가 발생했습니다');
+        setTimeout(() => navigate('/auth/login', { replace: true }), 3000);
       } finally {
         setLoading(false);
       }
     };
 
-    handleKakaoCallback();
-  }, [navigate, setAuth]);
+    fetchAuthData();
+  }, [location.search, navigate, setAuth]);
 
   // 로딩 화면
   if (loading) {
