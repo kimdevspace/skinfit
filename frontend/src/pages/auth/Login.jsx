@@ -8,17 +8,21 @@ import AuthBox from "../../components/auth/AuthBox.jsx";
 import Button from "../../components/common/Button.jsx";
 import kakaoLoginBtn from "../../assets/images/kakao_login_medium_wide.png";
 import useAuthStore from "../../stores/Auth.js";
+import { useKakaoLogin } from "../../stores/KakaoLogin.js";
 
 function Login() {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  // useKakaoLogin 훅에서 initiateKakaoLogin 함수 가져오기
+  const { initiateKakaoLogin } = useKakaoLogin();
+
   const setAuth = useAuthStore((state) => state.setAuth);
 
   const loginMutation = useMutation({
     mutationFn: (credentials) => axios.post("auth/signin", credentials),
     onSuccess: (response) => {
-      const { accessToken,roleType, registered } = response.data;
+      const { accessToken, roleType, registered } = response.data;
       console.log("registered 값:", registered, " | 타입:", typeof registered);
       console.log("로그인 성공:", response.data);
 
@@ -82,11 +86,13 @@ function Login() {
       </p>
       <hr className="divider" />
 
-      <img
-        className="kakao-login-btn"
-        src={kakaoLoginBtn}
-        alt="kakao-login-btn"
-      />
+      <button onClick={initiateKakaoLogin}>
+        <img
+          className="kakao-login-btn"
+          src={kakaoLoginBtn}
+          alt="kakao-login-btn"
+        />
+      </button>
     </div>
   );
 }

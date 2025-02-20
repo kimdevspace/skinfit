@@ -6,6 +6,7 @@ import SignUp from "../pages/auth/SignUp";
 import FindPW from "../pages/auth/FindPW";
 import UserForm from "../pages/auth/UserForm";
 import { AuthRoute, UserFormRoute } from "./ProtectedRoutes";
+import KakaoCallbackPage from "../pages/auth/KakaoCallbackPage";
 
 function AuthRoutes() {
   return (
@@ -18,6 +19,8 @@ function AuthRoutes() {
           </AuthRoute>
         }
       />
+      {/* 카카오 콜백을 위한 라우트 추가 */}
+      <Route path="login/oauth2/code/kakao" element={<KakaoCallbackPage />} />      
       <Route
         path="signup"
         element={
