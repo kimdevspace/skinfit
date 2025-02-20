@@ -1,6 +1,7 @@
 package com.ssafy12.moinsoop.skinfit.domain.admin.service;
 
 import com.ssafy12.moinsoop.skinfit.domain.admin.dto.CosmeticDetailResponse;
+import com.ssafy12.moinsoop.skinfit.domain.cosmetic_ingredient.entity.CosmeticIngredientId;
 import com.ssafy12.moinsoop.skinfit.domain.ingredient.dto.IngredientDetailDto;
 import com.ssafy12.moinsoop.skinfit.domain.admin.dto.UnverifiedCosmeticResponse;
 import com.ssafy12.moinsoop.skinfit.domain.admin.dto.UpdateCosmeticRequest;
@@ -84,10 +85,16 @@ public class AdminCosmeticService {
         // 요청으로 받은 성분 ID 목록으로 새로운 연관관계 생성
         if (request.getIngredientIds() != null) {
             for (int i = 0; i < request.getIngredientIds().size(); i++) {
-                Integer ingredientId = request.getIngredientIds().get(i);
-                Ingredient ingredient = ingredientRepository.findById(ingredientId)
+                String ingredientName = request.getIngredientIds().get(i);
+                Ingredient ingredient = ingredientRepository.findByIngredientName(ingredientName)
                         .orElseThrow(() -> new AdminException("해당 성분이 존재하지 않습니다."));
+                // 복합키 객체 생성
+                CosmeticIngredientId id = new CosmeticIngredientId(
+                        cosmetic.getCosmeticId(),  // cosmetic의 getId() 메서드가 있다고 가정
+                        ingredient.getIngredientId() // ingredient의 getId() 메서드가 있다고 가정
+                );
                 CosmeticIngredient cosmeticIngredient = CosmeticIngredient.builder()
+                        .id(id)
                         .cosmetic(cosmetic)
                         .ingredient(ingredient)
                         .sequence(i + 1)

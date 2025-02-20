@@ -15,5 +15,5 @@ public class UpdateCosmeticRequest {
     @NotBlank
     private String cosmeticVolume;
 
-    private List<Integer> ingredientIds;
+    private List<String> ingredientIds;
 }
