@@ -10,7 +10,7 @@ export const useKakaoLogin = () => {
     
    // 간단하게 직접 카카오 로그인 페이지로 리다이렉트
    const initiateKakaoLogin = () => {
-    window.location.href = 'http://localhost:8080/api/v1/oauth/kakao/login';
+    window.location.href = 'oauth/kakao/login';
   };
   
     return { initiateKakaoLogin };
