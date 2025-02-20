@@ -150,9 +150,11 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin: 0.5rem 0;
+        border-bottom: 0.5px solid #dedede;
 
         .cosmetic-name {
-          width: 90%;
+          width: 85%;
           font-size: 1.1rem;
           color: #565656;
           white-space: nowrap; // 줄바꿈 방지
