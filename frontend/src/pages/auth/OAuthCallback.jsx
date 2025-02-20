@@ -1,8 +1,10 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import useAuthStore from '../../stores/Auth.js';
 import './OAuthCallback.scss';
 
 function OAuthCallback() {
+  const navigate = useNavigate()
   const setAuth = useAuthStore((state) => state.setAuth);
   
   useEffect(() => {
@@ -21,11 +23,11 @@ function OAuthCallback() {
         isRegistered
       );
 
-      // 회원정보 기록록 상태에 따른 페이지 이동
+      // 회원정보 기록 상태에 따른 페이지 이동
       if (isRegistered === "true") {
-        window.location.href = "/";
+        navigate('/');
       } else {
-        window.location.href = "/auth/userform";
+        navigate('/auth/userform');
       }
     }
   }, []);
