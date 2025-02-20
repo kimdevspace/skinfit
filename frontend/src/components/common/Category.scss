@@ -1,0 +1,34 @@
+@use "../../assets/styles/mixin" as *;
+
+.skintype-group {
+  margin: 0 3rem 2.5rem;
+
+  label {
+    @include input-title();
+  }
+
+  .skintype-options {
+    display: flex;
+    /* 5개 버튼이 전부 한 줄에서 균등 분배되길 원한다면 flex-wrap: nowrap (기본값) */
+    /* 만약 좁은 화면에서 줄바꿈되길 원하면 flex-wrap: wrap; 을 사용 */
+    gap: 0.8rem; // 버튼들 사이 간격
+
+    .skin-btn {
+      flex: 1; /* 5개의 피부타입 버튼이 한 줄을 균등 분할 */
+      text-align: center; /* 텍스트 가운데 정렬 */
+      border: 0.5px solid #e1e1e1;
+      border-radius: 0.5rem;
+      // 카테고리 사이즈즈 수정 (글자 넘어가지않게)
+      padding: 1rem 0.4rem;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: #8e8e8e;
+
+      &.selected {
+        color: #565656;
+        border: 0.5px solid #8e8e8e;
+        background-color: #fff0e8;
+      }
+    }
+  }
+}

@@ -1,0 +1,70 @@
+@use '../../assets/styles/mixin' as *;
+
+.review-register form {
+  margin: 1rem 3rem 0;
+
+  // 공통 style
+  .input-wrapper {
+    @include input-group();
+
+    .input-title {
+      @include input-title();
+    }
+
+    // input style
+    .radio-box label .radio-label,
+    &.review-content textarea {
+      @include input-text();
+      @include input-border();
+    }
+
+    .error-msg {
+      @include error-msg();
+      
+
+      &.error {
+        display: block;
+      }
+    }
+
+    // 상품명 style
+    &.cosmetic-name > p:last-child {
+      color: #8e8e8e;
+      font-size: 1.2rem;
+    }
+
+    // 피부 적합 여부 style
+    .radio-box {
+      display: flex;
+      gap: 0 0.5rem;
+
+      label {
+        flex-grow: 1;
+        text-align: center;
+        position: relative;
+        cursor: pointer;
+      }
+
+      input {
+        display: none;
+
+        &:checked + .radio-label {
+          color: #565656;
+          border: 0.5px solid #8e8e8e;
+          background-color: #fff0e8;
+        }
+      }
+
+      .radio-label {
+        display: block;
+      }
+    }
+
+    // 리뷰 작성 style
+    &.review-content textarea {
+      width: 100%;
+      height: 12rem;
+      resize: none;
+    }
+  }
+}

@@ -1,0 +1,38 @@
+// input 그룹 스타일
+// input 그룹 : 제목(라벨), input(, 에러 메시지)
+@mixin input-group {
+    margin-bottom: 2.5rem;
+  }
+  
+  // input 제목 스타일
+  @mixin input-title {
+    display: block;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+  }
+  
+  // input 안 텍스트 스타일
+  @mixin input-text {
+    padding: 1rem;
+    color: #8e8e8e;
+    font-size: 1.2rem;
+  }
+  
+  // input 테두리 공통 스타일
+  @mixin input-border {
+    border: 0.5px solid #e1e1e1;
+    border-radius: 0.5rem;
+  }
+  
+  // input 에러 메세지 공통 스타일
+  // 오류 시 error 클래스 추가하기기
+  @mixin error-msg {
+    display: none;
+    margin-top: 0.5rem;
+    color: #ffae82;
+    font-size: 1rem;
+  
+    &.error {
+      display: block;
+    }
+  }

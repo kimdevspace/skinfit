@@ -1,0 +1,56 @@
+//searchItem.jsx : 검색결과 하나(뱃지, 버튼 Props로 바꾸기)
+
+.margin-setting {
+  margin-left: 3rem;
+  margin-right: 3rem;
+}
+.search-wrapper {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+  align-items: center;
+
+  .cosmetic-box {
+    font-size: 1.4rem;
+    flex-grow: 10;
+    margin-left: 1rem;
+
+    .brand-name {
+      font-size: 1.1rem;
+      align-self: center;
+    }
+  }
+
+  .search-hr {
+    height: 0.1rem;
+    border: none;
+    background-color: #dedede;
+  }
+
+  .cosmetic-image {
+    width: 4rem;
+    aspect-ratio: 1/1;
+  }
+}
+
+// 안전 / 유의 뱃지지
+%common {
+  font-size: 1.2rem;
+}
+
+.badge {
+  @extend %common;
+  padding: 0.8rem 0.6rem;
+  border-radius: 50%;
+
+
+  &.isSafe {
+    background-color: #69b293;
+    color: #fff;
+    
+  }
+
+  &.isWarned {
+    background-color: #F38B71;
+    color: #fff;  }
+}

@@ -1,0 +1,44 @@
+.ingredient-list {
+  .ingredient {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.5rem 0;
+
+    .ingredient-name {
+      color: #8e8e8e;
+      font-size: 1.1rem;
+    }
+
+    .ewg-score {
+      font-size: 1.2rem;
+      font-weight: 700;
+
+      // 안전 등급 스타일링
+      &.low {
+        color: #a5cf96;
+      }
+
+      // 보통 등급 스타일링
+      &.moderate {
+        color: #ffb58c;
+      }
+
+      // 위험 등급 스타일링
+      &.high {
+        color: #ff7d8a;
+      }
+
+      // 미분류 등급 스타일링
+      &.others {
+        color: #8e8e8e;
+      }
+    }
+  }
+
+  .not-included {
+    padding: 0.5rem 0.5rem 0;
+    color: #8e8e8e;
+    font-size: 1.1rem;
+  }
+}

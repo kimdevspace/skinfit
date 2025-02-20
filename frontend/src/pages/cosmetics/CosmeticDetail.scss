@@ -1,0 +1,84 @@
+.cosmetic-detail {
+  padding-bottom: 8rem;
+  
+  .reviews {
+    margin: 3rem 3rem 0;
+
+    .title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    // 내 피부 맞춤 리뷰 버튼
+    .skin-type-review {
+      display: flex;
+      align-items: center;
+      margin: 1rem 0.5rem 0.3rem;
+
+      // 토글 버튼
+      .toggle-btn {
+        position: relative;
+        width: 3.3rem;
+        height: 1.9rem;
+        padding: 0.2rem;
+        border: 1px solid #dedede;
+        border-radius: 1.8rem;
+        background-color: #fff;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &.on {
+          background-color: #fff0e8;
+        }
+
+        .slider {
+          position: absolute;
+          width: 1.4rem;
+          height: 1.4rem;
+          border: 1px solid #dedede;
+          border-radius: 50%;
+          background-color: #fff;
+          transition: transform 0.3s;
+        }
+
+        &.on .slider {
+          transform: translateX(1.4rem);
+        }
+      }
+
+      p {
+        margin-left: 0.3rem;
+      }
+    }
+
+    // 리뷰 컨트롤
+    .review-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0 0.5rem 0.5rem;
+
+      .latest,
+      .likes,
+      .write-btn {
+        padding: 0.5rem 1rem;
+        color: #8e8e8e;
+        font-size: 1rem;
+        border: 1px solid #dedede;
+        border-radius: 2rem;
+        background-color: #fff;
+
+        &.active {
+          color: #565656;
+          border: 1px solid #8e8e8e;
+          background-color: #fff0e8;
+        }
+      }
+
+      .latest {
+        margin-left: 0.5rem;
+      }
+    }
+  }
+}

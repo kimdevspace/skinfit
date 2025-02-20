@@ -1,0 +1,78 @@
+.filter {
+  display: flex;
+  justify-content: space-between; 
+  align-items: start;
+  margin: 1.5rem 3rem 1rem;
+
+  .category {
+    .category-btn {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 9rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid #DEDEDE;
+      border-radius: 2rem;
+      color: #8E8E8E;
+      cursor: pointer;
+
+      // '카테고리' 란 클릭시 검색결과 없다고 떠서 막아주기
+      // 이벤트 버블링 막아주기(카테고리 버튼에는 두 가지 클릭 이벤트 존재)
+      .cursor-off {
+        pointer-events : none
+      }
+      
+
+      &.active {
+        border-color: #FFAE82;
+      }
+
+      button {
+        font-size: 1rem;
+      }
+
+      svg {
+        margin-left: 1rem;
+      }
+    }
+
+    .category-options {
+      width: 9rem;
+      position: absolute;
+      margin-top: 0.3rem;
+      padding: 0.5rem 0.8rem;
+      text-align: center;
+      border: 1px solid #DEDEDE;
+      border-radius: 0.8rem;
+      background-color: #fff;
+
+      li {
+        button {
+          width: 100%;
+          padding: 0.5rem;
+          border-bottom: 0.5px solid #DEDEDE;  
+          color: #8E8E8E;
+          font-size: 1rem;
+        }
+
+        &:first-child button {
+          padding-top: 0;
+        }
+
+        &:last-child button {
+          padding-bottom: 0;
+          border-bottom: none;
+        }
+      }
+    }
+  }
+
+  .user-preference {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+
+    &.active {
+      color: #FFAE82;
+    }
+  }
+}
