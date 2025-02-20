@@ -13,22 +13,5 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserProfileResponse {
     private String nickname;
-    private List<SkinTypeInfo> skinTypes;  // 모든 피부타입 정보를 담되, isSelected로 현재 선택여부 표시
-
-    @Getter
-    @Builder
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class SkinTypeInfo {
-        private Integer typeId;
-        private String typeName;
-        private boolean isSelected;
-
-        public static SkinTypeInfo of(SkinType skinType, boolean isSelected) {
-            return SkinTypeInfo.builder()
-                    .typeId(skinType.getTypeId())
-                    .typeName(skinType.getTypeName())
-                    .isSelected(isSelected)
-                    .build();
-        }
-    }
+    private List<Integer> skinTypeIds;  // 모든 피부타입 정보를 담되, isSelected로 현재 선택여부 표시
 }

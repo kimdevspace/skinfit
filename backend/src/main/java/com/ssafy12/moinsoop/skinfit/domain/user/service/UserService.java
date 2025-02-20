@@ -224,25 +224,17 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
 
-        List<SkinType> allSkinTypes = skinTypeRepository.findAll();
         List<UserSkinType> userSkinTypes = userSkinTypeRepository.findAllByUser_UserId(userId);
 
         // 현재 사용자가 선택한 피부타입 ID 목록
-        Set<Integer> selectedTypeIds = userSkinTypes.stream()
+        List<Integer> selectedTypeIds = userSkinTypes.stream()
                 .map(ust -> ust.getSkinType().getTypeId())
-                .collect(Collectors.toSet());
+                .toList();
 
-        // 모든 피부타입에 대해 현재 사용자의 선택 여부 표시
-        List<UserProfileResponse.SkinTypeInfo> skinTypes = allSkinTypes.stream()
-                .map(type -> UserProfileResponse.SkinTypeInfo.of(
-                        type,
-                        selectedTypeIds.contains(type.getTypeId())
-                ))
-                .collect(Collectors.toList());
 
         return UserProfileResponse.builder()
                 .nickname(user.getNickname())
-                .skinTypes(skinTypes)
+                .skinTypeIds(selectedTypeIds)
                 .build();
     }
 
