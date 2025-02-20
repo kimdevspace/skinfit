@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage  } from 'zustand/middleware';
 
 const useAuthStore = create(
   persist(
@@ -37,7 +37,16 @@ const useAuthStore = create(
     }),
     {
       name: 'auth-storage',
-      etStorage: () => sessionStorage, // 로컬 스토리지에서 세션 스토리지로 변경
+      // 이 부분이 변경됨: getStorage에서 storage로 변경
+      storage: createJSONStorage(() => sessionStorage),
+      // 선택적으로 추가할 수 있는 옵션 (필요시)
+      partialize: (state) => ({
+        isAuthenticated: state.isAuthenticated,
+        accessToken: state.accessToken,
+        verificationToken: state.verificationToken,
+        roleType: state.roleType,
+        isRegistered: state.isRegistered,
+      }),
     }
   )
 );
