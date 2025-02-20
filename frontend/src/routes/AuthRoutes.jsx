@@ -18,9 +18,7 @@ function AuthRoutes() {
             <Login />
           </AuthRoute>
         }
-      />
-      {/* 카카오 콜백을 위한 라우트 추가 */}
-      <Route path="login/oauth2/code/kakao" element={<KakaoCallbackPage />} />      
+      />  
       <Route
         path="signup"
         element={
