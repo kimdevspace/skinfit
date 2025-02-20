@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
 import AuthRoutes from "./routes/AuthRoutes";
 import MyPageRoute from "./routes/MyPageRoute";
 import Home from "./pages/home/Home";
@@ -65,14 +65,9 @@ function App() {
         />
 
         {/* 어드민 관련 라우트 */}
-        <Route
-          path="/admin/*"
-          element={
-            <AdminRoute>
-              <AdminRoutes />
-            </AdminRoute>
-          }
-        />
+        <Route path="/admin/*" element={<AdminRoute><Outlet /></AdminRoute>}>
+          {AdminRoutes()}
+        </Route>
       </Routes>
 
       {/* 완료 팝업창 */}

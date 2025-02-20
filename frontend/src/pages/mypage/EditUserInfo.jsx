@@ -8,6 +8,7 @@ import Button from "../../components/common/Button.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import NavBar from "../../components/common/NavBar";
+import useAuthStore from "../../stores/Auth.js";
 
 export default function EditUserInfo() {
   const navigate = useNavigate();
@@ -32,7 +33,20 @@ export default function EditUserInfo() {
 
   //#region 기존 데이터 불러오기
   const fetchUserData = async () => {
-    const response = await axios.get("user/mypage/info");
+    const verificationToken = useAuthStore.getState().verificationToken;
+    
+    // 검증 토큰이 없으면 에러 발생
+    if (!verificationToken) {
+      throw new Error('비밀번호 검증이 필요합니다');
+    }
+    
+    // 검증 토큰을 헤더에 추가하여 요청
+    const response = await axios.get("user/mypage/info", {
+      headers: {
+        'Verification-Token': verificationToken
+      }
+    });
+    
     return response.data;
   };
 
@@ -43,6 +57,18 @@ export default function EditUserInfo() {
   } = useQuery({
     queryKey: ["userData"],
     queryFn: fetchUserData,
+    onError: (error) => {
+      // 검증 토큰 관련 에러 처리
+      if (error.message === '비밀번호 검증이 필요합니다') {
+        alert('내정보 수정을 위해 비밀번호 검증이 필요합니다.');
+        navigate('/mypage/verify-password');
+      } else {
+        console.error('사용자 정보 가져오기 실패:', error);
+        alert('사용자 정보를 가져오는데 실패했습니다.');
+      }
+    },
+    // 검증 토큰이 있을 때만 쿼리 실행
+    enabled: !!useAuthStore.getState().verificationToken,
   });
 
   // 사용자 데이터 로드 시 초기값 설정 (useEffect 사용)
@@ -54,6 +80,15 @@ export default function EditUserInfo() {
       setNicknameChecked(true);
     }
   }, [userData]);
+
+  // 컴포넌트 마운트 시 검증 토큰 확인
+  useEffect(() => {
+    const verificationToken = useAuthStore.getState().verificationToken;
+    if (!verificationToken) {
+      alert('내정보 수정을 위해 비밀번호 검증이 필요합니다.');
+      navigate('/mypage/verify-password');
+    }
+  }, [navigate]);
 
   //#endregion
 
@@ -141,7 +176,23 @@ export default function EditUserInfo() {
 
   //#region 유저 정보 수정 요청
   const updateUserInfo = async (payload) => {
-    const response = await axios.patch("user/mypage/info", payload);
+    // Auth 스토어에서 검증 토큰 가져오기
+    const verificationToken = useAuthStore.getState().verificationToken;
+    
+    if (!verificationToken) {
+      throw new Error('비밀번호 검증이 필요합니다');
+    }
+    
+    // 헤더에 검증 토큰 추가
+    const response = await axios.patch("user/mypage/info", payload, {
+      headers: {
+        'Verification-Token': verificationToken
+      }
+    });
+    
+    // 응답 성공 후 검증 토큰 제거 (일회용)
+    useAuthStore.getState().clearVerificationToken();
+    
     return response.data;
   };
 
@@ -154,7 +205,14 @@ export default function EditUserInfo() {
     },
     onError: (error) => {
       console.error("사용자 정보 업데이트 실패", error);
-      // 에러 메시지 표시
+      // 검증 토큰 에러 특별 처리
+    if (error.message === '비밀번호 검증이 필요합니다') {
+      alert('내정보 수정을 위해 비밀번호 검증이 필요합니다.');
+      navigate('/mypage/verify-password');
+    } else {
+      // 다른 에러 메시지 표시
+      alert(`정보 수정 중 오류가 발생했습니다: ${error.response?.data?.message || error.message}`);
+    }
     },
   });
 
