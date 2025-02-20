@@ -38,17 +38,20 @@ export function UserFormRoute({ children }) {
 
 // 인증 페이지용 라우트 (로그인, 회원가입, 비밀번호 찾기)
 export function AuthRoute({ children }) {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, roleType } = useAuthStore();
 
   if (isAuthenticated) {
-    // 인증된 사용자는 메인 페이지로 (회원정보 등록 여부와 관계없이)
+    // 관리자는 관리자 페이지로 리다이렉트
+    if (roleType === "ADMIN") {
+      return <Navigate to="/admin" replace />;
+    }
+    // 일반 사용자는 메인 페이지로 리다이렉트
     return <Navigate to="/" replace />;
   }
 
   // 미인증 사용자만 접근 가능
   return children;
 }
-
 // 관리자 전용 라우트트
 export function AdminRoute({ children }) {
   const { isAuthenticated, roleType } = useAuthStore();

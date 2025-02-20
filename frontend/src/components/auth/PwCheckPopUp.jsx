@@ -51,29 +51,12 @@ export default function PwCheckPopUp({ onClose, state }) {
   const mutation = useMutation({
     mutationFn: pwReview,
     onSuccess: (response) => {
-      // 응답 헤더에서 새 액세스 토큰 가져오기
-      const newAccessToken =
-        response.headers.authorization ||
-        response.headers.Authorization ||
-        response.headers["Authorization"];
-
-      if (newAccessToken) {
-        // Authorization 헤더가 'Bearer {token}' 형식이라면 파싱
-        const tokenValue = newAccessToken.startsWith("Bearer ")
-          ? newAccessToken.substring(7)
-          : newAccessToken;
-
-        // 기존 상태값 유지하면서 토큰만 업데이트
-        const currentState = useAuthStore.getState();
+      // 응답 바디에서 검증 토큰 저장
+      if (response.data && response.data.token) {
         useAuthStore
           .getState()
-          .setAuth(
-            tokenValue,
-            currentState.roleType,
-            currentState.isRegistered
-          );
-
-        console.log("액세스 토큰이 갱신되었습니다");
+          .setVerificationToken(response.data.token);
+        console.log("검증 토큰이 저장되었습니다");
       }
 
       navigate("/mypage/edit"); // 내 정보수정하기 페이지로 이동
