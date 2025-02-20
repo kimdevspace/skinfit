@@ -152,7 +152,7 @@ export default function OcrScanner() {
     },
   });
 
-  console.log('isLoading?', mutation.isLoading)
+  console.log('isLoading?', mutation.isPending)
 
   //미입력 에러메시지 관리리
   const brandNameErrorRef = useRef(null);
@@ -200,7 +200,7 @@ export default function OcrScanner() {
   };
   return (
     <>
-      {mutation.isLoading ? (
+      {mutation.isPending ? (
         <div className="loading-container">
           <div className="spinner"></div>
           <p className="info-txt">화장품을 등록하고 있어요!</p>
