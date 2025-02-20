@@ -11,7 +11,7 @@ export const useKakaoLogin = () => {
  const { refetch, isLoading, error } = useQuery({
    queryKey: ['kakaoLogin'],
    queryFn: async () => {
-     const response = await axios.get('/api/v1/oauth/kakao/login');
+     const response = await axios.get('oauth/kakao/login');
      return response.data;
    },
    enabled: false, // 자동 실행 방지
@@ -23,14 +23,16 @@ export const useKakaoLogin = () => {
     } else {
       // 백엔드가 직접 카카오 로그인 처리를 한 경우 (토큰 등을 반환)
       if (data.accessToken) {
-        console.log('카카오 로그인 데이터', data)
-        setAuth({
-          isAuthenticated: true,
-          accessToken: data.accessToken,
-          refreshToken: data.refreshToken,
-          roleType: data.roleType || 'USER'
-        });
-        navigate('/');
+        console.log('카카오 로그인 데이터', data);
+      // data.registered가 undefined일 경우에만 true를 사용
+      const isUserRegistered = data.registered !== undefined ? data.registered : true;
+      
+      setAuth(
+        data.accessToken,
+        data.roleType || 'USER',
+        isUserRegistered
+      );
+        // navigate('/');
       }
     }
     //  // 백엔드에서 리다이렉트 URL을 제공하는 경우
