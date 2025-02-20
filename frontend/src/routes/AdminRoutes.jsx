@@ -1,6 +1,6 @@
 // src/routes/AdminRoutes.jsx
 import { Route } from 'react-router-dom';
-import AdminLayout from '../components/admin/AdminLayout';
+import AdminLayout from '../pages/admin/AdminLayout';
 import AdminHome from '../pages/admin/AdminHome';
 import ReviewManagement from '../pages/admin/ReviewManagement';
 import CosmeticCheck from '../pages/admin/CosmeticCheck';
