@@ -47,7 +47,7 @@ function CosmeticDetail() {
         sort,
         page,
         limit: 10,
-        MyReview: custom ? "true" : "false",
+        custom: custom ? "true" : "false",
       },
     });
     console.log('내피부맞춤',custom, sort)
