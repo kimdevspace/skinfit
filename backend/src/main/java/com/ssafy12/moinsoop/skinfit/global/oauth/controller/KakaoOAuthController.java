@@ -60,7 +60,7 @@ public class KakaoOAuthController {
     }
 
     @GetMapping("/login/oauth2/code/kakao")
-    public ResponseEntity<?> kakaoCallback(@RequestParam String code,
+    public void kakaoCallback(@RequestParam String code,
                                            HttpServletResponse response) throws IOException {
         log.info("인가 코드: {}", code);
 
@@ -123,24 +123,27 @@ public class KakaoOAuthController {
                     response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 
                     // 응답에는 리프레시 토큰 제외
-                    SignInResponse signInResponse = SignInResponse.builder()
-                            .accessToken(jwtAccessToken)
-                            .isRegistered(isRegistered)
-                            .roleType(user.getRoleType())
-                            .build();
+//                    SignInResponse signInResponse = SignInResponse.builder()
+//                            .accessToken(jwtAccessToken)
+//                            .isRegistered(isRegistered)
+//                            .roleType(user.getRoleType())
+//                            .build();
 
-                    return ResponseEntity.ok(signInResponse);
+                    // 프론트엔드 리다이렉트 처리
+                    String frontendRedirectUrl = "https://i12b111.p.ssafy.io/oauth/callback";
+
+                    // URL에 파라미터 추가
+                    frontendRedirectUrl += "?accessToken=" + jwtAccessToken +
+                            "&isRegistered=" + isRegistered;
+
+                    // 프론트엔드 페이지로 리다이렉트
+                    response.sendRedirect(frontendRedirectUrl);
 
                 }
             }
 
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("토큰 응답이 비어있습니다.");
-
         } catch (Exception e) {
-            log.error("카카오 로그인 실패", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("카카오 로그인 실패: " + e.getMessage());
+            response.sendRedirect("https://i12b111.p.ssafy.io/auth/login");
         }
     }
 
