@@ -10,14 +10,14 @@ import OcrScanner from "./pages/ocr/OcrScanner";
 import AdminRoutes from "./routes/AdminRoutes";
 import CompletePopUp from "./components/common/CompletePopUp";
 import { ProtectedRoute, AdminRoute } from "./routes/ProtectedRoutes";
-import KakaoCallbackPage from './pages/auth/KakaoCallbackPage'
+import OAuthCallback from "./pages/auth/OAuthCallback";
 
 function App() {
   return (
     <>
       <Routes>
         {/* 카카오 콜백을 위한 라우트 추가 */}
-        <Route path="/api/v1/login/oauth2/code/kakao" element={<KakaoCallbackPage />} />
+        <Route path="/OAuthCallback" element={<OAuthCallback />} />
         {/* 홈 관련 라우트 */}
         <Route
           path="/"
