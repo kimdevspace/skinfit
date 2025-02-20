@@ -12,8 +12,8 @@ import java.util.List;
 public interface CosmeticRepository extends JpaRepository<Cosmetic, Integer> {
     // 🔍 화장품 자동완성 검색 (10개 제한, 브랜드 + 화장품명 검색 가능)
     @Query("SELECT c FROM Cosmetic c " +
-            "WHERE (LOWER(c.cosmeticName) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "OR LOWER(c.cosmeticBrand) LIKE LOWER(CONCAT('%', :query, '%'))) " +
+            "WHERE LOWER(REPLACE(CONCAT(c.cosmeticBrand, c.cosmeticName), ' ', '')) " +
+            "LIKE LOWER(CONCAT('%', REPLACE(:query, ' ', ''), '%')) " +
             "AND c.status = true " +
             "ORDER BY " +
             "CASE WHEN c.cosmeticBrand LIKE '[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]%' THEN 1 ELSE 2 END, " +
