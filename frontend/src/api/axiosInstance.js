@@ -12,7 +12,7 @@ const axiosInstance = axios.create({
 // 요청 인터셉터
 axiosInstance.interceptors.request.use((config) => {
   try {
-    const authStorage = localStorage.getItem("auth-storage");
+    const authStorage = sessionStorage.getItem("auth-storage"); // 로컬 스토리지에서 세션 스토리지로 변경
     if (authStorage) {
       const parsedAuth = JSON.parse(authStorage);
       const accessToken = parsedAuth?.state?.accessToken;
@@ -59,13 +59,21 @@ axiosInstance.interceptors.response.use(
           ? newAccessToken.substring(7)
           : newAccessToken;
 
-        // 새 액세스 토큰 저장
-        useAuthStore.getState().setAuth(tokenValue);
+        // 기존 상태값 유지하며 토큰만 업데이트
+        const currentState = useAuthStore.getState();
+        useAuthStore.getState().setAuth(
+          tokenValue,
+          currentState.roleType,
+          currentState.isRegistered
+        );
+
+        console.log("액세스 토큰이 갱신되었습니다", useAuthStore.getState());
 
         // 원래 요청의 헤더에 새 토큰 설정
         originalRequest.headers.Authorization = `Bearer ${tokenValue}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
+        console.error("토큰 갱신 실패:", refreshError);
         useAuthStore.getState().clearAuth();
         window.location.href = "/auth/login";
         return Promise.reject(refreshError);
