@@ -75,7 +75,7 @@ public class OCRService {
                 .cosmeticName(request.getCosmeticName())
                 .cosmeticBrand(request.getCosmeticBrand())
                 .cosmeticVolume(request.getCosmeticVolume())
-                .imageUrl(imageUrl)
+                .imageUrl(null)
                 .status(false)
                 .build();
 

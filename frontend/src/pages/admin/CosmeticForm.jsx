@@ -1,12 +1,9 @@
-// src/pages/admin/CosmeticForm.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "../../api/axiosInstance.js";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import "./CosmeticForm.scss";
-
-const token =
-  "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInJvbGVUeXBlIjoiQURNSU4iLCJpYXQiOjE3Mzk3NzQ2ODksImV4cCI6MTczOTc3NjQ4OX0.S6GmGhBJ2-V_a9OXWqNzpEv1gYSHPPoVEgoWS8Gn4qc";
+import ImageUpload from "../../components/common/ImageUpload"; // ImageUpload 컴포넌트 임포트
 
 function CosmeticForm() {
   const { cosmeticId } = useParams();
@@ -19,11 +16,7 @@ function CosmeticForm() {
     queryKey: ["cosmeticDetail", cosmeticId],
     queryFn: () =>
       axios
-        .get(`admin/cosmetics/${cosmeticId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        .get(`admin/cosmetics/${cosmeticId}`)
         .then((res) => res.data),
   });
 
@@ -33,7 +26,20 @@ function CosmeticForm() {
     cosmeticBrand: "",
     cosmeticVolume: "",
     ingredientIds: [],
+    images: [], // images는 항상 배열로 초기화
   });
+
+  const [selectedFile, setSelectedFile] = useState(null); // 파일 선택 상태
+  const [imageError, setImageError] = useState(false); // 이미지 오류 상태
+
+  // handleInputChange 함수 추가: 입력 값을 상태에 반영
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
 
   useEffect(() => {
     if (data) {
@@ -41,8 +47,8 @@ function CosmeticForm() {
         cosmeticName: data.cosmeticName,
         cosmeticBrand: data.cosmeticBrand,
         cosmeticVolume: data.cosmeticVolume,
-        // data.ingredients가 IngredientDetailDto 배열로 가정 (각 객체에 ingredientId 존재)
         ingredientIds: data.ingredients.map((ing) => ing.ingredientName),
+        images: [], // 초기화시에도 images는 빈 배열로 설정
       });
     }
   }, [data]);
@@ -50,11 +56,7 @@ function CosmeticForm() {
   // 업데이트 mutation (PUT 요청)
   const mutation = useMutation({
     mutationFn: (updatedData) =>
-      axios.put(`/admin/cosmetics/${cosmeticId}`, updatedData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }),
+      axios.put(`/admin/cosmetics/${cosmeticId}`, updatedData),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["cosmeticDetail", cosmeticId],
@@ -65,7 +67,30 @@ function CosmeticForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    mutation.mutate(formData);
+
+    const { cosmeticName, cosmeticBrand, cosmeticVolume, ingredientIds, images } = formData;
+    const formDataToSubmit = new FormData();
+
+    const dataObject = {
+      cosmeticName,
+      cosmeticBrand,
+      cosmeticVolume,
+      ingredientIds, // 성분 ID 목록
+    };
+
+    formDataToSubmit.append(
+      "data",
+      new Blob([JSON.stringify(dataObject)], {
+        type: "application/json",
+      })
+    );
+
+    // 선택된 이미지가 있으면 이를 FormData에 추가
+    if (images && images.length > 0) {
+      formDataToSubmit.append("cosmeticImage", images[0]);
+    }
+
+    mutation.mutate(formDataToSubmit);
   };
 
   if (isLoading) return <div>Loading cosmetic details...</div>;
@@ -83,37 +108,33 @@ function CosmeticForm() {
             <div className="form-group">
               <label>화장품 이름</label>
               <input
+                id="cosmeticName"
                 type="text"
                 value={formData.cosmeticName}
-                onChange={(e) =>
-                  setFormData({ ...formData, cosmeticName: e.target.value })
-                }
+                onChange={handleInputChange} // handleInputChange 사용
               />
             </div>
             <div className="form-group">
               <label>화장품 브랜드</label>
               <input
+                id="cosmeticBrand"
                 type="text"
                 value={formData.cosmeticBrand}
-                onChange={(e) =>
-                  setFormData({ ...formData, cosmeticBrand: e.target.value })
-                }
+                onChange={handleInputChange} // handleInputChange 사용
               />
             </div>
             <div className="form-group">
               <label>화장품 용량</label>
               <input
+                id="cosmeticVolume"
                 type="text"
                 value={formData.cosmeticVolume}
-                onChange={(e) =>
-                  setFormData({ ...formData, cosmeticVolume: e.target.value })
-                }
+                onChange={handleInputChange} // handleInputChange 사용
               />
             </div>
             <div className="form-group">
-              <label>화장품 성분 (콤마로 구분하여 성분 ID 입력)</label>
-              <input
-                type="text"
+              <label>화장품 성분</label>
+              <textarea
                 value={formData.ingredientIds.join(",")}
                 onChange={(e) => {
                   const value = e.target.value;
@@ -122,11 +143,17 @@ function CosmeticForm() {
                 }}
               />
             </div>
-            <div className="form-group">
-              <label>화장품 이미지</label>
-              <input type="file" />
-              {/* 파일 업로드 처리는 별도 로직 필요 */}
-            </div>
+
+            {/* 이미지 등록 컴포넌트 */}
+            <ImageUpload
+              images={formData.images} // 이미지는 배열로 전달
+              setImages={setFormData} // 이미지 등록 후 상태 업데이트
+              maxImages={1} // 최대 이미지 1개로 설정
+              dataType="ocr" // 데이터 타입 지정
+              onError={setImageError} // 에러 상태 업데이트
+              error={imageError} // 에러 메시지 표시 여부
+            />
+
             <div className="card__actions">
               <button type="submit">등록하기</button>
             </div>

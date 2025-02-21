@@ -12,9 +12,12 @@ import com.ssafy12.moinsoop.skinfit.domain.cosmetic_ingredient.entity.CosmeticIn
 import com.ssafy12.moinsoop.skinfit.domain.cosmetic_ingredient.entity.repository.CosmeticIngredientRepository;
 import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.Ingredient;
 import com.ssafy12.moinsoop.skinfit.domain.ingredient.entity.repository.IngredientRepository;
+import com.ssafy12.moinsoop.skinfit.infrastructure.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +29,7 @@ public class AdminCosmeticService {
     private final CosmeticRepository cosmeticRepository;
     private final CosmeticIngredientRepository cosmeticIngredientRepository;
     private final IngredientRepository ingredientRepository;
+    private final S3Uploader s3Uploader;
 
     /**
      * 미검수(0) 상태인 화장품 리스트 조회
@@ -67,7 +71,7 @@ public class AdminCosmeticService {
      * 화장품 정보 수정 (검수 등록) - 화장품 정보와 성분 업데이트
      */
     @Transactional
-    public void updateCosmetic(Integer cosmeticId, UpdateCosmeticRequest request) {
+    public void updateCosmetic(Integer cosmeticId, UpdateCosmeticRequest request, MultipartFile cosmeticsImage) {
         Cosmetic cosmetic = cosmeticRepository.findById(cosmeticId)
                 .orElseThrow(() -> new AdminException("해당 화장품이 존재하지 않습니다."));
 
@@ -75,6 +79,12 @@ public class AdminCosmeticService {
         cosmetic.setCosmeticName(request.getCosmeticName());
         cosmetic.setCosmeticBrand(request.getCosmeticBrand());
         cosmetic.setCosmeticVolume(request.getCosmeticVolume());
+
+        // 이미지가 제공된 경우 S3에 업로드
+        if (cosmeticsImage != null && !cosmeticsImage.isEmpty()) {
+            String imageUrl = s3Uploader.uploadFile(cosmeticsImage, "cosmetics");
+            cosmetic.setImageUrl(imageUrl);
+        }
 
         // 검수 완료 처리 (status true)
         cosmetic.setStatus(true);

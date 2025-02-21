@@ -65,6 +65,8 @@ public class Cosmetic {
         this.status = status;
     }
 
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+
     @Builder
     public Cosmetic(Category category, String cosmeticName, String cosmeticBrand,
                     String cosmeticVolume, String imageUrl, boolean status) {

@@ -6,8 +6,10 @@ import com.ssafy12.moinsoop.skinfit.domain.admin.dto.UpdateCosmeticRequest;
 import com.ssafy12.moinsoop.skinfit.domain.admin.service.AdminCosmeticService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -42,10 +44,11 @@ public class AdminCosmeticController {
      * 화장품 정보 수정 (검수 등록)
      * PUT /api/v1/admin/cosmetics/{cosmeticId}
      */
-    @PutMapping("/{cosmeticId}")
+    @PutMapping(value = "/{cosmeticId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateCosmetic(@PathVariable Integer cosmeticId,
-                                                 @RequestBody @Valid UpdateCosmeticRequest request) {
-        adminCosmeticService.updateCosmetic(cosmeticId, request);
+                                                 @RequestPart("data") @Valid UpdateCosmeticRequest request,
+                                                 @RequestPart(value = "cosmeticImage", required = false) MultipartFile cosmeticImage) {
+        adminCosmeticService.updateCosmetic(cosmeticId, request, cosmeticImage);
         return ResponseEntity.ok("화장품 정보가 수정 및 검수 완료되었습니다.");
     }
 }
