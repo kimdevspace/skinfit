@@ -111,16 +111,12 @@ function CosmeticForm() {
               />
             </div>
             <div className="form-group">
-              <label>화장품 성분 (콤마로 구분하여 성분 ID 입력)</label>
-              <input
-                type="text"
-                value={formData.ingredientIds.join(",")}
-                onChange={(e) => {
+              <label>화장품 성분</label>
+              <textarea name="" id="ingredient" onChange={(e) => {
                   const value = e.target.value;
                   const ingredients = value.split(",").map((s) => s.trim());
                   setFormData({ ...formData, ingredientIds: ingredients });
-                }}
-              />
+                }}>{formData.ingredientIds.join(",")}</textarea>
             </div>
             <div className="form-group">
               <label>화장품 이미지</label>
