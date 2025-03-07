@@ -55,6 +55,24 @@
 ![alt text](img/image-29.png)
 ![alt text](img/image-30.png)
 
+## 주요 화면 gif
+### 로딩화면
+![alt text](img/로딩화면.gif)
+![alt text](img/서비스%20소개화면.gif)
+### 입력폼
+![alt text](img/입력폼%201차.gif)
+![alt text](img/입력폼%202차.gif)
+### 메인 페이지 & 마이 페이지지
+![alt text](img/메인%20페이지,%20마이%20페이지,%20잘%20맞는%20화장품%20수정%20시%20추천%20변화.gif)
+![alt text](img/마이페이지%20top3%20및%20나와%20맞지%20않는%20성분%20제공.gif)
+### 검색 & 리뷰 작성
+![alt text](img/일반%20검색,%20추천%20화장품만%20보기.gif)
+![alt text](img/제품%20상세%20전성분%20보기.gif)
+![alt text](img/리뷰작성.gif)
+### OCR 요청
+![alt text](img/ocr%20요청.gif)
+![alt text](img/관리자.gif)
+![alt text](img/ocr%20후%20등록된%20제품%20확인.gif)
 
 ## 개발 기간
 **2025.01.06 월** ~ **2025.02.21 금** <br>
