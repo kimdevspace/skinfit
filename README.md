@@ -36,31 +36,28 @@
 
 ## 주요기능 및 기술
 1. **사용자별 민감성분 분석 및 진단**
-<div align="center">
-  <img src="img/image-4.png" width="48%" />
-  <img src="img/image-5.png" width="48%" />
-  <img src="img/image-6.png" width="48%" />
+<div>
+  <img src="img/image-4.png" width="33%" />
+  <img src="img/image-5.png" width="33%" />
+  <img src="img/image-6.png" width="33%" />
 </div>
 <br>
 
 2. **AI 기반 사용자 맞춤 화장품 추천**
-<div align="center">
-  <img src="img/image-2.png" width="48%" />
-  <img src="img/image-7.png" width="48%" />
-  <img src="img/image-8.png" width="48%" />
-  <img src="img/image-9.png" width="48%" />
-  <img src="img/image-10.png" width="48%" />
-  <img src="img/image-11.png" width="48%" />
+<div>
+  <img src="img/image-7.png" width="30%" />
+  <img src="img/image-8.png" width="30%" />
+  <img src="img/image-9.png" width="30%" />
+  <img src="img/image-10.png" width="30%" />
+  <img src="img/image-11.png" width="30%" />
 </div>
 <br>
 
 3. **OCR 기반 간편한 화장품 등록**
-<div align="center">
+<div>
   <img src="img/image-13.png" width="48%" />
   <img src="img/image-12.png" width="48%" />
-</div>
-<div align="center">
-  <img src="img/image-15.png" width="60%" />
+  <img src="img/image-15.png" width="100%" />
 </div>
 <br>
 
@@ -69,7 +66,7 @@
    1) 성별, 출생연도, 닉네임, 피부타입(지성, 건성, 중성, 복합성, 민감성)
    2) 나에게 잘 맞는 / 안맞는 화장품 검색 후 등록(필수)
    3) 나에게 잘 맞는 / 안맞는 성분 검색 후 등록(선택)
-<div align="center">
+<div>
   <img src="img/입력폼%201차.gif" width="48%" />
   <img src="img/입력폼%202차.gif" width="48%" />
 </div>
@@ -79,8 +76,8 @@
    1) 제품 검색바 제공
    2) 피부 분석 정확도 시각화
    3) 추천 화장품 목록 제공
-<div align="center">
-  <img src="img/image-23.png" width="60%" />
+<div>
+  <img src="img/image-23.png" width="48%" />
 </div>
 <br>
 
@@ -89,11 +86,9 @@
    2) 디바운싱 기반 연관검색어 제공
    3) 카테고리별(스킨, 토너, 바디 등) / 잘 맞는 화장품만 필터링 검색
    4) 안전 / 유의 뱃지로 잘 맞는 화장품 시각화
-<div align="center">
+<div>
   <img src="img/image-27.png" width="48%" />
   <img src="img/image-28.png" width="48%" />
-</div>
-<div align="center">
   <img src="img/일반%20검색,%20추천%20화장품만%20보기.gif" width="60%" />
 </div>
 <br>
@@ -101,18 +96,14 @@
 4. **상세 페이지**
    1) 사용자에게 민감한 성분 정보 제공
    2) 전성분 안전 등급 제공 (美EWG 피부연구기관 데이터 기반)
-<div align="center">
-  <img src="img/image-24.png" width="48%" />
-  <img src="img/image-25.png" width="48%" />
-</div>
-<div align="center">
-  <img src="img/image-26.png" width="48%" />
-  <img src="img/제품%20상세%20전성분%20보기.gif" width="48%" />
+<div>
+  <img src="img/image-24.png" width="35%" />
+  <img src="img/제품%20상세%20전성분%20보기.gif" width="60%" />
 </div>
    
    3) 좋아요순 / 최신순, 내피부 맞춤 리뷰 필터링 기능
    4) 리뷰 등록 및 신고 기능
-<div align="center">
+<div>
   <img src="img/리뷰작성.gif" width="60%" />
 </div>
 <br>
@@ -127,7 +118,7 @@
 6. **OCR 기반 화장품 등록 요청**
    1) 상품명, 브랜드명 등 화장품 관련 정보 입력
    2) 화장품 뒷면 전성분 사진 등록
-<div align="center">
+<div>
   <img src="img/image-29.png" width="48%" />
   <img src="img/image-30.png" width="48%" />
 </div>
@@ -136,14 +127,14 @@
 7. **관리자 페이지**
    1) 신고 리뷰 관리
    2) 요청된 화장품 정보 검수 및 등록
-<div align="center">
+<div>
   <img src="img/관리자.gif" width="60%" />
 </div>
 <br>
 
 8. **로딩 및 소개 화면**
    1) 3 페이지에 걸쳐 주요 기능 3가지 소개
-<div align="center">
+<div>
   <img src="img/로딩화면.gif" width="48%" />
   <img src="img/서비스%20소개화면.gif" width="48%" />
 </div>
