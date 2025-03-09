@@ -158,12 +158,12 @@
 ## 명세서(기능, API, 요구사항)
 ### 기능 명세서
 <div align="center">
-  <img src="img/기능명세서.png" />
+  <img src="img/기능명세서.gif" />
 </div>
 
 ### API 명세서
 <div align="center">
-  <img src="img/api명세서.png" />
+  <img src="img/api명세서.gif" />
 </div>
 
 ### 요구사항 명세서
