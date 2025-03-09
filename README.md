@@ -125,7 +125,6 @@
    2) 화장품 뒷면 전성분 사진 등록
 <div>
   <img src="img/image-29.png" width="48%" />
-  <img src="img/image-30.png" width="48%" />
 </div>
 <br>
 
@@ -133,6 +132,7 @@
    1) 신고 리뷰 관리
    2) 요청된 화장품 정보 검수 및 등록
 <div>
+  <img src="img/image-30.png" width="48%" />
   <img src="img/관리자.gif" width="48%" />
 </div>
 <br>
@@ -180,9 +180,9 @@
 
 | 이름 | 역할 | 담당 업무 |
 | --- | --- | --- |
-| 김의중 | BE, Infra | - Spring Security, JWT, OAuth를 이용해 소셜로그인 및 회원가입 구현 (인증, 인가)<br>- 회원 마이페이지 CRUD 기능 구현<br>- JPA를 이용하여 API 개발<br>- Redis를 이용하여 인증토큰 관리 및 추천화장품, 성분분석정보 캐싱<br>- EC2, Jenkins, Dokcer, Nginx, GitLab을 이용하여 무중단 배포서버 구축<br>- 인증서를 이용하여 https 구현<br>- Nginx로 리버스프록시 사용 (/api, /, /recommend, /ocr)<br>- 스프링부트 서버에서 성분 분석 알고리즘 구현 |
-| 김세림 | BE, Data | - BeautifulSoup, Selenium을 이용한 화장품 데이터 크롤링<br>- 화장품 성분 및 평점 데이터 수집<br>- 성분명 전처리 진행<br>- DB 초기 데이터 정제 및 AWS S3 이미지 url 연동<br>- 리뷰 페이지 CRUD 구현<br>- AWS S3을 이용한 이미지 업로드 기능 구현 |
-| 오한나 | FE | - 서비스 디자인(Figma)<br>- 메인페이지, 상품 상세 페이지, 리뷰 등록, 소개 페이지 구현<br>- 검색 팝업창(화장품/성분 등록/수정 기능) 구현<br>- 리뷰 등록, OCR, 관리자페이지에서 사용하는 이미지 업로드, 미리보기 컴포넌트 구현<br>- 회원정보폼 구현 마무리<br>- css 초기 설정 및 반응형 설정 |
-| 이태우 | BE | - 서비스 디자인(Figma)<br>- JPA를 이용하여 API 개발<br>- 스프링부트 서버에서 검색 정렬 알고리즘 구현<br>- 디바운싱 기반 화장품과 성분명 자동 완성 알고리즘 구현<br>- 화장품 상세 페이지 |
-| 전혜준 | FE | - Zustand 전역 상태 관리 시스템 구축<br>- TanStack Query와 Axios 기반 비동기 데이터 처리<br>- 검색 기능 구현(디바운싱 기반 연관 검색어, 필터링 검색)<br>- 마이페이지, 회원정보폼, OCR 등록 페이지<br>- 리뷰 좋아요 CRUD 기능 구현<br>- SCSS와 CSS Keyframes 활용한 인터랙티브 UI/UX 개발<br>- Figma 화면정의서 & API 명세서 지속적 업데이트 |
-| 황대규 | BE, FE, Data | - 로그인, 회원가입, 초기 회원 정보 입력 폼 페이지 구현<br>- 관리자 신고 받은 리뷰 확인 및 ocr 기반 화장품 등록 페이지 구현<br>- 관리자 페이지 CRUD 구현<br>- clova ocr모델과 open ai api를 활용, ocr 데이터 처리<br>- 코사인 유사도, 하이브리드 추천 시스템을 활용한 추천 알고리즘 구현 |
+| **김의중** | BE, Infra | - Spring Security, JWT, OAuth를 이용해 소셜로그인 및 회원가입 구현 (인증, 인가)<br>- 회원 마이페이지 CRUD 기능 구현<br>- JPA를 이용하여 API 개발<br>- Redis를 이용하여 인증토큰 관리 및 추천화장품, 성분분석정보 캐싱<br>- EC2, Jenkins, Dokcer, Nginx, GitLab을 이용하여 무중단 배포서버 구축<br>- 인증서를 이용하여 https 구현<br>- Nginx로 리버스프록시 사용 (/api, /, /recommend, /ocr)<br>- 스프링부트 서버에서 성분 분석 알고리즘 구현 |
+| **김세림** | BE, Data | - BeautifulSoup, Selenium을 이용한 화장품 데이터 크롤링<br>- 화장품 성분 및 평점 데이터 수집<br>- 성분명 전처리 진행<br>- DB 초기 데이터 정제 및 AWS S3 이미지 url 연동<br>- 리뷰 페이지 CRUD 구현<br>- AWS S3을 이용한 이미지 업로드 기능 구현 |
+| **오한나** | FE | - 서비스 디자인(Figma)<br>- 메인페이지, 상품 상세 페이지, 리뷰 등록, 소개 페이지 구현<br>- 검색 팝업창(화장품/성분 등록/수정 기능) 구현<br>- 리뷰 등록, OCR, 관리자페이지에서 사용하는 이미지 업로드, 미리보기 컴포넌트 구현<br>- 회원정보폼 구현 마무리<br>- css 초기 설정 및 반응형 설정 |
+| **이태우** | BE | - 서비스 디자인(Figma)<br>- JPA를 이용하여 API 개발<br>- 스프링부트 서버에서 검색 정렬 알고리즘 구현<br>- 디바운싱 기반 화장품과 성분명 자동 완성 알고리즘 구현<br>- 화장품 상세 페이지 |
+| **전혜준** | FE | - Zustand 전역 상태 관리 시스템 구축<br>- TanStack Query와 Axios 기반 비동기 데이터 처리<br>- 검색 기능 구현(디바운싱 기반 연관 검색어, 필터링 검색)<br>- 마이페이지, 회원정보폼, OCR 등록 페이지<br>- 리뷰 좋아요 CRUD 기능 구현<br>- SCSS와 CSS Keyframes 활용한 인터랙티브 UI/UX 개발<br>- Figma 화면정의서 & API 명세서 지속적 업데이트 |
+| **황대규** | BE, FE, Data | - 로그인, 회원가입, 초기 회원 정보 입력 폼 페이지 구현<br>- 관리자 신고 받은 리뷰 확인 및 ocr 기반 화장품 등록 페이지 구현<br>- 관리자 페이지 CRUD 구현<br>- clova ocr모델과 open ai api를 활용, ocr 데이터 처리<br>- 코사인 유사도, 하이브리드 추천 시스템을 활용한 추천 알고리즘 구현 |
