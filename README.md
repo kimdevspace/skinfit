@@ -12,7 +12,7 @@
 ---
 
 # SkinFit : 내 피부에 딱 맞는 화장품 찾기
-사용자별 민감 성분 분석 기반 AI 화장품 추천 플랫폼
+사용자별 민감 성분 분석 및 화장품 추천 플랫폼
 <div align="center">
   <img src="img/image.png" />
 </div>
@@ -43,7 +43,7 @@
 </div>
 <br>
 
-### 2. AI 기반 사용자 맞춤 화장품 추천
+### 2. 하이브리드 추천 시스템 기반 사용자 맞춤 화장품 추천
 <div>
   <img src="img/image-7.png" width="30%" />
   <img src="img/image-8.png" width="30%" />
@@ -54,6 +54,7 @@
 <br>
 
 ### 3. OCR 기반 간편한 화장품 등록
+- AI 모델을 이용한 화장품 성분 텍스트 인식
 <div>
   <img src="img/image-13.png" width="48%" />
   <img src="img/image-12.png" width="48%" />
@@ -106,8 +107,8 @@
 <br>
 
 ### 5. 상세 페이지
-   1) 사용자에게 민감한 성분 정보 제공
-   2) 전성분 안전 등급 제공 (美EWG 피부연구기관 데이터 기반)
+   1) 사용자별로 개인화된 민감한 성분 정보 제공
+   2) 전성분 안전 등급 제공 (美EWG 피부연구기관 및 韓폴라초이스 데이터 기반)
 <div>
   <img src="img/image-24.png" width="35%" />
   <img src="img/제품%20상세%20전성분%20보기.gif" width="48%" />
