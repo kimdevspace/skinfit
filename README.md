@@ -151,37 +151,7 @@
   <img src="img/image-14.png" />
 </div>
 
-## ERD
-<div align="center">
-  <img src="img/image-31.png" />
-</div>
-
-## 명세서
-### 1. 기능 명세서
-<div align="center">
-  <img src="img/기능명세서.gif" />
-</div>
-
-### 2. API 명세서
-<div align="center">
-  <img src="img/api명세서.gif" />
-</div>
-
-### 3. 요구사항 명세서
-<div align="center">
-  <img src="img/요구사항_명세서.png" />
-</div>
-
-## 화면 정의서
-<div align="center">
-  <img src="img/화면정의서.png" />
-</div>
-
-## 담당 역할
-
-| 이름 | 역할 | 담당 업무 |
-| --- | --- | --- |
-| **김의중** | BE, Infra | - Spring Security, JWT, OAuth를 이용해 소셜로그인 및 회원가입 구현 (인증, 인가)<br>- 회원 마이페이지 CRUD 기능 구현<br>- JPA를 이용하여 API 개발<br>- Redis를 이용하여 인증토큰 관리 및 추천화장품, 성분분석정보 캐싱<br>- EC2, Jenkins, Dokcer, Nginx, GitLab을 이용하여 무중단 배포서버 구축<br>- 인증서를 이용하여 https 구현<br>- Nginx로 리버스프록시 사용 (/api, /, /recommend, /ocr)<br>- 스프링부트 서버에서 성분 분석 알고리즘 구현 |
+## ERD축<br>- 인증서를 이용하여 https 구현<br>- Nginx로 리버스프록시 사용 (/api, /, /recommend, /ocr)<br>- 스프링부트 서버에서 성분 분석 알고리즘 구현 |
 | **김세림** | BE, Data | - BeautifulSoup, Selenium을 이용한 화장품 데이터 크롤링<br>- 화장품 성분 및 평점 데이터 수집<br>- 성분명 전처리 진행<br>- DB 초기 데이터 정제 및 AWS S3 이미지 url 연동<br>- 리뷰 페이지 CRUD 구현<br>- AWS S3을 이용한 이미지 업로드 기능 구현 |
 | **오한나** | FE | - 서비스 디자인(Figma)<br>- 메인페이지, 상품 상세 페이지, 리뷰 등록, 소개 페이지 구현<br>- 검색 팝업창(화장품/성분 등록/수정 기능) 구현<br>- 리뷰 등록, OCR, 관리자페이지에서 사용하는 이미지 업로드, 미리보기 컴포넌트 구현<br>- 회원정보폼 구현 마무리<br>- css 초기 설정 및 반응형 설정 |
 | **이태우** | BE | - 서비스 디자인(Figma)<br>- JPA를 이용하여 API 개발<br>- 스프링부트 서버에서 검색 정렬 알고리즘 구현<br>- 디바운싱 기반 화장품과 성분명 자동 완성 알고리즘 구현<br>- 화장품 상세 페이지 |
